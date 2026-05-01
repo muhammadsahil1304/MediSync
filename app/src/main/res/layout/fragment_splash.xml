@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:background="#F7F7F7"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/logoImage"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/icon_splash"
+        android:layout_marginBottom="12dp"
+        android:contentDescription="Logo" />
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MediTrack"
+        android:textColor="@color/primary"
+        android:textStyle="bold"
+        android:textSize="40sp"
+        android:fontFamily="sans-serif-black" />
+
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="THE CLINICAL SANCTUARY"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:letterSpacing="0.2"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="80dp" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnSignIn"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="16dp"
+        android:text="Sign In"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_signin_gradient" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btnJoinPractice"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:text="Join Practice"
+        android:textAllCaps="false"
+        android:textColor="#1E5B7A"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:background="@drawable/bg_join_practice" />
+
+    <TextView
+        android:id="@+id/tvVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="VERSION 4.2.0-ALPHA"
+        android:textColor="#C4C4C4"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:layout_marginTop="40dp" />
+
+</LinearLayout>

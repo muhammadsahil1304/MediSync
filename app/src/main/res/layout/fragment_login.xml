@@ -76,6 +76,7 @@
                         android:textSize="12sp" />
 
                     <com.google.android.material.textfield.TextInputLayout
+
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
@@ -89,6 +90,7 @@
                         app:boxStrokeColor="#FFFFFF">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/Et_email"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="doctor@meditrack.com"
@@ -140,6 +142,7 @@
                         app:boxStrokeColor="#E0E0E0">
 
                         <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/Et_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:hint="••••••••"

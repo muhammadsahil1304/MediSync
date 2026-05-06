@@ -27,10 +27,17 @@ class SplashFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_splash, container, false)
 
         val btnSignIn = view.findViewById<View>(R.id.btnSignIn)
+        val btnSignUp = view.findViewById<View>(R.id.btnJoinPractice)
+
 
         btnSignIn.setOnClickListener {
             findNavController().navigate(
                 R.id.action_navigation_splash_to_navigation_login
+            )
+        }
+        btnSignUp.setOnClickListener {
+            findNavController().navigate(
+                R.id.action_navigation_splash_to_navigation_signup
             )
         }
 

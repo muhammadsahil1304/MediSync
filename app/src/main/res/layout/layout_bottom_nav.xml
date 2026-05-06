@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/bottomCard"
+    android:layout_width="match_parent"
+    android:layout_height="90dp"
+    app:cardCornerRadius="32dp"
+    app:cardElevation="10dp"
+    app:cardBackgroundColor="@android:color/white">
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        app:itemIconSize="28dp"
+        app:itemTextAppearanceActive="@style/NavTextActive"
+        app:itemTextAppearanceInactive="@style/NavTextInactive"
+        app:itemIconTint="@color/bottom_nav_color"
+        app:itemTextColor="@color/bottom_nav_color"
+        app:itemRippleColor="@android:color/transparent"
+        app:itemActiveIndicatorStyle="@style/CustomBottomIndicator"
+        app:labelVisibilityMode="labeled"
+        android:layout_gravity="center"
+        app:menu="@menu/bottom_nav_menu" />
+
+</com.google.android.material.card.MaterialCardView>

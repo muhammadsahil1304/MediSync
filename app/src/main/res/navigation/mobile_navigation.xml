@@ -14,13 +14,26 @@
         <action
             android:id="@+id/action_navigation_splash_to_navigation_login"
             app:destination="@id/navigation_login" />
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_signup"
+            app:destination="@id/navigation_signup" />
     </fragment>
 
     <fragment
         android:id="@+id/navigation_login"
         android:name="com.example.newmedisync.ui.login.LoginFragment"
         android:label="@string/login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_navigation_login_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_signup"
+        android:name="com.example.newmedisync.ui.signup.SignupFragment"
+        android:label="Signup"
+        tools:layout="@layout/fragment_signup" />
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.newmedisync.ui.home.HomeFragment"

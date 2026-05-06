@@ -8,4 +8,7 @@
     <string name="splash">Splash</string>
     <string name="login">login</string>
     <string name="appName">MediSync</string>
+    <string name="search_patient_by_phone_number">Search patient by phone number</string>
+    <string name="settings">Settings</string>
+    <string name="patients">Patients</string>
 </resources>

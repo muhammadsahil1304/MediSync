@@ -4,6 +4,10 @@ import android.os.Bundle
 import android.view.View
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -16,11 +20,16 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        WindowCompat.setDecorFitsSystemWindows(window, false)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        val navView: BottomNavigationView = binding.navView
+        ViewCompat.setOnApplyWindowInsetsListener(binding.bottomNavContainer) { view, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            view.updatePadding(bottom = systemBars.bottom)
+            insets
+        }
+        val navView: BottomNavigationView = binding.bottomNavInclude.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
         // Passing each menu ID as a set of Ids because each
@@ -33,13 +42,16 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.navigation_splash -> {
-                    binding.navView.visibility = View.GONE
+                    binding.bottomNavContainer.visibility = View.GONE
                 } R.id.navigation_login -> {
-                    binding.navView.visibility = View.GONE
+                binding.bottomNavContainer.visibility = View.GONE
+                }
+                R.id.navigation_signup -> {
+                    binding.bottomNavContainer.visibility = View.GONE
                 }
 
                 else -> {
-                    binding.navView.visibility = View.VISIBLE
+                    binding.bottomNavContainer.visibility = View.VISIBLE
                 }
             }
         }

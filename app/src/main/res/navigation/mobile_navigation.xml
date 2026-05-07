@@ -33,7 +33,11 @@
         android:id="@+id/navigation_signup"
         android:name="com.example.newmedisync.ui.signup.SignupFragment"
         android:label="Signup"
-        tools:layout="@layout/fragment_signup" />
+        tools:layout="@layout/fragment_signup" >
+        <action
+            android:id="@+id/action_navigation_signup_to_navigation_home"
+            app:destination="@id/navigation_home" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_home"
         android:name="com.example.newmedisync.ui.home.HomeFragment"
@@ -42,13 +46,19 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="com.example.newmedisync.ui.dashboard.DashboardFragment"
+        android:name="com.example.newmedisync.ui.patients.PatientsFragment"
         android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_patients" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="com.example.newmedisync.ui.notifications.NotificationsFragment"
         android:label="@string/title_notifications"
         tools:layout="@layout/fragment_notifications" />
+    <fragment
+        android:id="@+id/navigation_patients"
+        android:name="com.example.newmedisync.ui.patients.PatientsFragment"
+        android:label="@string/patients"
+        tools:layout="@layout/fragment_patients" />
+
 </navigation>

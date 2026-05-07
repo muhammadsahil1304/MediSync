@@ -32,8 +32,8 @@
     <style name="CustomBottomIndicator">
         <item name="android:color">#DDECF7</item>
         <item name="shapeAppearance">@style/ShapeAppearanceAppRound</item>
-        <item name="android:width">64dp</item>      <!-- ADD: control width -->
-        <item name="android:height">34dp</item>     <!-- ADD: control height -->
+        <item name="android:width">56dp</item>
+        <item name="android:height">28dp</item>
     </style>
 
     <style name="ShapeAppearanceAppRound">

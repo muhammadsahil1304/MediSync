@@ -29,6 +29,11 @@ class HomeFragment : Fragment() {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         setupLogout()
+        binding.cvPrescription.setOnClickListener{
+            findNavController().navigate(
+                R.id.action_navigation_home_to_navigation_patients_prescription
+            )
+        }
 
         return binding.root
     }

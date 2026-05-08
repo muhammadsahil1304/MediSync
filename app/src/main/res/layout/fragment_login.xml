@@ -93,10 +93,10 @@
                             android:id="@+id/Et_email"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="doctor@meditrack.com"
+                            android:hint="Email"
                             android:inputType="textEmailAddress"
-                            android:textColor="#212121"
-                            android:textColorHint="#C4C4C4"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/black"
                             android:padding="14dp" />
 
                     </com.google.android.material.textfield.TextInputLayout>
@@ -145,10 +145,10 @@
                             android:id="@+id/Et_password"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="••••••••"
+                            android:hint="Password"
                             android:inputType="textPassword"
-                            android:textColor="#212121"
-                            android:textColorHint="#C4C4C4"
+                            android:textColor="@color/black"
+                            android:textColorHint="@color/black"
                             android:padding="14dp" />
 
                     </com.google.android.material.textfield.TextInputLayout>

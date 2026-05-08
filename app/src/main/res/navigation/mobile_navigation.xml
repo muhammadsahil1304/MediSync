@@ -42,7 +42,11 @@
         android:id="@+id/navigation_home"
         android:name="com.example.newmedisync.ui.home.HomeFragment"
         android:label="@string/title_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+            <action
+                android:id="@+id/action_navigation_home_to_navigation_patients_prescription"
+                app:destination="@id/navigation_prescription" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_dashboard"
@@ -60,5 +64,11 @@
         android:name="com.example.newmedisync.ui.patients.PatientsFragment"
         android:label="@string/patients"
         tools:layout="@layout/fragment_patients" />
+
+    <fragment
+        android:id="@+id/navigation_prescription"
+        android:name="com.example.newmedisync.ui.prescription.PrescriptionBoardFragment"
+        android:label="@string/prescription"
+        tools:layout="@layout/fragment_prescription" />
 
 </navigation>

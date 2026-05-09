@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.medisync.model.Patient
 import com.example.newmedisync.databinding.ItemPatientBinding
+import com.example.newmedisync.room.PatientEntity
 
-class PatientsAdapter(private val list: List<Patient>) :
+class PatientsAdapter(private val list: List<PatientEntity>) :
     RecyclerView.Adapter<PatientsAdapter.PatientViewHolder>() {
 
     inner class PatientViewHolder(val binding: ItemPatientBinding) :
@@ -26,12 +27,14 @@ class PatientsAdapter(private val list: List<Patient>) :
         val item = list[position]
 
         holder.binding.apply {
-            tvInitials.text = item.initials
+            tvInitials.text =
+                item.name.take(2).uppercase()
             tvName.text = item.name
-            tvId.text = "ID: ${item.patientId}"
             tvPhone.text = item.phone
-            tvLastVisit.text = "Last visit: ${item.lastVisit}"
-            tvStatus.text = item.status
+            tvLastVisit.text = "Age: ${item.age}"
+            tvStatus.text = item.bloodGroup
+            tvId.text = "Gender: ${item.gender}"
+//            tvStatus.text = item.status
         }
     }
 

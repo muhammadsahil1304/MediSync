@@ -48,11 +48,11 @@
                 app:destination="@id/navigation_prescription" />
     </fragment>
 
-    <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.example.newmedisync.ui.patients.PatientsFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_patients" />
+<!--    <fragment-->
+<!--        android:id="@+id/navigation_dashboard"-->
+<!--        android:name="com.example.newmedisync.ui.patients.PatientsFragment"-->
+<!--        android:label="@string/title_dashboard"-->
+<!--        tools:layout="@layout/fragment_patients" />-->
 
     <fragment
         android:id="@+id/navigation_notifications"
@@ -63,12 +63,21 @@
         android:id="@+id/navigation_patients"
         android:name="com.example.newmedisync.ui.patients.PatientsFragment"
         android:label="@string/patients"
-        tools:layout="@layout/fragment_patients" />
+        tools:layout="@layout/fragment_patients" >
+        <action
+            android:id="@+id/action_navigation_patients_to_navigation_addPatients"
+            app:destination="@id/navigation_addPatients" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_prescription"
         android:name="com.example.newmedisync.ui.prescription.PrescriptionBoardFragment"
         android:label="@string/prescription"
         tools:layout="@layout/fragment_prescription" />
+ <fragment
+        android:id="@+id/navigation_addPatients"
+        android:name="com.example.newmedisync.ui.addPatients.AddPatientsFragment"
+        android:label="Add Patients"
+        tools:layout="@layout/fragment_add_patients" />
 
 </navigation>

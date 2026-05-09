@@ -54,7 +54,13 @@ class DrawingView(context: Context, attrs: AttributeSet?) : View(context, attrs)
         invalidate()
         return true
     }
-
+    fun getDrawPath(): Path {
+        return drawPath
+    }
+    fun setDrawPath(path: Path) {
+        drawPath = path
+        invalidate()
+    }
     fun clearCanvas() {
         drawPath.reset()
         invalidate()

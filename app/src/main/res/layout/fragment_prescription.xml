@@ -55,13 +55,6 @@
 
                     </LinearLayout>
 
-                    <ImageView
-                        android:id="@+id/imgSearch"
-                        android:layout_width="22dp"
-                        android:layout_height="22dp"
-                        android:src="@drawable/search"
-                        app:tint="#444444" />
-
                 </LinearLayout>
 
                 <!-- TITLE -->
@@ -110,14 +103,42 @@
                             android:layout_marginTop="10dp"
                             app:cardCornerRadius="14dp">
 
-                            <EditText
-                                android:id="@+id/etPatientName"
+                            <Spinner
+                                android:id="@+id/spPatients"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:background="@android:color/transparent"
+                                android:background="@drawable/bg_spinner_white"
+                                android:popupBackground="@drawable/bg_spinner_white"
+                                android:spinnerMode="dropdown" />
+
+                        </androidx.cardview.widget.CardView>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="18dp"
+                            android:text="CONTACT NUMBER"
+                            android:textColor="@color/black"
+                            android:textSize="11sp"
+                            android:textStyle="bold" />
+
+                        <androidx.cardview.widget.CardView
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_marginTop="10dp"
+                            app:cardCornerRadius="14dp">
+
+                            <EditText
+                                android:id="@+id/etPatientPhone"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:background="@color/white"
+                                android:focusable="false"
+                                android:clickable="false"
+                                android:hint="Patient phone number"
                                 android:gravity="center_vertical"
-                                android:hint="e.g. Jonathan Aris"
-                                android:paddingHorizontal="16dp" />
+                                android:paddingHorizontal="16dp"
+                                android:textColor="@color/black"
+                                android:textColorHint="#B9B9B9" />
 
                         </androidx.cardview.widget.CardView>
 
@@ -167,9 +188,11 @@
 
                                 <ImageView
                                     android:id="@+id/btnErase"
-                                    android:layout_width="22dp"
-                                    android:layout_height="22dp"
+                                    android:layout_width="42dp"
+                                    android:layout_height="42dp"
                                     android:layout_marginStart="18dp"
+                                    android:background="@drawable/bg_tool_unselected"
+                                    android:padding="10dp"
                                     android:src="@drawable/eraser"
                                     app:tint="#777777" />
 
@@ -197,22 +220,54 @@
 
                                 <View
                                     android:id="@+id/blueColor"
-                                    android:layout_width="18dp"
-                                    android:layout_height="18dp"
-                                    android:background="@drawable/bg_blue_dot" />
-
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
+                                    android:background="@drawable/bg_blue_selected" />
                                 <View
                                     android:id="@+id/redColor"
-                                    android:layout_width="18dp"
-                                    android:layout_height="18dp"
+                                    android:layout_width="24dp"
+                                    android:layout_height="24dp"
                                     android:layout_marginStart="12dp"
-                                    android:background="@drawable/bg_red_dot" />
-
+                                    android:background="@drawable/bg_red_unselected" />
                             </LinearLayout>
 
                         </androidx.cardview.widget.CardView>
 
                     </FrameLayout>
+
+                </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/btnSaveGallery"
+                    android:layout_width="250dp"
+                    android:layout_height="54dp"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="20dp"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="0dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_signin_gradient"
+                        android:gravity="center"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:layout_marginEnd="10dp"
+                            android:src="@drawable/pdf"
+                            app:tint="@android:color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/save_as_pdf"
+                            android:textColor="#FFFFFF"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
 
                 </androidx.cardview.widget.CardView>
 

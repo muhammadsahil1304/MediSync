@@ -1,72 +1,163 @@
 package com.example.newmedisync.views
 
 import android.content.Context
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
+import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 
-class DrawingView(context: Context, attrs: AttributeSet?) : View(context, attrs) {
+class DrawingView @JvmOverloads constructor(
+    context: Context,
+    attrs: AttributeSet? = null
+) : View(context, attrs) {
+    init {
+    }
+    data class Stroke(
+        val path: Path,
+        val paint: Paint
+    )
 
-    private var drawPath = Path()
+    private val strokes = mutableListOf<Stroke>()
 
-    private var drawPaint = Paint().apply {
-        color = Color.parseColor("#0A70A2")
-        isAntiAlias = true
-        strokeWidth = 8f
-        style = Paint.Style.STROKE
-        strokeJoin = Paint.Join.ROUND
-        strokeCap = Paint.Cap.ROUND
+    private var currentPath = Path()
+
+    private var currentPaint = createPaint(
+        Color.parseColor("#0A70A2")
+    )
+
+    private var isEraser = false
+
+    private fun createPaint(color: Int): Paint {
+
+        return Paint().apply {
+
+            this.color = color
+
+            isAntiAlias = true
+
+            style = Paint.Style.STROKE
+
+            strokeJoin = Paint.Join.ROUND
+
+            strokeCap = Paint.Cap.ROUND
+
+            strokeWidth = 8f
+        }
+    }
+
+    fun undoLastStroke() {
+
+        if (strokes.isNotEmpty()) {
+
+            strokes.removeAt(strokes.lastIndex)
+
+            invalidate()
+        }
+    }
+
+    fun setBrushColor(color: Int) {
+
+        isEraser = false
+
+        currentPaint = createPaint(color)
+    }
+
+    fun enableEraser() {
+
+        isEraser = true
+
+        currentPaint = Paint().apply {
+
+            color = Color.WHITE
+
+            isAntiAlias = true
+
+            style = Paint.Style.STROKE
+
+            strokeJoin = Paint.Join.ROUND
+
+            strokeCap = Paint.Cap.ROUND
+
+            strokeWidth = 60f
+        }
+    }
+
+    fun clearCanvas() {
+
+        strokes.clear()
+
+        currentPath.reset()
+
+        invalidate()
     }
 
     override fun onDraw(canvas: Canvas) {
+
         super.onDraw(canvas)
-        canvas.drawPath(drawPath, drawPaint)
+        canvas.drawColor(Color.WHITE)
+        for (stroke in strokes) {
+
+            canvas.drawPath(
+                stroke.path,
+                stroke.paint
+            )
+        }
+
+        canvas.drawPath(
+            currentPath,
+            currentPaint
+        )
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-
         parent.requestDisallowInterceptTouchEvent(true)
-
-        val touchX = event.x
-        val touchY = event.y
+        val x = event.x
+        val y = event.y
 
         when (event.action) {
 
             MotionEvent.ACTION_DOWN -> {
-                drawPath.moveTo(touchX, touchY)
+
+                currentPath = Path()
+
+                currentPath.moveTo(x, y)
             }
 
             MotionEvent.ACTION_MOVE -> {
-                drawPath.lineTo(touchX, touchY)
+
+                currentPath.lineTo(x, y)
             }
 
             MotionEvent.ACTION_UP -> {
-                parent.requestDisallowInterceptTouchEvent(false)
-            }
 
-            else -> return false
+                strokes.add(
+                    Stroke(
+                        Path(currentPath),
+                        Paint(currentPaint)
+                    )
+                )
+
+                currentPath = Path()
+            }
         }
 
         invalidate()
+
         return true
     }
-    fun getDrawPath(): Path {
-        return drawPath
-    }
-    fun setDrawPath(path: Path) {
-        drawPath = path
-        invalidate()
-    }
-    fun clearCanvas() {
-        drawPath.reset()
-        invalidate()
+
+    fun getStrokes(): MutableList<Stroke> {
+        return strokes
     }
 
-    fun setBrushColor(color: Int) {
-        drawPaint.color = color
+    fun setStrokes(
+        newStrokes: MutableList<Stroke>
+    ) {
+
+        strokes.clear()
+
+        strokes.addAll(newStrokes)
+
+        invalidate()
     }
 }

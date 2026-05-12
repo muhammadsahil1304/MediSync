@@ -46,6 +46,9 @@
             <action
                 android:id="@+id/action_navigation_home_to_navigation_patients_prescription"
                 app:destination="@id/navigation_prescription" />
+            <action
+                android:id="@+id/action_navigation_home_to_navigation_Add_patients"
+                app:destination="@id/navigation_addPatients" />
     </fragment>
 
 <!--    <fragment-->

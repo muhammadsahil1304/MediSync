@@ -34,6 +34,11 @@ class HomeFragment : Fragment() {
                 R.id.action_navigation_home_to_navigation_patients_prescription
             )
         }
+        binding.addPatients.setOnClickListener{
+            findNavController().navigate(
+                R.id.action_navigation_home_to_navigation_Add_patients
+            )
+        }
 
         return binding.root
     }

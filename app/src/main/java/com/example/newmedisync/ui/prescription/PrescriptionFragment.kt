@@ -25,6 +25,9 @@ class PrescriptionBoardFragment : Fragment() {
 
     private var _binding: FragmentPrescriptionBinding? = null
     private val binding get() = _binding!!
+    private var currentColor = Color.parseColor("#0A70A2")
+
+    private var isEraserSelected = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,51 +52,136 @@ class PrescriptionBoardFragment : Fragment() {
 
         binding.blueColor.setOnClickListener {
 
-            selectBlue()
-            selectPen()
+            currentColor = Color.parseColor("#0A70A2")
 
-            binding.drawingView.setBrushColor(
-                Color.parseColor("#0A70A2")
-            )
+            isEraserSelected = false
+
+            updateColorSelection(true)
+            updateToolSelection(true)
+
+            binding.drawingView.setBrushColor(currentColor)
+
+            binding.fullscreenDrawingView.setBrushColor(currentColor)
         }
 
         binding.redColor.setOnClickListener {
 
-            selectRed()
-            selectPen()
+            currentColor = Color.RED
 
-            binding.drawingView.setBrushColor(Color.RED)
+            isEraserSelected = false
+
+            updateColorSelection(false)
+            updateToolSelection(true)
+
+            binding.drawingView.setBrushColor(currentColor)
+
+            binding.fullscreenDrawingView.setBrushColor(currentColor)
         }
 
         binding.btnClear.setOnClickListener {
             binding.drawingView.clearCanvas()
         }
+        binding.fullClear.setOnClickListener {
+
+            binding.fullscreenDrawingView.clearCanvas()
+        }
 
         binding.btnErase.setOnClickListener {
 
-            selectEraser()
+            isEraserSelected = true
 
-            binding.drawingView.setBrushColor(Color.WHITE)
+            updateToolSelection(false)
+
+            binding.drawingView.enableEraser()
+
+            binding.fullscreenDrawingView.enableEraser()
+        }
+
+        binding.fullBlue.setOnClickListener {
+
+            updateColorSelection(true)
+            updateToolSelection(true)
+
+            binding.fullscreenDrawingView.setBrushColor(
+                Color.parseColor("#0A70A2")
+            )
+
+            binding.drawingView.setBrushColor(
+                Color.parseColor("#0A70A2")
+            )
+        }
+        binding.fullRed.setOnClickListener {
+
+            updateColorSelection(false)
+            updateToolSelection(true)
+
+            binding.fullscreenDrawingView.setBrushColor(Color.RED)
+
+            binding.drawingView.setBrushColor(Color.RED)
+        }
+
+        binding.fullErase.setOnClickListener {
+
+            updateToolSelection(false)
+
+            binding.fullscreenDrawingView.enableEraser()
+
+            binding.drawingView.enableEraser()
+        }
+        binding.btnUndo.setOnClickListener {
+
+            binding.drawingView.undoLastStroke()
+        }
+
+        binding.fullUndo.setOnClickListener {
+
+            binding.fullscreenDrawingView.undoLastStroke()
         }
 
         binding.btnFullscreen.setOnClickListener {
 
             binding.fullscreenContainer.visibility = View.VISIBLE
 
-            binding.fullscreenDrawingView.setDrawPath(
-                binding.drawingView.getDrawPath()
+            binding.fullscreenDrawingView.setStrokes(
+                binding.drawingView.getStrokes()
             )
 
-            binding.fullscreenDrawingView.setBrushColor(
-                Color.parseColor("#0A70A2")
-            )
+            if (isEraserSelected) {
+
+                binding.fullscreenDrawingView.enableEraser()
+
+            } else {
+
+                binding.fullscreenDrawingView.setBrushColor(
+                    currentColor
+                )
+            }
+        }
+        binding.btnFullPen.setOnClickListener {
+
+            isEraserSelected = false
+
+            updateToolSelection(true)
+
+            binding.fullscreenDrawingView.setBrushColor(currentColor)
+
+            binding.drawingView.setBrushColor(currentColor)
+        }
+        binding.btnPen.setOnClickListener {
+
+            isEraserSelected = false
+
+            updateToolSelection(true)
+
+            binding.drawingView.setBrushColor(currentColor)
+
+            binding.fullscreenDrawingView.setBrushColor(currentColor)
         }
         binding.btnCloseFullscreen.setOnClickListener {
 
-            binding.drawingView.setDrawPath(
-                binding.fullscreenDrawingView.getDrawPath()
+            binding.drawingView.setStrokes(
+                binding.fullscreenDrawingView.getStrokes()
             )
-
             binding.fullscreenContainer.visibility = View.GONE
         }
         requireActivity().findViewById<View>(R.id.nav_view)
@@ -114,61 +202,114 @@ class PrescriptionBoardFragment : Fragment() {
             savePrescriptionAsPdf()
         }
 
-        selectPen()
-        selectBlue()
+        updateToolSelection(true)
+        updateColorSelection(true)
     }
-    private fun selectPen() {
+//    private fun selectPen() {
+//
+//        binding.btnPen.setBackgroundResource(
+//            R.drawable.bg_tool_selected
+//        )
+//
+//        binding.btnErase.setBackgroundResource(
+//            R.drawable.bg_tool_unselected
+//        )
+//
+//        binding.btnPen.setColorFilter(Color.WHITE)
+//
+//        binding.btnErase.setColorFilter(
+//            Color.parseColor("#777777")
+//        )
+//    }
+//    private fun selectEraser() {
+//
+//        binding.btnErase.setBackgroundResource(
+//            R.drawable.bg_tool_selected
+//        )
+//
+//        binding.btnPen.setBackgroundResource(
+//            R.drawable.bg_tool_unselected
+//        )
+//
+//        binding.btnErase.setColorFilter(Color.WHITE)
+//
+//        binding.btnPen.setColorFilter(
+//            Color.parseColor("#777777")
+//        )
+//    }
+//    private fun selectRed() {
+//
+//        binding.redColor.setBackgroundResource(
+//            R.drawable.bg_red_selected
+//        )
+//
+//        binding.blueColor.setBackgroundResource(
+//            R.drawable.bg_blue_unselected
+//        )
+//    }
+//    private fun selectBlue() {
+//
+//        binding.blueColor.setBackgroundResource(
+//            R.drawable.bg_blue_selected
+//        )
+//
+//        binding.redColor.setBackgroundResource(
+//            R.drawable.bg_red_unselected
+//        )
+//    }
+private fun updateToolSelection(
+    isPenSelected: Boolean
+) {
 
-        binding.btnPen.setBackgroundResource(
-            R.drawable.bg_tool_selected
-        )
+    binding.btnPen.background =
+        if (isPenSelected)
+            resources.getDrawable(R.drawable.bg_tool_selected)
+        else null
 
-        binding.btnErase.setBackgroundResource(
-            R.drawable.bg_tool_unselected
-        )
+    binding.btnFullPen.background =
+        if (isPenSelected)
+            resources.getDrawable(R.drawable.bg_tool_selected)
+        else null
 
-        binding.btnPen.setColorFilter(Color.WHITE)
+    binding.btnErase.background =
+        if (!isPenSelected)
+            resources.getDrawable(R.drawable.bg_tool_selected)
+        else null
 
-        binding.btnErase.setColorFilter(
-            Color.parseColor("#777777")
-        )
+    binding.fullErase.background =
+        if (!isPenSelected)
+            resources.getDrawable(R.drawable.bg_tool_selected)
+        else null
+}
+    private fun updateColorSelection(
+        isBlueSelected: Boolean
+    ) {
+
+        binding.blueColor.background =
+            if (isBlueSelected)
+                resources.getDrawable(R.drawable.bg_blue_selected)
+            else
+                resources.getDrawable(R.drawable.bg_blue_dot)
+
+        binding.redColor.background =
+            if (!isBlueSelected)
+                resources.getDrawable(R.drawable.bg_red_selected)
+            else
+                resources.getDrawable(R.drawable.bg_red_dot)
+
+        binding.fullBlue.background =
+            if (isBlueSelected)
+                resources.getDrawable(R.drawable.bg_blue_selected)
+            else
+                resources.getDrawable(R.drawable.bg_blue_dot)
+
+        binding.fullRed.background =
+            if (!isBlueSelected)
+                resources.getDrawable(R.drawable.bg_red_selected)
+            else
+                resources.getDrawable(R.drawable.bg_red_dot)
     }
-    private fun selectEraser() {
 
-        binding.btnErase.setBackgroundResource(
-            R.drawable.bg_tool_selected
-        )
-
-        binding.btnPen.setBackgroundResource(
-            R.drawable.bg_tool_unselected
-        )
-
-        binding.btnErase.setColorFilter(Color.WHITE)
-
-        binding.btnPen.setColorFilter(
-            Color.parseColor("#777777")
-        )
-    }
-    private fun selectRed() {
-
-        binding.redColor.setBackgroundResource(
-            R.drawable.bg_red_selected
-        )
-
-        binding.blueColor.setBackgroundResource(
-            R.drawable.bg_blue_unselected
-        )
-    }
-    private fun selectBlue() {
-
-        binding.blueColor.setBackgroundResource(
-            R.drawable.bg_blue_selected
-        )
-
-        binding.redColor.setBackgroundResource(
-            R.drawable.bg_red_unselected
-        )
-    }
     private fun setupPatientsSpinner(
         patients: List<PatientEntity>
     ) {

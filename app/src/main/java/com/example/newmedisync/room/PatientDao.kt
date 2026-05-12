@@ -14,4 +14,12 @@ interface PatientDao {
 
     @Query("SELECT * FROM patients ORDER BY id DESC")
     fun getAllPatients(): LiveData<List<PatientEntity>>
+
+    @Query("""
+    SELECT * FROM patients
+    WHERE name LIKE '%' || :query || '%'
+    OR phone LIKE '%' || :query || '%'
+    ORDER BY id DESC
+""")
+    fun searchPatients(query: String): LiveData<List<PatientEntity>>
 }

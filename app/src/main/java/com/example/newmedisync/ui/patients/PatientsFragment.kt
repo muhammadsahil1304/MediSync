@@ -1,6 +1,8 @@
 package com.example.newmedisync.ui.patients
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import androidx.lifecycle.Observer
@@ -33,26 +35,94 @@ class PatientsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        AppDatabase
+        val dao = AppDatabase
             .getDatabase(requireContext())
             .patientDao()
-            .getAllPatients()
-            .observe(viewLifecycleOwner) { patients ->
 
-                binding.recyclerPatients.layoutManager =
-                    LinearLayoutManager(requireContext())
+        val adapter = PatientsAdapter(emptyList()) { patient ->
 
-                binding.recyclerPatients.adapter =
-                    PatientsAdapter(patients)
+            val bundle = Bundle()
+
+            bundle.putString("name", patient.name)
+            bundle.putString("phone", patient.phone)
+            bundle.putString("age", patient.age)
+            bundle.putString("blood", patient.bloodGroup)
+            bundle.putString("gender", patient.gender)
+
+            findNavController().navigate(
+                R.id.action_navigation_patients_to_navigation_patientProfile,
+                bundle
+            )
+        }
+
+        binding.recyclerPatients.layoutManager =
+            LinearLayoutManager(requireContext())
+
+        binding.recyclerPatients.adapter = adapter
+
+        // Default all patients
+        dao.getAllPatients().observe(viewLifecycleOwner) { patients ->
+            adapter.updateList(patients)
+        }
+
+        binding.ivAdd.setOnClickListener{
+            findNavController().navigate(R.id.action_navigation_patients_to_navigation_addPatients)
+        }
+        // Search
+        binding.etSearch.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(
+                s: CharSequence?,
+                start: Int,
+                count: Int,
+                after: Int
+            ) {}
+
+            override fun onTextChanged(
+                s: CharSequence?,
+                start: Int,
+                before: Int,
+                count: Int
+            ) {
+
+                val query = s.toString().trim()
+
+                if (query.isEmpty()) {
+
+                    dao.getAllPatients()
+                        .observe(viewLifecycleOwner) {
+                            adapter.updateList(it)
+
+                            if (it.isEmpty()) {
+                                binding.tvEmpty.visibility = View.VISIBLE
+                                binding.recyclerPatients.visibility = View.GONE
+                            } else {
+                                binding.tvEmpty.visibility = View.GONE
+                                binding.recyclerPatients.visibility = View.VISIBLE
+                            }
+                        }
+
+                } else {
+
+                    dao.searchPatients(query)
+                        .observe(viewLifecycleOwner) {
+                            adapter.updateList(it)
+
+                            if (it.isEmpty()) {
+                                binding.tvEmpty.visibility = View.VISIBLE
+                                binding.recyclerPatients.visibility = View.GONE
+                            } else {
+                                binding.tvEmpty.visibility = View.GONE
+                                binding.recyclerPatients.visibility = View.VISIBLE
+                            }
+                        }
+                }
             }
 
-        binding.fabAdd.setOnClickListener {
-            Toast.makeText(requireContext(), "Add Patient Clicked", Toast.LENGTH_SHORT).show()
-        }
+            override fun afterTextChanged(s: Editable?) {}
+        })
 
-        binding.tvAddPatient.setOnClickListener {
-            findNavController().navigate(R.id.navigation_addPatients)
-        }
+
     }
 
     override fun onDestroyView() {

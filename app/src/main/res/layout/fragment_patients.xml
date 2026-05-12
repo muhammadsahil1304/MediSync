@@ -38,11 +38,12 @@
                 android:textStyle="bold"
                 android:textSize="16sp"
                 android:includeFontPadding="true" />
-
             <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/search" />
+                android:layout_width="@dimen/_50dp"
+                android:layout_height="@dimen/_50dp"
+                android:src="@drawable/bell"
+                android:padding="@dimen/_10dp"/>
+
 
         </LinearLayout>
 
@@ -68,10 +69,17 @@
             android:paddingBottom="4dp" />
 
         <!-- Search Bar -->
-        <androidx.cardview.widget.CardView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:layout_height="54dp">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cv_search"
+            android:layout_width="0dp"
             android:layout_height="54dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginEnd="@dimen/_10dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/iv_add"
             app:cardCornerRadius="16dp"
             app:cardElevation="0dp"
             app:cardBackgroundColor="#FFFFFF">
@@ -103,6 +111,18 @@
             </LinearLayout>
 
         </androidx.cardview.widget.CardView>
+            <ImageView
+                android:id="@+id/iv_add"
+                android:layout_width="@dimen/_50dp"
+                android:layout_height="@dimen/_50dp"
+                android:src="@drawable/add_pateinets"
+                app:tint="@color/white"
+                android:background="@drawable/bg_selected"
+                android:padding="5dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cv_search"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
@@ -113,52 +133,19 @@
             android:layout_marginTop="20dp"
             android:clipToPadding="false"
             android:paddingBottom="100dp" />
-
-        <!-- Bottom Add Button -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvEmpty"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:paddingBottom="10dp">
-
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/add_pateinets" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="End of directory"
-                android:textColor="#9A9A9A"
-                android:textSize="13sp" />
-
-            <TextView
-                android:id="@+id/tvAddPatient"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:text="ADD NEW PATIENT"
-                android:textColor="#0A70A2"
-                android:textStyle="bold"
-                android:textSize="15sp" />
-
-        </LinearLayout>
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:text="No patient found"
+            android:textColor="#9A9A9A"
+            android:textSize="15sp"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
-    <!-- Floating Button -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:src="@drawable/add_pateinets"
-        app:backgroundTint="#0A70A2"
-        app:tint="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

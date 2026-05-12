@@ -70,6 +70,10 @@
         <action
             android:id="@+id/action_navigation_patients_to_navigation_addPatients"
             app:destination="@id/navigation_addPatients" />
+        <action
+            android:id="@+id/action_navigation_patients_to_navigation_patientProfile"
+            app:destination="@id/navigation_patientProfile" />
+
     </fragment>
 
     <fragment
@@ -82,5 +86,10 @@
         android:name="com.example.newmedisync.ui.addPatients.AddPatientsFragment"
         android:label="Add Patients"
         tools:layout="@layout/fragment_add_patients" />
+ <fragment
+        android:id="@+id/navigation_patientProfile"
+        android:name="com.example.newmedisync.ui.patientProfile.PatientProfileFragment"
+        android:label="@string/patient_profile"
+        tools:layout="@layout/fragment_patient_profile" />
 
 </navigation>

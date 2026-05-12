@@ -13,4 +13,5 @@
     <string name="patients">Patients</string>
     <string name="prescription">prescription</string>
     <string name="save_as_pdf">Save as PDF</string>
+    <string name="patient_profile">Patient Profile</string>
 </resources>

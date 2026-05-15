@@ -10,6 +10,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.ViewModelProvider
 import com.example.newmedisync.R
 import com.example.newmedisync.databinding.FragmentHomeBinding
+import com.example.newmedisync.room.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {
@@ -27,6 +28,27 @@ class HomeFragment : Fragment() {
         ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+
+        val database =
+            AppDatabase.getDatabase(requireContext())
+
+        database
+            .patientDao()
+            .getPatientsCount()
+            .observe(viewLifecycleOwner) { count ->
+
+                binding.tvTotalPatients.text =
+                    count.toString()
+            }
+
+        database
+            .visitDao()
+            .getVisitsCount()
+            .observe(viewLifecycleOwner) { count ->
+
+                binding.tvTodayVisits.text =
+                    count.toString()
+            }
 
         setupLogout()
         binding.cvPrescription.setOnClickListener{

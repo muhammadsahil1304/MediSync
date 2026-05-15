@@ -5,9 +5,11 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.newmedisync.databinding.ItemVisitHistoryBinding
 import com.example.newmedisync.model.VisitHistory
+import com.example.newmedisync.room.PrescriptionEntity
 
 class VisitHistoryAdapter(
-    private val list: List<VisitHistory>
+    private val list: List<PrescriptionEntity>,
+    private val onItemClick: (PrescriptionEntity) -> Unit
 ) : RecyclerView.Adapter<VisitHistoryAdapter.ViewHolder>() {
 
     inner class ViewHolder(
@@ -34,11 +36,13 @@ class VisitHistoryAdapter(
     ) {
 
         val item = list[position]
-
-        holder.binding.tvDate.text = item.date
-        holder.binding.tvType.text = item.type
-        holder.binding.tvDescription.text = item.description
-        holder.binding.tvStatus.text = item.status
+        holder.itemView.setOnClickListener {
+            onItemClick(item)
+        }
+        holder.binding.tvDate.text = item.visitDate
+        holder.binding.tvType.text = "PRESCRIPTION"
+        holder.binding.tvDescription.text = item.patientPhone
+        holder.binding.tvStatus.text = "VIEW"
     }
 
     override fun getItemCount(): Int = list.size

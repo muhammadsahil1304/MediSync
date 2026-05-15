@@ -50,10 +50,10 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_width="22dp"
-                    android:layout_height="22dp"
-                    android:src="@drawable/search"
-                    app:tint="#444444" />
+                    android:layout_width="@dimen/_50dp"
+                    android:layout_height="@dimen/_50dp"
+                    android:src="@drawable/bell"
+                    android:padding="@dimen/_10dp"/>
 
             </LinearLayout>
 
@@ -134,8 +134,9 @@
                                 android:layout_height="match_parent"
                                 android:layout_marginStart="10dp"
                                 android:background="@android:color/transparent"
-                                android:hint="Jonathan Aris"
+                                android:hint="@string/enter_your_full_name"
                                 android:textColor="#222222"
+                                android:textSize="12sp"
                                 android:textColorHint="#BDBDBD" />
 
                         </LinearLayout>
@@ -178,10 +179,10 @@
                                 android:layout_height="match_parent"
                                 android:layout_marginStart="10dp"
                                 android:background="@android:color/transparent"
-                                android:hint="+1 (555) 000-0000"
+                                android:hint="@string/enter_your_phone_number"
                                 android:inputType="phone"
                                 android:textColor="#222222"
-                                android:textColorHint="#BDBDBD" />
+                                android:textSize="12sp"                                android:textColorHint="#BDBDBD" />
 
                         </LinearLayout>
 
@@ -210,10 +211,11 @@
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent"
                             android:gravity="center_vertical"
-                            android:hint="32"
+                            android:hint="@string/enter_your_age"
                             android:inputType="number"
                             android:paddingHorizontal="16dp"
                             android:textColor="#222222"
+                            android:textSize="12sp"
                             android:textColorHint="#BDBDBD" />
 
                     </androidx.cardview.widget.CardView>
@@ -275,7 +277,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="54dp"
                         android:layout_marginTop="8dp"
-                        android:background="@drawable/bg_spinner" />
+                        android:background="@drawable/bg_spinner"
+                        android:paddingHorizontal="10dp"
+                        android:popupBackground="#FFFFFF"/>
 
                     <!-- ADDRESS -->
                     <TextView
@@ -300,6 +304,7 @@
                             android:layout_height="match_parent"
                             android:background="@android:color/transparent"
                             android:gravity="top"
+                            android:textSize="12sp"
                             android:hint="Enter patient address..."
                             android:padding="16dp"
                             android:textColor="#222222"
@@ -332,6 +337,7 @@
                             android:gravity="top"
                             android:hint="Allergies, conditions, ongoing medication..."
                             android:padding="16dp"
+                            android:textSize="12sp"
                             android:textColor="#222222"
                             android:textColorHint="#BDBDBD" />
 

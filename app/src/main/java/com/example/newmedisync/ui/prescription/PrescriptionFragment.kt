@@ -8,7 +8,14 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-
+import android.os.Handler
+import android.os.Looper
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 import android.widget.ArrayAdapter
 import com.example.newmedisync.room.AppDatabase
 import com.example.newmedisync.room.PatientEntity
@@ -20,14 +27,17 @@ import android.os.Environment
 import java.io.File
 import java.io.FileOutputStream
 import com.example.newmedisync.databinding.FragmentPrescriptionBinding
+import com.example.newmedisync.room.PrescriptionEntity
 
 class PrescriptionBoardFragment : Fragment() {
 
     private var _binding: FragmentPrescriptionBinding? = null
     private val binding get() = _binding!!
     private var currentColor = Color.parseColor("#0A70A2")
-
+    private var selectedPatientName = ""
+    private var selectedPatientPhone = ""
     private var isEraserSelected = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,6 +45,14 @@ class PrescriptionBoardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentPrescriptionBinding.inflate(inflater, container, false)
+        arguments?.let {
+
+            selectedPatientName =
+                it.getString("name", "")
+
+            selectedPatientPhone =
+                it.getString("phone", "")
+        }
         return binding.root
     }
 
@@ -199,7 +217,7 @@ class PrescriptionBoardFragment : Fragment() {
                 ).show()
                 return@setOnClickListener
             }
-            savePrescriptionAsPdf()
+            savePrescriptionAsImage()
         }
 
         updateToolSelection(true)
@@ -335,6 +353,20 @@ private fun updateToolSelection(
         binding.spPatients.adapter = adapter
 
         binding.spPatients.adapter = adapter
+        if (selectedPatientName.isNotEmpty()) {
+
+            val patientIndex =
+                patientNames.indexOf(selectedPatientName)
+
+            if (patientIndex != -1) {
+
+                binding.spPatients.setSelection(patientIndex)
+
+                binding.etPatientPhone.setText(
+                    selectedPatientPhone
+                )
+            }
+        }
 
         binding.spPatients.onItemSelectedListener =
             object : AdapterView.OnItemSelectedListener {
@@ -363,6 +395,94 @@ private fun updateToolSelection(
 
                 }
             }
+    }
+    private fun savePrescriptionAsImage() {
+
+        try {
+
+            val content = binding.drawingView
+
+            val bitmap = Bitmap.createBitmap(
+                content.width,
+                content.height,
+                Bitmap.Config.ARGB_8888
+            )
+
+            val canvas = Canvas(bitmap)
+
+            content.draw(canvas)
+
+            val directory = File(
+                Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_PICTURES
+                ),
+                "MediSync"
+            )
+
+            if (!directory.exists()) {
+                directory.mkdirs()
+            }
+
+            val file = File(
+                directory,
+                "Prescription_${System.currentTimeMillis()}.png"
+            )
+
+            val outputStream = FileOutputStream(file)
+
+            bitmap.compress(
+                Bitmap.CompressFormat.PNG,
+                100,
+                outputStream
+            )
+
+            outputStream.flush()
+            outputStream.close()
+
+            savePrescriptionToRoom(file.absolutePath)
+
+        } catch (e: Exception) {
+
+            e.printStackTrace()
+
+            Toast.makeText(
+                requireContext(),
+                "Failed to save prescription",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
+
+    private fun savePrescriptionToRoom(
+        imagePath: String
+    ) {
+
+        val prescription = PrescriptionEntity(
+            patientName = selectedPatientName,
+            patientPhone = selectedPatientPhone,
+            visitDate = SimpleDateFormat(
+                "dd MMM yyyy",
+                Locale.getDefault()
+            ).format(Date()),
+            imagePath = imagePath
+        )
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            AppDatabase
+                .getDatabase(requireContext())
+                .prescriptionDao()
+                .insertPrescription(prescription)
+
+            Handler(Looper.getMainLooper()).post {
+
+                Toast.makeText(
+                    requireContext(),
+                    "Prescription Saved",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
+        }
     }
     private fun savePrescriptionAsPdf() {
 

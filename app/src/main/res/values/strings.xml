@@ -14,4 +14,8 @@
     <string name="prescription">prescription</string>
     <string name="save_as_pdf">Save as PDF</string>
     <string name="patient_profile">Patient Profile</string>
+    <string name="enter_your_full_name">Enter your full name</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="enter_your_age">Enter your age</string>
+    <string name="save_as_image">Save as Image</string>
 </resources>

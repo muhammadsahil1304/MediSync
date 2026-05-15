@@ -90,6 +90,10 @@
         android:id="@+id/navigation_patientProfile"
         android:name="com.example.newmedisync.ui.patientProfile.PatientProfileFragment"
         android:label="@string/patient_profile"
-        tools:layout="@layout/fragment_patient_profile" />
+        tools:layout="@layout/fragment_patient_profile" >
+     <action
+         android:id="@+id/action_patientProfileFragment_to_navigation_prescription"
+         app:destination="@id/navigation_prescription" />
+ </fragment>
 
 </navigation>

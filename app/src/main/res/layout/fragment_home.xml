@@ -156,9 +156,10 @@
                             android:textColor="#777" />
 
                         <TextView
+                            android:id="@+id/tvTotalPatients"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="1,240"
+                            android:text="0"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#000" />
@@ -196,9 +197,10 @@
                             android:textColor="#FFFFFF" />
 
                         <TextView
+                            android:id="@+id/tvTodayVisits"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="18"
+                            android:text="0"
                             android:textSize="20sp"
                             android:textStyle="bold"
                             android:textColor="#FFFFFF" />
@@ -393,10 +395,6 @@
                         android:gravity="center_vertical"
                         android:padding="18dp">
 
-                        <ImageView
-                            android:layout_width="72dp"
-                            android:layout_height="72dp"
-                            android:src="@drawable/people" />
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -427,28 +425,15 @@
                                 android:textSize="16sp"
                                 android:textColor="#666666" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="10:30 AM"
-                                android:textSize="16sp"
-                                android:textColor="#444444" />
+
 
                         </LinearLayout>
-
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-
-                            android:paddingStart="18dp"
-                            android:paddingTop="10dp"
-                            android:paddingEnd="18dp"
-                            android:paddingBottom="10dp"
-                            android:text="ARRIVED"
-                            android:textColor="#0A70A2"
-                            android:textStyle="bold"
-                            android:textSize="12sp" />
-
+                            android:text="10:30 AM"
+                            android:textSize="16sp"
+                            android:textColor="#444444" />
                     </LinearLayout>
 
                 </androidx.cardview.widget.CardView>

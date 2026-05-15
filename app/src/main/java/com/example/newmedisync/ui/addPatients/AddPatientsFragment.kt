@@ -1,14 +1,18 @@
 package com.example.newmedisync.ui.addPatients
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.newmedisync.databinding.FragmentAddPatientsBinding
 import androidx.lifecycle.lifecycleScope
+import com.example.newmedisync.R
 import com.example.newmedisync.room.AppDatabase
 import com.example.newmedisync.room.PatientEntity
 import kotlinx.coroutines.launch
@@ -50,10 +54,68 @@ class AddPatientsFragment : Fragment() {
             "O-"
         )
 
-        val adapter = ArrayAdapter(
+        val adapter = object : ArrayAdapter<String>(
             requireContext(),
-            android.R.layout.simple_spinner_dropdown_item,
+            R.layout.item_spinner_selected,
             bloodGroups
+        ) {
+
+            override fun getView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+
+                val view = super.getView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                val textView = view.findViewById<TextView>(
+                    android.R.id.text1
+                )
+
+                if (position == 0) {
+
+                    textView.setTextColor(
+                        Color.parseColor("#BDBDBD")
+                    )
+
+                } else {
+
+                    textView.setTextColor(
+                        Color.parseColor("#222222")
+                    )
+                }
+
+                return view
+            }
+
+            override fun getDropDownView(
+                position: Int,
+                convertView: View?,
+                parent: ViewGroup
+            ): View {
+
+                val view = super.getDropDownView(
+                    position,
+                    convertView,
+                    parent
+                )
+
+                val textView = view.findViewById<TextView>(
+                    android.R.id.text1
+                )
+
+                textView.setTextColor(Color.BLACK)
+
+
+                return view
+            }
+        }
+        adapter.setDropDownViewResource(
+            R.layout.item_spinner_dropdown
         )
 
         binding.spBloodGroup.adapter = adapter

@@ -6,12 +6,18 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 
 @Database(
-    entities = [PatientEntity::class],
-    version = 1
+    entities = [
+        PatientEntity::class,
+        PrescriptionEntity::class,
+        VisitEntity::class
+    ],
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun patientDao(): PatientDao
+    abstract fun visitDao(): VisitDao
+    abstract fun prescriptionDao(): PrescriptionDao
 
     companion object {
 
@@ -26,7 +32,9 @@ abstract class AppDatabase : RoomDatabase() {
                     context.applicationContext,
                     AppDatabase::class.java,
                     "medisync_db"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
                 instance

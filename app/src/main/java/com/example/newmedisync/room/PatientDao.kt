@@ -22,4 +22,6 @@ interface PatientDao {
     ORDER BY id DESC
 """)
     fun searchPatients(query: String): LiveData<List<PatientEntity>>
+    @Query("SELECT COUNT(*) FROM patients")
+    fun getPatientsCount(): LiveData<Int>
 }

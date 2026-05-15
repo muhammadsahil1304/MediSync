@@ -55,7 +55,7 @@
                 android:paddingHorizontal="14dp"
                 android:paddingVertical="6dp"
                 android:text="COMPLETED"
-                android:textColor="#0A70A2"
+                android:textColor="@color/white"
                 android:textSize="11sp"
                 android:textStyle="bold"/>
         </LinearLayout>

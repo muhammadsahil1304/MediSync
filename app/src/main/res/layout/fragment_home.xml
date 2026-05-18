@@ -65,10 +65,10 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
             <TextView
+                android:id="@+id/greetingText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:text="Good morning,"
                 android:textSize="26sp"
                 android:textStyle="bold"
                 android:textColor="#222222" />
@@ -81,40 +81,7 @@
                 android:textColor="#777777" />
 
 
-            <!-- Search -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                app:cardBackgroundColor="@color/white"
-                android:layout_marginTop="16dp"
-                app:cardCornerRadius="25dp"
-                app:cardElevation="2dp">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp">
-
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/search"
-                        app:tint="#999999" />
-
-                    <EditText
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="10dp"
-                        android:background="@android:color/transparent"
-                        android:hint="@string/search_patient_by_phone_number"
-                        android:textSize="14sp"
-                        android:textColor="#000"
-                        android:textColorHint="#999999" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
 
             <!-- Stats -->
             <LinearLayout
@@ -254,6 +221,7 @@
 
                 <!-- Card 2 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/viewPatients"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"

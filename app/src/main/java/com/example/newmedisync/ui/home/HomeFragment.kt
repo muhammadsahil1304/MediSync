@@ -39,6 +39,27 @@ class HomeFragment : Fragment() {
 
         binding.tvDoctorName.text =
             "DR. ${doctorName.uppercase()}"
+
+        val currentHour =
+            java.util.Calendar.getInstance()
+                .get(java.util.Calendar.HOUR_OF_DAY)
+
+        val greeting = when {
+
+            currentHour in 5..11 ->
+                "Good Morning,"
+
+            currentHour in 12..16 ->
+                "Good Afternoon,"
+
+            currentHour in 17..20 ->
+                "Good Evening,"
+
+            else ->
+                "Good Night,"
+        }
+
+        binding.greetingText.text = greeting
         val database =
             AppDatabase.getDatabase(requireContext())
 
@@ -91,6 +112,11 @@ class HomeFragment : Fragment() {
         binding.addPatients.setOnClickListener{
             findNavController().navigate(
                 R.id.action_navigation_home_to_navigation_Add_patients
+            )
+        }
+        binding.viewPatients.setOnClickListener{
+            findNavController().navigate(
+                R.id.action_navigation_home_to_navigation_patient
             )
         }
 

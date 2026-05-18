@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.newmedisync.databinding.FragmentNotificationsBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class NotificationsFragment : Fragment() {
 
@@ -22,17 +23,39 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val notificationsViewModel =
-            ViewModelProvider(this).get(NotificationsViewModel::class.java)
 
-        _binding = FragmentNotificationsBinding.inflate(inflater, container, false)
-        val root: View = binding.root
+        _binding =
+            FragmentNotificationsBinding.inflate(
+                inflater,
+                container,
+                false
+            )
 
-        val textView: TextView = binding.textNotifications
-        notificationsViewModel.text.observe(viewLifecycleOwner) {
-            textView.text = it
-        }
-        return root
+        return binding.root
+    }
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val user =
+            FirebaseAuth.getInstance().currentUser
+
+        val name =
+            user?.displayName ?: "Doctor"
+
+        val email =
+            user?.email ?: "No Email"
+
+        binding.tvDoctorName.text =
+            "Dr. $name"
+
+        binding.tvDoctorEmail.text =
+            email
+
+        binding.tvDoctorAge.text =
+            "22 Years"
     }
 
     override fun onDestroyView() {

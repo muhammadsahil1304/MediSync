@@ -2,6 +2,7 @@ package com.example.newmedisync.ui.signup
 
 import android.os.Bundle
 import android.util.Patterns
+import com.google.firebase.auth.userProfileChangeRequest
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -97,6 +98,14 @@ class SignupFragment : Fragment() {
 
                             if (task.isSuccessful) {
 
+                                val user = auth.currentUser
+
+                                val profileUpdates = userProfileChangeRequest {
+                                    displayName = name
+                                }
+
+                                user?.updateProfile(profileUpdates)
+
                                 val snackbar = Snackbar.make(
                                     view,
                                     "Signup Successful",
@@ -104,7 +113,9 @@ class SignupFragment : Fragment() {
                                 )
 
                                 snackbar.setBackgroundTint(
-                                    requireContext().getColor(android.R.color.holo_green_dark)
+                                    requireContext().getColor(
+                                        android.R.color.holo_green_dark
+                                    )
                                 )
 
                                 snackbar.show()
@@ -112,7 +123,6 @@ class SignupFragment : Fragment() {
                                 findNavController().navigate(
                                     R.id.action_navigation_signup_to_navigation_home
                                 )
-
                             } else {
 
                                 val snackbar = Snackbar.make(

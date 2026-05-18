@@ -85,7 +85,11 @@
         android:id="@+id/navigation_addPatients"
         android:name="com.example.newmedisync.ui.addPatients.AddPatientsFragment"
         android:label="Add Patients"
-        tools:layout="@layout/fragment_add_patients" />
+        tools:layout="@layout/fragment_add_patients" >
+        <action
+            android:id="@+id/action_addPatientsFragment_to_navigation_patients"
+            app:destination="@id/navigation_patients" />
+ </fragment>
  <fragment
         android:id="@+id/navigation_patientProfile"
         android:name="com.example.newmedisync.ui.patientProfile.PatientProfileFragment"

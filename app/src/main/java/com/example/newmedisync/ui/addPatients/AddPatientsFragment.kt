@@ -12,6 +12,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.newmedisync.databinding.FragmentAddPatientsBinding
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
 import com.example.newmedisync.room.AppDatabase
 import com.example.newmedisync.room.PatientEntity
@@ -160,6 +161,7 @@ class AddPatientsFragment : Fragment() {
                 .insertPatient(patient)
 
             toast("Patient Added Successfully")
+            findNavController().navigate(R.id.action_addPatientsFragment_to_navigation_patients)
 
         }
     }

@@ -27,4 +27,7 @@ interface VisitDao {
 
     @Query("SELECT COUNT(*) FROM visits")
     fun getVisitsCount(): LiveData<Int>
+
+    @Query("SELECT * FROM visits ORDER BY id DESC LIMIT 1")
+    fun getLatestVisit(): LiveData<VisitEntity>
 }

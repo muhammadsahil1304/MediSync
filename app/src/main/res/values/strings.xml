@@ -18,4 +18,5 @@
     <string name="enter_your_phone_number">Enter your phone number</string>
     <string name="enter_your_age">Enter your age</string>
     <string name="save_as_image">Save as Image</string>
+    <string name="you_have_18_appointments_today">You have 18 appointments today.</string>
 </resources>

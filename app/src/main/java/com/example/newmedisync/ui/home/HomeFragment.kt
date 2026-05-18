@@ -2,6 +2,7 @@ package com.example.newmedisync.ui.home
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
 
+
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -28,9 +30,38 @@ class HomeFragment : Fragment() {
         ViewModelProvider(this)[HomeViewModel::class.java]
 
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
+        val firebaseUser =
+            FirebaseAuth.getInstance().currentUser
 
+        val doctorName =
+            firebaseUser?.displayName ?: "Doctor"
+        Log.d("HomeFragment", "Doctor Name: $doctorName")
+
+        binding.tvDoctorName.text =
+            "DR. ${doctorName.uppercase()}"
         val database =
             AppDatabase.getDatabase(requireContext())
+
+        database
+            .visitDao()
+            .getLatestVisit()
+            .observe(viewLifecycleOwner) { visit ->
+
+                if (visit != null) {
+
+                    binding.tvUpcomingPatientName.text =
+                        visit.patientName
+
+                    binding.tvUpcomingVisitType.text =
+                        "Upcoming Visit"
+
+                    binding.tvUpcomingPurpose.text =
+                        visit.purpose
+
+                    binding.tvUpcomingTime.text =
+                        visit.visitTime
+                }
+            }
 
         database
             .patientDao()
@@ -45,7 +76,8 @@ class HomeFragment : Fragment() {
             .visitDao()
             .getVisitsCount()
             .observe(viewLifecycleOwner) { count ->
-
+                binding.tvAppointmentsToday.text =
+                    "You have $count appointments today"
                 binding.tvTodayVisits.text =
                     count.toString()
             }

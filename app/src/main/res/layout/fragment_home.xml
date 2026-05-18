@@ -21,12 +21,6 @@
                 android:orientation="horizontal"
                 android:gravity="center_vertical">
 
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/bg_circle"
-                    android:padding="6dp"
-                    android:src="@drawable/people" />
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -44,9 +38,10 @@
                         android:textColor="#0A70A2" />
 
                     <TextView
+                        android:id="@+id/tvDoctorName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="DR. SMITH"
+                        android:text="Doctor"
                         android:textSize="12sp"
                         android:textColor="#888888" />
                 </LinearLayout>
@@ -78,10 +73,10 @@
                 android:textStyle="bold"
                 android:textColor="#222222" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="You have 18 appointments today."
+                    <TextView
+                        android:id="@+id/tvAppointmentsToday"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="#777777" />
 
@@ -404,24 +399,27 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/tvUpcomingPatientName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="James Wilson"
+                                android:text="Patient Name"
                                 android:textStyle="bold"
                                 android:textSize="18sp"
                                 android:textColor="#222222" />
 
                             <TextView
+                                android:id="@+id/tvUpcomingPurpose"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="General"
+                                android:text="Checkup •"
                                 android:textSize="16sp"
                                 android:textColor="#666666" />
 
                             <TextView
+                                android:id="@+id/tvUpcomingVisitType"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Checkup •"
+                                android:text="General"
                                 android:textSize="16sp"
                                 android:textColor="#666666" />
 
@@ -429,6 +427,7 @@
 
                         </LinearLayout>
                         <TextView
+                            android:id="@+id/tvUpcomingTime"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="10:30 AM"

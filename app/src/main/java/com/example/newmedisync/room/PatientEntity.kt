@@ -8,7 +8,7 @@ data class PatientEntity(
 
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-
+    val userId: String,
     val name: String,
     val phone: String,
     val age: String,

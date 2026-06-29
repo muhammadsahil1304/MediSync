@@ -17,6 +17,7 @@ import com.example.medisync.model.Patient
 import com.example.newmedisync.R
 import com.example.newmedisync.adapter.PatientsAdapter
 import com.example.newmedisync.databinding.FragmentPatientsBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class PatientsFragment : Fragment() {
 
@@ -38,6 +39,8 @@ class PatientsFragment : Fragment() {
         val dao = AppDatabase
             .getDatabase(requireContext())
             .patientDao()
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
 
         val adapter = PatientsAdapter(emptyList()) { patient ->
 
@@ -61,7 +64,7 @@ class PatientsFragment : Fragment() {
         binding.recyclerPatients.adapter = adapter
 
         // Default all patients
-        dao.getAllPatients().observe(viewLifecycleOwner) { patients ->
+        dao.getAllPatients(uid).observe(viewLifecycleOwner) { patients ->
             adapter.updateList(patients)
         }
 
@@ -89,7 +92,7 @@ class PatientsFragment : Fragment() {
 
                 if (query.isEmpty()) {
 
-                    dao.getAllPatients()
+                    dao.getAllPatients(uid)
                         .observe(viewLifecycleOwner) {
                             adapter.updateList(it)
 

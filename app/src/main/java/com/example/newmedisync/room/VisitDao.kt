@@ -25,9 +25,9 @@ interface VisitDao {
     )
     fun getAllVisits(): LiveData<List<VisitEntity>>
 
-    @Query("SELECT COUNT(*) FROM visits")
-    fun getVisitsCount(): LiveData<Int>
+    @Query("SELECT COUNT(*) FROM visits WHERE userId = :uid")
+    fun getVisitsCount(uid: String): LiveData<Int>
 
-    @Query("SELECT * FROM visits ORDER BY id DESC LIMIT 1")
-    fun getLatestVisit(): LiveData<VisitEntity>
+    @Query("SELECT * FROM visits WHERE userId = :uid ORDER BY id DESC LIMIT 1")
+    fun getLatestVisit(uid: String): LiveData<VisitEntity?>
 }

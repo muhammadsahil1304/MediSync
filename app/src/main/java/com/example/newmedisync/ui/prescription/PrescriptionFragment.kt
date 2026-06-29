@@ -28,6 +28,7 @@ import java.io.File
 import java.io.FileOutputStream
 import com.example.newmedisync.databinding.FragmentPrescriptionBinding
 import com.example.newmedisync.room.PrescriptionEntity
+import com.google.firebase.auth.FirebaseAuth
 
 class PrescriptionBoardFragment : Fragment() {
 
@@ -58,11 +59,12 @@ class PrescriptionBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
 
         AppDatabase
             .getDatabase(requireContext())
             .patientDao()
-            .getAllPatients()
+            .getAllPatients(uid)
             .observe(viewLifecycleOwner) { patients ->
 
                 setupPatientsSpinner(patients)

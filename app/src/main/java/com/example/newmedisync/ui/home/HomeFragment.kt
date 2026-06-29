@@ -62,10 +62,10 @@ class HomeFragment : Fragment() {
         binding.greetingText.text = greeting
         val database =
             AppDatabase.getDatabase(requireContext())
-
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
         database
             .visitDao()
-            .getLatestVisit()
+            .getLatestVisit(uid)
             .observe(viewLifecycleOwner) { visit ->
 
                 if (visit != null) {
@@ -86,7 +86,7 @@ class HomeFragment : Fragment() {
 
         database
             .patientDao()
-            .getPatientsCount()
+            .getPatientsCount(uid)
             .observe(viewLifecycleOwner) { count ->
 
                 binding.tvTotalPatients.text =
@@ -95,7 +95,7 @@ class HomeFragment : Fragment() {
 
         database
             .visitDao()
-            .getVisitsCount()
+            .getVisitsCount(uid)
             .observe(viewLifecycleOwner) { count ->
                 binding.tvAppointmentsToday.text =
                     "You have $count appointments today"

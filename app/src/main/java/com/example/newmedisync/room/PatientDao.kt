@@ -12,9 +12,11 @@ interface PatientDao {
     suspend fun insertPatient(patient: PatientEntity)
 
 
-    @Query("SELECT * FROM patients ORDER BY id DESC")
-    fun getAllPatients(): LiveData<List<PatientEntity>>
-
+//    @Query("SELECT * FROM patients ORDER BY id DESC")
+//    fun getAllPatients(): LiveData<List<PatientEntity>>
+//
+@Query("SELECT * FROM patients WHERE userId = :uid")
+fun getAllPatients(uid: String): LiveData<List<PatientEntity>>
     @Query("""
     SELECT * FROM patients
     WHERE name LIKE '%' || :query || '%'
@@ -22,6 +24,6 @@ interface PatientDao {
     ORDER BY id DESC
 """)
     fun searchPatients(query: String): LiveData<List<PatientEntity>>
-    @Query("SELECT COUNT(*) FROM patients")
-    fun getPatientsCount(): LiveData<Int>
+    @Query("SELECT COUNT(*) FROM patients WHERE userId = :uid")
+    fun getPatientsCount(uid: String): LiveData<Int>
 }

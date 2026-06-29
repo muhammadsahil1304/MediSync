@@ -16,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
 import com.example.newmedisync.room.AppDatabase
 import com.example.newmedisync.room.PatientEntity
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 class AddPatientsFragment : Fragment() {
 
@@ -125,6 +126,7 @@ class AddPatientsFragment : Fragment() {
     private fun validateAndSave() {
 
         val name = binding.etName.text.toString().trim()
+        val uid = FirebaseAuth.getInstance().currentUser!!.uid
         val phone = binding.etPhone.text.toString().trim()
         val age = binding.etAge.text.toString().trim()
         val address = binding.etAddress.text.toString().trim()
@@ -146,6 +148,7 @@ class AddPatientsFragment : Fragment() {
         lifecycleScope.launch {
 
             val patient = PatientEntity(
+                userId = uid,
                 name = name,
                 phone = phone,
                 age = age,

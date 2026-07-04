@@ -82,15 +82,39 @@ class LoginFragment : Fragment() {
 
                             if (task.isSuccessful) {
 
-                                SnackbarUtils.showTopSnackbar(
-                                    view,
-                                    "Login Successful",
-                                    true
-                                )
+                                val user = auth.currentUser
 
-                                findNavController().navigate(
-                                    R.id.action_navigation_login_to_navigation_home
-                                )
+                                if (user != null && user.isEmailVerified) {
+
+                                    SnackbarUtils.showTopSnackbar(
+                                        view,
+                                        "Login Successful",
+                                        true
+                                    )
+
+                                    findNavController().navigate(
+                                        R.id.action_navigation_login_to_navigation_home
+                                    )
+
+                                } else {
+
+                                    auth.signOut()
+
+                                    SnackbarUtils.showTopSnackbar(
+                                        view,
+                                        "Please verify your email first.",
+                                        false
+                                    )
+
+                                    val bundle = Bundle().apply {
+                                        putString("email", user?.email)
+                                    }
+
+                                    findNavController().navigate(
+                                        R.id.navigateLogin_to_verify,
+                                        bundle
+                                    )
+                                }
 
                             } else {
 
@@ -110,7 +134,9 @@ class LoginFragment : Fragment() {
     override fun onStart() {
         super.onStart()
 
-        if (FirebaseAuth.getInstance().currentUser != null) {
+        val user = FirebaseAuth.getInstance().currentUser
+
+        if (user != null && user.isEmailVerified) {
 
             findNavController().navigate(
                 R.id.action_navigation_login_to_navigation_home

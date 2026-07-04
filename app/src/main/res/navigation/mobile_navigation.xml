@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_navigation_login_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/navigateLogin_to_verify"
+            app:destination="@id/navigation_verifyEmail" />
     </fragment>
 
     <fragment
@@ -37,6 +40,9 @@
         <action
             android:id="@+id/action_navigation_signup_to_navigation_home"
             app:destination="@id/navigation_home" />
+        <action
+            android:id="@+id/action_navigation_signup_to_verifyEmailFragment"
+            app:destination="@id/navigation_hverome" />
     </fragment>
     <fragment
         android:id="@+id/navigation_home"
@@ -84,6 +90,11 @@
         android:name="com.example.newmedisync.ui.prescription.PrescriptionBoardFragment"
         android:label="@string/prescription"
         tools:layout="@layout/fragment_prescription" />
+    <fragment
+        android:id="@+id/navigation_verifyEmail"
+        android:name="com.example.newmedisync.ui.verifyEmail.VerifyEmailFragment"
+        android:label="@string/verifyemail"
+        tools:layout="@layout/fragment_verify_email" />
  <fragment
         android:id="@+id/navigation_addPatients"
         android:name="com.example.newmedisync.ui.addPatients.AddPatientsFragment"

@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
+import com.example.newmedisync.utils.SnackbarUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 
@@ -105,24 +106,57 @@ class SignupFragment : Fragment() {
                                 }
 
                                 user?.updateProfile(profileUpdates)
+                                user?.sendEmailVerification()
+                                    ?.addOnSuccessListener {
 
-                                val snackbar = Snackbar.make(
-                                    view,
-                                    "Signup Successful",
-                                    Snackbar.LENGTH_SHORT
-                                )
+                                        val bundle = Bundle().apply {
+                                            putString("email", user.email)
+                                        }
 
-                                snackbar.setBackgroundTint(
-                                    requireContext().getColor(
-                                        android.R.color.holo_green_dark
-                                    )
-                                )
+                                        findNavController().navigate(
+                                            R.id.action_navigation_signup_to_verifyEmailFragment,
+                                            bundle
+                                        )
 
-                                snackbar.show()
+                                    }
+                                    ?.addOnFailureListener {
 
-                                findNavController().navigate(
-                                    R.id.action_navigation_signup_to_navigation_home
-                                )
+                                        SnackbarUtils.showTopSnackbar(
+                                            view,
+                                            "Failed to send verification email",
+                                            false
+                                        )
+
+                                    }
+
+                                user?.sendEmailVerification()
+                                    ?.addOnSuccessListener {
+
+                                        SnackbarUtils.showTopSnackbar(
+                                            view,
+                                            "Verification email sent!",
+                                            true
+                                        )
+
+                                        val bundle = Bundle().apply {
+                                            putString("email", user.email)
+                                        }
+
+                                        findNavController().navigate(
+                                            R.id.action_navigation_signup_to_verifyEmailFragment,
+                                            bundle
+                                        )
+
+                                    }
+                                    ?.addOnFailureListener {
+
+                                        SnackbarUtils.showTopSnackbar(
+                                            view,
+                                            it.localizedMessage ?: "Couldn't send verification email",
+                                            false
+                                        )
+
+                                    }
                             } else {
 
                                 val snackbar = Snackbar.make(

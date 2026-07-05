@@ -1,6 +1,7 @@
 package com.example.newmedisync.ui.signup
 
 import android.os.Bundle
+import android.util.Log
 import android.util.Patterns
 import com.google.firebase.auth.userProfileChangeRequest
 import android.view.LayoutInflater
@@ -96,80 +97,61 @@ class SignupFragment : Fragment() {
 
                             progressBar.visibility = View.GONE
                             btnSignup.isEnabled = true
-
                             if (task.isSuccessful) {
 
-                                val user = auth.currentUser
+                                val user = auth.currentUser ?: return@addOnCompleteListener
 
                                 val profileUpdates = userProfileChangeRequest {
                                     displayName = name
                                 }
 
-                                user?.updateProfile(profileUpdates)
-                                user?.sendEmailVerification()
-                                    ?.addOnSuccessListener {
+                                user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener { profileTask ->
 
-                                        val bundle = Bundle().apply {
-                                            putString("email", user.email)
+                                        if (profileTask.isSuccessful) {
+
+                                            user.sendEmailVerification()
+                                                .addOnSuccessListener {
+
+                                                    Log.d("EMAIL", "Verification email sent successfully")
+
+                                                    val bundle = Bundle().apply {
+                                                        putString("email", user.email)
+                                                    }
+
+                                                    findNavController().navigate(
+                                                        R.id.action_navigation_signup_to_verifyEmailFragment,
+                                                        bundle
+                                                    )
+                                                }
+                                                .addOnFailureListener { e ->
+
+                                                    Log.e("EMAIL", "Verification failed", e)
+
+                                                    Toast.makeText(
+                                                        requireContext(),
+                                                        e.localizedMessage ?: "Failed to send verification email",
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                }
+
+                                        } else {
+
+                                            Toast.makeText(
+                                                requireContext(),
+                                                "Failed to update profile",
+                                                Toast.LENGTH_LONG
+                                            ).show()
                                         }
-
-                                        findNavController().navigate(
-                                            R.id.action_navigation_signup_to_verifyEmailFragment,
-                                            bundle
-                                        )
-
-                                    }
-                                    ?.addOnFailureListener {
-
-                                        SnackbarUtils.showTopSnackbar(
-                                            view,
-                                            "Failed to send verification email",
-                                            false
-                                        )
-
                                     }
 
-                                user?.sendEmailVerification()
-                                    ?.addOnSuccessListener {
-
-                                        SnackbarUtils.showTopSnackbar(
-                                            view,
-                                            "Verification email sent!",
-                                            true
-                                        )
-
-                                        val bundle = Bundle().apply {
-                                            putString("email", user.email)
-                                        }
-
-                                        findNavController().navigate(
-                                            R.id.action_navigation_signup_to_verifyEmailFragment,
-                                            bundle
-                                        )
-
-                                    }
-                                    ?.addOnFailureListener {
-
-                                        SnackbarUtils.showTopSnackbar(
-                                            view,
-                                            it.localizedMessage ?: "Couldn't send verification email",
-                                            false
-                                        )
-
-                                    }
                             } else {
 
-                                val snackbar = Snackbar.make(
-                                    view,
-                                    task.exception?.message ?: "Signup Failed",
-                                    Snackbar.LENGTH_LONG
-                                )
-
-                                snackbar.setBackgroundTint(
-                                    requireContext().getColor(android.R.color.holo_red_dark)
-                                )
-
-                                snackbar.show()
+                                Toast.makeText(
+                                    requireContext(),
+                                    task.exception?.localizedMessage ?: "Signup Failed",
+                                    Toast.LENGTH_LONG
+                                ).show()
                             }
                         }
                 }

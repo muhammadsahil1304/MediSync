@@ -42,7 +42,7 @@
             app:destination="@id/navigation_home" />
         <action
             android:id="@+id/action_navigation_signup_to_verifyEmailFragment"
-            app:destination="@id/navigation_hverome" />
+            app:destination="@id/navigation_verifyEmail" />
     </fragment>
     <fragment
         android:id="@+id/navigation_home"

@@ -2,7 +2,7 @@ package com.example.newmedisync.utils
 
 import android.view.Gravity
 import android.view.View
-import android.view.ViewGroup
+import android.widget.FrameLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.google.android.material.snackbar.Snackbar
 
@@ -14,20 +14,19 @@ object SnackbarUtils {
         isSuccess: Boolean
     ) {
 
-        val snackbar = Snackbar.make(
-            view,
-            message,
-            Snackbar.LENGTH_SHORT
-        )
+        if (!view.isAttachedToWindow) return
 
-        val snackbarView = snackbar.view
+        val snackbar = Snackbar.make(view, message, Snackbar.LENGTH_SHORT)
 
-        val params = snackbarView.layoutParams
+        val params = snackbar.view.layoutParams
 
-        if (params is CoordinatorLayout.LayoutParams) {
-
-            params.gravity = Gravity.TOP
-            snackbarView.layoutParams = params
+        when (params) {
+            is CoordinatorLayout.LayoutParams -> {
+                params.gravity = Gravity.TOP
+            }
+            is FrameLayout.LayoutParams -> {
+                params.gravity = Gravity.TOP
+            }
         }
 
         snackbar.setBackgroundTint(

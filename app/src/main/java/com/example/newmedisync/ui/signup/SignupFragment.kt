@@ -1,5 +1,6 @@
 package com.example.newmedisync.ui.signup
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.util.Patterns
@@ -12,6 +13,7 @@ import android.widget.EditText
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
@@ -23,6 +25,7 @@ class SignupFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
 
+    @RequiresApi(Build.VERSION_CODES.FROYO)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

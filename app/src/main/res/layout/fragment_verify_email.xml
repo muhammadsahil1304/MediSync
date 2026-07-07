@@ -71,6 +71,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="16dp"/>
 
+
     <Button
         android:id="@+id/btnVerified"
         android:layout_width="0dp"

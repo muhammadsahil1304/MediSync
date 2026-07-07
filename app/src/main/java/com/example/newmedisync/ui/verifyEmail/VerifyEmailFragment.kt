@@ -1,11 +1,13 @@
 package com.example.newmedisync.ui.verifyEmail
 
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
@@ -20,6 +22,8 @@ class VerifyEmailFragment : Fragment() {
     private lateinit var btnVerified: Button
     private lateinit var tvResend: TextView
     private lateinit var tvBack: TextView
+    private var resendTimer: CountDownTimer? = null
+    private var canResend = true
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -43,6 +47,7 @@ class VerifyEmailFragment : Fragment() {
         val email = arguments?.getString("email") ?: ""
 
         tvEmail.text = email
+        startResendTimer()
 
         btnVerified.setOnClickListener {
 
@@ -80,27 +85,29 @@ class VerifyEmailFragment : Fragment() {
 
         tvResend.setOnClickListener {
 
+            if (!canResend) return@setOnClickListener
+
             auth.currentUser
                 ?.sendEmailVerification()
                 ?.addOnSuccessListener {
 
-                    SnackbarUtils.showTopSnackbar(
-                        requireView(),
-                        "Verification email sent again.",
-                        true
-                    )
+                    Toast.makeText(
+                        requireContext(),
+                        "Verification email sent.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    startResendTimer()
 
                 }
                 ?.addOnFailureListener {
 
-                    SnackbarUtils.showTopSnackbar(
-                        requireView(),
+                    Toast.makeText(
+                        requireContext(),
                         it.localizedMessage ?: "Failed",
-                        false
-                    )
-
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
-
         }
 
         tvBack.setOnClickListener {
@@ -114,5 +121,34 @@ class VerifyEmailFragment : Fragment() {
         }
 
         return view
+    }
+    private fun startResendTimer() {
+
+        canResend = false
+        tvResend.isEnabled = false
+
+        resendTimer?.cancel()
+
+        resendTimer = object : CountDownTimer(30000, 1000) {
+
+            override fun onTick(millisUntilFinished: Long) {
+
+                val seconds = millisUntilFinished / 1000
+
+                tvResend.text = "Resend Email (${seconds}s)"
+            }
+
+            override fun onFinish() {
+
+                canResend = true
+                tvResend.isEnabled = true
+                tvResend.text = "Resend Email"
+            }
+
+        }.start()
+    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        resendTimer?.cancel()
     }
 }

@@ -60,6 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:scaleType="centerCrop"
+                    android:background="@color/white"
                     android:src="@drawable/people" />
 
                 <ImageView
@@ -94,6 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="28dp"
             app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="#FFFFFF"
             app:cardElevation="4dp">
 
             <LinearLayout
@@ -111,11 +113,11 @@
                     android:textStyle="bold" />
 
                 <com.google.android.material.textfield.TextInputLayout
-                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
-                    android:hint="Specialization">
+                    app:boxBackgroundColor="@android:color/white"
+                    android:hint="Specialization"
+                    app:endIconMode="dropdown_menu">
 
                     <AutoCompleteTextView
                         android:id="@+id/etSpecialization"
@@ -128,13 +130,15 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:hint="Qualification"
+                    app:boxBackgroundColor="@android:color/white"
                     android:layout_marginTop="14dp"
-                    android:hint="Qualification">
+                    >
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/etQualification"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content" />
+                        android:layout_height="wrap_content"
+                       />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -142,6 +146,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    app:boxBackgroundColor="@android:color/white"
                     android:hint="Experience (Years)">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -155,6 +160,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    app:boxBackgroundColor="@android:color/white"
                     android:layout_marginTop="14dp"
                     android:hint="Medical Registration Number">
 
@@ -175,6 +181,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="@color/white"
             app:cardElevation="4dp">
 
             <LinearLayout
@@ -195,6 +202,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
+                    app:boxBackgroundColor="@android:color/white"
                     android:hint="Clinic Name">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -208,6 +216,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    app:boxBackgroundColor="@android:color/white"
                     android:hint="Consultation Fee (₹)">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -222,6 +231,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="14dp"
+                    app:boxBackgroundColor="@android:color/white"
                     android:hint="Clinic Address">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -244,6 +254,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            app:cardBackgroundColor="@color/white"
             app:cardCornerRadius="18dp"
             app:cardElevation="4dp">
 
@@ -265,6 +276,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="18dp"
+                    app:boxBackgroundColor="@android:color/white"
                     android:hint="Professional Bio">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -303,6 +315,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
             app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="@color/white"
             app:cardElevation="3dp"
             app:strokeColor="#1486D4"
             app:strokeWidth="1dp">
@@ -317,6 +330,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:padding="5dp"
                     android:src="@drawable/ic_document"/>
 
                 <LinearLayout
@@ -341,11 +355,13 @@
 
                 </LinearLayout>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnUploadLicense"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@color/primary"
                     android:text="Upload"
+                    android:textColor="@color/white"
                     android:textAllCaps="false"/>
 
             </LinearLayout>
@@ -363,6 +379,7 @@
             app:cardCornerRadius="16dp"
             app:cardElevation="3dp"
             app:strokeColor="#1486D4"
+            app:cardBackgroundColor="@color/white"
             app:strokeWidth="1dp">
 
             <LinearLayout
@@ -375,6 +392,7 @@
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:padding="5dp"
                     android:src="@drawable/ic_document"/>
 
                 <LinearLayout
@@ -399,10 +417,12 @@
 
                 </LinearLayout>
 
-                <Button
+                <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/btnUploadDegree"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:background="@color/primary"
                     android:text="Upload"
                     android:textAllCaps="false"/>
 

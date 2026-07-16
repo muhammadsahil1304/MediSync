@@ -32,13 +32,7 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.bottomNavInclude.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_patients, R.id.navigation_notifications
-            )
-        )
+
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.navigation_splash -> {
@@ -49,13 +43,16 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_signup -> {
                     binding.bottomNavContainer.visibility = View.GONE
                 }
+                R.id.navigation_doctorVerify -> {
+                    binding.bottomNavContainer.visibility = View.GONE
+                }
 
                 else -> {
                     binding.bottomNavContainer.visibility = View.VISIBLE
                 }
             }
         }
-//        setupActionBarWithNavController(navController, appBarConfiguration)
+
         navView.setupWithNavController(navController)
     }
 }

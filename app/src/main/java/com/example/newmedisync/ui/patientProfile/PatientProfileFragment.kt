@@ -24,6 +24,7 @@ import com.example.newmedisync.model.VisitHistory
 import com.example.newmedisync.room.AppDatabase
 import android.app.Dialog
 import android.net.Uri
+import android.util.Log
 import android.view.Window
 import android.widget.ImageView
 import com.example.newmedisync.room.VisitEntity
@@ -284,7 +285,7 @@ class PatientProfileFragment : Fragment() {
                     .visitDao()
                     .insertVisit(visit)
             }
-
+            Log.d("VISIT", "Inserted: $visit")
             dialog.dismiss()
         }
 

@@ -58,6 +58,9 @@
         <action
                 android:id="@+id/action_navigation_home_to_navigation_patient"
                 app:destination="@id/navigation_patients" />
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_doctorVerification"
+            app:destination="@id/navigation_doctorVerify" />
     </fragment>
 
 <!--    <fragment-->
@@ -112,6 +115,13 @@
      <action
          android:id="@+id/action_patientProfileFragment_to_navigation_prescription"
          app:destination="@id/navigation_prescription" />
+ </fragment>
+    <fragment
+        android:id="@+id/navigation_doctorVerify"
+        android:name="com.example.newmedisync.ui.docVerify.DoctorVerificationFragment"
+        android:label="Doctor Verify"
+        tools:layout="@layout/fragment_doctor_verification" >
+
  </fragment>
 
 </navigation>

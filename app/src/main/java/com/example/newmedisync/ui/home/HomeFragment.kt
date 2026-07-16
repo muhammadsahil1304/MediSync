@@ -119,6 +119,13 @@ class HomeFragment : Fragment() {
                 R.id.action_navigation_home_to_navigation_patient
             )
         }
+        binding.btnGetVerified.setOnClickListener {
+
+            findNavController().navigate(
+                R.id.action_navigation_home_to_navigation_doctorVerification
+            )
+
+        }
 
         return binding.root
     }

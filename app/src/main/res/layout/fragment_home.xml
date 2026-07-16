@@ -80,7 +80,49 @@
                 android:textSize="14sp"
                 android:textColor="#777777" />
 
+                    <com.google.android.material.card.MaterialCardView
+                        android:id="@+id/cardVerification"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        app:cardCornerRadius="18dp"
+                        app:cardElevation="3dp"
+                        app:cardBackgroundColor="#FFF4E5">
 
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="18dp">
+
+                            <TextView
+                                android:id="@+id/tvVerificationTitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🔴 Account Not Verified"
+                                android:textStyle="bold"
+                                android:textSize="18sp"
+                                android:textColor="#D32F2F"/>
+
+                            <TextView
+                                android:id="@+id/tvVerificationMessage"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="8dp"
+                                android:text="Complete your professional verification to unlock all doctor features."
+                                android:textColor="#666666"/>
+
+                            <Button
+                                android:id="@+id/btnGetVerified"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
+                                android:text="Get Verified"
+                                android:textAllCaps="false"/>
+
+                        </LinearLayout>
+
+                    </com.google.android.material.card.MaterialCardView>
 
 
             <!-- Stats -->

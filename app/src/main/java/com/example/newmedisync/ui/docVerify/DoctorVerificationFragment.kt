@@ -1,5 +1,6 @@
-package com.example.newmedisync.ui.verification
+package com.example.newmedisync.ui.docVerify
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,6 +10,7 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
@@ -19,10 +21,14 @@ class DoctorVerificationFragment : Fragment() {
     private lateinit var imgCamera: ImageView
 
     private lateinit var etSpecialization: AutoCompleteTextView
-
+    private var selectedLicenseUri: Uri? = null
+    private var selectedDegreeUri: Uri? = null
+    private lateinit var tvLicenseFile: TextView
+    private lateinit var tvDegreeFile: TextView
     private lateinit var btnUploadLicense: Button
     private lateinit var btnUploadDegree: Button
     private lateinit var btnSubmitVerification: Button
+    private var selectedProfileImageUri: Uri? = null
 
     private lateinit var tvSkip: TextView
 
@@ -41,7 +47,8 @@ class DoctorVerificationFragment : Fragment() {
         // Profile
         imgProfile = view.findViewById(R.id.imgProfile)
         imgCamera = view.findViewById(R.id.imgCamera)
-
+        tvLicenseFile = view.findViewById(R.id.tvLicenseFile)
+        tvDegreeFile = view.findViewById(R.id.tvDegreeFile)
         // Fields
         etSpecialization = view.findViewById(R.id.etSpecialization)
         val specializationAdapter = ArrayAdapter(
@@ -60,19 +67,26 @@ class DoctorVerificationFragment : Fragment() {
         tvSkip = view.findViewById(R.id.tvSkip)
 
         imgProfile.setOnClickListener {
-            // TODO : Open Image Picker
+
+            imagePickerLauncher.launch("image/*")
+
         }
 
         imgCamera.setOnClickListener {
-            // TODO : Open Image Picker
-        }
 
+            imagePickerLauncher.launch("image/*")
+
+        }
         btnUploadLicense.setOnClickListener {
-            // TODO : Pick License PDF/Image
+
+            licensePickerLauncher.launch("*/*")
+
         }
 
         btnUploadDegree.setOnClickListener {
-            // TODO : Pick Degree PDF/Image
+
+            degreePickerLauncher.launch("*/*")
+
         }
 
         btnSubmitVerification.setOnClickListener {
@@ -94,4 +108,45 @@ class DoctorVerificationFragment : Fragment() {
 
         return view
     }
+    private val degreePickerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri ->
+
+            uri?.let {
+
+                selectedDegreeUri = it
+
+                tvDegreeFile.text =
+                    "Degree Selected ✔"
+
+            }
+        }
+    private val licensePickerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri ->
+
+            uri?.let {
+
+                selectedLicenseUri = it
+
+                tvLicenseFile.text =
+                    "License Selected ✔"
+
+            }
+        }
+    private val imagePickerLauncher =
+        registerForActivityResult(
+            ActivityResultContracts.GetContent()
+        ) { uri ->
+
+            uri?.let {
+
+                selectedProfileImageUri = it
+
+                imgProfile.setImageURI(it)
+
+            }
+        }
 }

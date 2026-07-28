@@ -2,6 +2,7 @@ package com.example.newmedisync.ui.docVerify
 
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,15 +11,24 @@ import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
+import com.example.newmedisync.firebase.DoctorVerificationRepository
+import com.example.newmedisync.model.DoctorVerification
+import com.google.android.material.textfield.TextInputEditText
+import kotlinx.coroutines.launch
 
 class DoctorVerificationFragment : Fragment() {
 
     private lateinit var imgProfile: ImageView
     private lateinit var imgCamera: ImageView
+    private val repository = DoctorVerificationRepository()
+
 
     private lateinit var etSpecialization: AutoCompleteTextView
     private var selectedLicenseUri: Uri? = null
@@ -31,12 +41,19 @@ class DoctorVerificationFragment : Fragment() {
     private var selectedProfileImageUri: Uri? = null
 
     private lateinit var tvSkip: TextView
+    private lateinit var etQualification: TextInputEditText
+    private lateinit var etExperience: TextInputEditText
+    private lateinit var etRegistrationNumber: TextInputEditText
+    private lateinit var etClinicName: TextInputEditText
+    private lateinit var etConsultationFee: TextInputEditText
+    private lateinit var etClinicAddress: TextInputEditText
+    private lateinit var etBio: TextInputEditText
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
+    ): View? {
 
         val view = inflater.inflate(
             R.layout.fragment_doctor_verification,
@@ -58,6 +75,13 @@ class DoctorVerificationFragment : Fragment() {
         )
 
         etSpecialization.setAdapter(specializationAdapter)
+        etQualification = view.findViewById(R.id.etQualification)
+        etExperience = view.findViewById(R.id.etExperience)
+        etRegistrationNumber = view.findViewById(R.id.etRegistrationNumber)
+        etClinicName = view.findViewById(R.id.etClinicName)
+        etConsultationFee = view.findViewById(R.id.etConsultationFee)
+        etClinicAddress = view.findViewById(R.id.etClinicAddress)
+        etBio = view.findViewById(R.id.etBio)
         // Buttons
         btnUploadLicense = view.findViewById(R.id.btnUploadLicense)
         btnUploadDegree = view.findViewById(R.id.btnUploadDegree)
@@ -65,6 +89,7 @@ class DoctorVerificationFragment : Fragment() {
             view.findViewById(R.id.btnSubmitVerification)
 
         tvSkip = view.findViewById(R.id.tvSkip)
+
 
         imgProfile.setOnClickListener {
 
@@ -78,26 +103,105 @@ class DoctorVerificationFragment : Fragment() {
 
         }
         btnUploadLicense.setOnClickListener {
-
-            licensePickerLauncher.launch("*/*")
-
+            Toast.makeText(
+                requireContext(),
+                "Document upload will be available in a future update.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
         btnUploadDegree.setOnClickListener {
-
-            degreePickerLauncher.launch("*/*")
-
+            Toast.makeText(
+                requireContext(),
+                "Document upload will be available in a future update.",
+                Toast.LENGTH_SHORT
+            ).show()
         }
+
 
         btnSubmitVerification.setOnClickListener {
 
-            // TODO:
-            // 1. Validate all fields
-            // 2. Upload profile image
-            // 3. Upload documents
-            // 4. Save doctor details to Firestore
-            // 5. Update verification status = PENDING
+            lifecycleScope.launch {
 
+                try {
+
+                    val specialization = etSpecialization.text.toString().trim()
+                    val qualification = etQualification.text.toString().trim()
+                    val experience = etExperience.text.toString().trim()
+                    val registrationNumber = etRegistrationNumber.text.toString().trim()
+                    val clinicName = etClinicName.text.toString().trim()
+                    val consultationFee = etConsultationFee.text.toString().trim()
+                    val clinicAddress = etClinicAddress.text.toString().trim()
+                    val bio = etBio.text.toString().trim()
+
+                    // Validate text fields
+                    if (
+                        specialization.isEmpty() ||
+                        qualification.isEmpty() ||
+                        experience.isEmpty() ||
+                        registrationNumber.isEmpty() ||
+                        clinicName.isEmpty() ||
+                        consultationFee.isEmpty() ||
+                        clinicAddress.isEmpty() ||
+                        bio.isEmpty()
+                    ) {
+                        Toast.makeText(
+                            requireContext(),
+                            "Please complete all fields.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        return@launch
+                    }
+
+
+
+                    // Get logged-in user
+                    val user = repository.getCurrentUser()
+
+                    // Create verification object
+                    val verification = DoctorVerification(
+                        uid = user.uid,
+                        fullName = user.name,
+                        email = user.email,
+                        phone = user.phone,
+
+                        specialization = specialization,
+                        qualification = qualification,
+                        experience = experience,
+                        registrationNumber = registrationNumber,
+
+                        clinicName = clinicName,
+                        consultationFee = consultationFee,
+                        clinicAddress = clinicAddress,
+                        bio = bio,
+
+                        profileImageUrl = "",
+                        licenseUrl = "",
+                        degreeUrl = "",
+
+                        status = "PENDING"
+                    )
+
+                    // Save to Firestore
+                    repository.submitVerification(verification)
+
+                    Toast.makeText(
+                        requireContext(),
+                        "Verification submitted successfully!",
+                        Toast.LENGTH_LONG
+                    ).show()
+
+                    findNavController().popBackStack()
+
+                } catch (e: Exception) {
+
+                    Toast.makeText(
+                        requireContext(),
+                        e.message ?: "Something went wrong",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
         }
 
         tvSkip.setOnClickListener {

@@ -9,15 +9,18 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.example.newmedisync.R
 import com.example.newmedisync.databinding.FragmentHomeBinding
+import com.example.newmedisync.firebase.DoctorVerificationRepository
 import com.example.newmedisync.room.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class HomeFragment : Fragment() {
 
     private var _binding: FragmentHomeBinding? = null
-
+    private var isVerified = false
 
     private val binding get() = _binding!!
 
@@ -104,21 +107,33 @@ class HomeFragment : Fragment() {
             }
 
         setupLogout()
-        binding.cvPrescription.setOnClickListener{
-            findNavController().navigate(
-                R.id.action_navigation_home_to_navigation_patients_prescription
-            )
+        binding.viewPatients.setOnClickListener {
+            checkAccess {
+                findNavController().navigate(
+                    R.id.action_navigation_home_to_navigation_patient
+                )
+            }
         }
-        binding.addPatients.setOnClickListener{
-            findNavController().navigate(
-                R.id.action_navigation_home_to_navigation_Add_patients
-            )
+
+        binding.cvPrescription.setOnClickListener {
+            checkAccess {
+                findNavController().navigate(
+                    R.id.action_navigation_home_to_navigation_patients_prescription
+                )
+            }
         }
-        binding.viewPatients.setOnClickListener{
-            findNavController().navigate(
-                R.id.action_navigation_home_to_navigation_patient
-            )
+        binding.addPatients.setOnClickListener {
+            checkAccess {
+                findNavController().navigate(
+                    R.id.action_navigation_home_to_navigation_Add_patients
+                )
+            }
         }
+//        binding.viewPatients.setOnClickListener{
+//            findNavController().navigate(
+//                R.id.action_navigation_home_to_navigation_patient
+//            )
+//        }
         binding.btnGetVerified.setOnClickListener {
 
             findNavController().navigate(
@@ -126,7 +141,7 @@ class HomeFragment : Fragment() {
             )
 
         }
-
+        checkVerificationStatus()
         return binding.root
     }
 
@@ -157,7 +172,85 @@ class HomeFragment : Fragment() {
                 .show()
         }
     }
+    private fun checkVerificationStatus() {
 
+        val repository = DoctorVerificationRepository()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+
+            try {
+
+                val uid = FirebaseAuth.getInstance().currentUser!!.uid
+
+                val doctor = repository.getDoctorVerification(uid)
+
+                when (doctor.status) {
+
+                    "PENDING" -> {
+
+                        isVerified = false
+
+                        binding.tvVerificationTitle.text =
+                            "🟡 Verification Pending"
+
+                        binding.tvVerificationMessage.text =
+                            "Your documents are under review."
+
+                        binding.btnGetVerified.visibility = View.GONE
+                    }
+
+                    "APPROVED" -> {
+                        isVerified = true
+                        binding.cardVerification.visibility = View.GONE
+                    }
+
+                    "REJECTED" -> {
+
+                        isVerified = false
+
+                        binding.tvVerificationTitle.text =
+                            "🔴 Verification Rejected"
+
+                        binding.tvVerificationMessage.text =
+                            "Please update your information and submit again."
+
+                        binding.btnGetVerified.text = "Resubmit"
+                    }
+                }
+
+            } catch (e: Exception) {
+
+                // No verification submitted yet
+                binding.cardVerification.visibility = View.VISIBLE
+
+                binding.tvVerificationTitle.text =
+                    "🔴 Account Not Verified"
+
+                binding.tvVerificationMessage.text =
+                    "Complete your professional verification."
+
+                binding.btnGetVerified.visibility = View.VISIBLE
+                binding.btnGetVerified.text = "Get Verified"
+            }
+        }
+    }
+    private fun checkAccess(action: () -> Unit) {
+
+        if (isVerified) {
+            action()
+        } else {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Verification Required")
+                .setMessage("Your account must be verified before you can use this feature.")
+                .setPositiveButton("Get Verified") { _, _ ->
+                    findNavController().navigate(
+                        R.id.action_navigation_home_to_navigation_doctorVerification
+                    )
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null

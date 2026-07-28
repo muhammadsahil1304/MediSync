@@ -65,4 +65,6 @@ dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("com.google.firebase:firebase-storage-ktx")
     implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    ksp("com.github.bumptech.glide:ksp:4.16.0")
 }

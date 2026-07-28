@@ -17,14 +17,16 @@ import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
+import com.example.newmedisync.model.User
 import com.example.newmedisync.utils.SnackbarUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class SignupFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
-
+    private lateinit var firestore: FirebaseFirestore
     @RequiresApi(Build.VERSION_CODES.FROYO)
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,6 +39,7 @@ class SignupFragment : Fragment() {
             view.findViewById<ProgressBar>(R.id.progressBarSignup)
 
         auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
 
         val etName = view.findViewById<EditText>(R.id.etFullName)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
@@ -113,31 +116,50 @@ class SignupFragment : Fragment() {
 
                                         if (profileTask.isSuccessful) {
 
-                                            user.sendEmailVerification()
+                                            val appUser = User(
+                                                uid = user.uid,
+                                                name = name,
+                                                email = email,
+                                                phone = phone,
+                                                role = "doctor"
+                                            )
+
+                                            firestore.collection("users")
+                                                .document(user.uid)
+                                                .set(appUser)
                                                 .addOnSuccessListener {
 
-                                                    Log.d("EMAIL", "Verification email sent successfully")
+                                                    user.sendEmailVerification()
+                                                        .addOnSuccessListener {
 
-                                                    val bundle = Bundle().apply {
-                                                        putString("email", user.email)
-                                                    }
+                                                            Log.d("EMAIL", "Verification email sent successfully")
 
-                                                    findNavController().navigate(
-                                                        R.id.action_navigation_signup_to_verifyEmailFragment,
-                                                        bundle
-                                                    )
+                                                            val bundle = Bundle().apply {
+                                                                putString("email", user.email)
+                                                            }
+
+                                                            findNavController().navigate(
+                                                                R.id.action_navigation_signup_to_verifyEmailFragment,
+                                                                bundle
+                                                            )
+                                                        }
+                                                        .addOnFailureListener { e ->
+
+                                                            Toast.makeText(
+                                                                requireContext(),
+                                                                e.localizedMessage ?: "Failed to send verification email",
+                                                                Toast.LENGTH_LONG
+                                                            ).show()
+                                                        }
                                                 }
                                                 .addOnFailureListener { e ->
 
-                                                    Log.e("EMAIL", "Verification failed", e)
-
                                                     Toast.makeText(
                                                         requireContext(),
-                                                        e.localizedMessage ?: "Failed to send verification email",
+                                                        "Failed to save user: ${e.localizedMessage}",
                                                         Toast.LENGTH_LONG
                                                     ).show()
                                                 }
-
                                         } else {
 
                                             Toast.makeText(

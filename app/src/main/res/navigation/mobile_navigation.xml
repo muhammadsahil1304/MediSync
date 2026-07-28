@@ -30,6 +30,9 @@
         <action
             android:id="@+id/navigateLogin_to_verify"
             app:destination="@id/navigation_verifyEmail" />
+        <action
+            android:id="@+id/action_navigation_login_to_adminHomeFragment"
+            app:destination="@id/navigation_adminHome"/>
     </fragment>
 
     <fragment
@@ -117,11 +120,31 @@
          app:destination="@id/navigation_prescription" />
  </fragment>
     <fragment
+        android:id="@+id/navigation_adminHome"
+        android:name="com.example.newmedisync.ui.admin.AdminHomeFragment"
+        android:label="AdminHome"
+        tools:layout="@layout/fragment_admin_home" >
+        <action
+            android:id="@+id/action_adminHomeFragment_to_doctorVerificationDetailsFragment"
+            app:destination="@id/navigation_doctorVerifyDetails" />
+
+
+ </fragment>
+    <fragment
         android:id="@+id/navigation_doctorVerify"
         android:name="com.example.newmedisync.ui.docVerify.DoctorVerificationFragment"
         android:label="Doctor Verify"
         tools:layout="@layout/fragment_doctor_verification" >
 
+ </fragment>
+    <fragment
+        android:id="@+id/navigation_doctorVerifyDetails"
+        android:name="com.example.newmedisync.ui.admin.DoctorVerificationDetailsFragment"
+        android:label="Doctor Verify Details"
+        tools:layout="@layout/fragment_doctor_verification_details" >
+        <argument
+            android:name="doctorUid"
+            app:argType="string" />
  </fragment>
 
 </navigation>

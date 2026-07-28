@@ -46,6 +46,9 @@ class MainActivity : AppCompatActivity() {
                 R.id.navigation_doctorVerify -> {
                     binding.bottomNavContainer.visibility = View.GONE
                 }
+                R.id.navigation_adminHome -> {
+                    binding.bottomNavContainer.visibility = View.GONE
+                }
 
                 else -> {
                     binding.bottomNavContainer.visibility = View.VISIBLE

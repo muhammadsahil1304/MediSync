@@ -16,11 +16,12 @@ import com.example.newmedisync.utils.SnackbarUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
-
+    private lateinit var firestore: FirebaseFirestore
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,7 +31,7 @@ class LoginFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_login, container, false)
 
         auth = FirebaseAuth.getInstance()
-
+        firestore = FirebaseFirestore.getInstance()
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
 
         val emailEditText =
@@ -85,16 +86,13 @@ class LoginFragment : Fragment() {
                                 val user = auth.currentUser
 
                                 if (user != null && user.isEmailVerified) {
-
                                     SnackbarUtils.showTopSnackbar(
                                         view,
                                         "Login Successful",
                                         true
                                     )
 
-                                    findNavController().navigate(
-                                        R.id.action_navigation_login_to_navigation_home
-                                    )
+                                    navigateBasedOnRole(user.uid)
 
                                 } else {
 
@@ -138,9 +136,38 @@ class LoginFragment : Fragment() {
 
         if (user != null && user.isEmailVerified) {
 
-            findNavController().navigate(
-                R.id.action_navigation_login_to_navigation_home
-            )
+            navigateBasedOnRole(user.uid)
         }
+    }
+    private fun navigateBasedOnRole(uid: String) {
+
+        firestore.collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { document ->
+
+                val role = document.getString("role")
+
+                if (role == "admin") {
+
+                    findNavController().navigate(
+                        R.id.action_navigation_login_to_adminHomeFragment
+                    )
+
+                } else {
+
+                    findNavController().navigate(
+                        R.id.action_navigation_login_to_navigation_home
+                    )
+                }
+            }
+            .addOnFailureListener {
+
+                SnackbarUtils.showTopSnackbar(
+                    requireView(),
+                    "Failed to fetch user role",
+                    false
+                )
+            }
     }
 }

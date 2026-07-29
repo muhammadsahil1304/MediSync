@@ -33,6 +33,9 @@
         <action
             android:id="@+id/action_navigation_login_to_adminHomeFragment"
             app:destination="@id/navigation_adminHome"/>
+        <action
+            android:id="@+id/action_navigation_login_to_patientHomeFragment"
+            app:destination="@id/navigation_patientHome"/>
     </fragment>
 
     <fragment
@@ -135,6 +138,13 @@
         android:name="com.example.newmedisync.ui.docVerify.DoctorVerificationFragment"
         android:label="Doctor Verify"
         tools:layout="@layout/fragment_doctor_verification" >
+
+ </fragment>
+    <fragment
+        android:id="@+id/navigation_patientHome"
+        android:name="com.example.newmedisync.ui.patient.PatientHomeFragment"
+        android:label="Patient Home"
+        tools:layout="@layout/fragment_patient_home" >
 
  </fragment>
     <fragment

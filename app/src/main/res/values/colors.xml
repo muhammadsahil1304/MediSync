@@ -10,4 +10,14 @@
     <color name="primary">#0A70A2</color>
     <color name="blue">#3F51B5</color>
     <color name="card_bg">#EFEFEF</color>
+    <color name="primaryBlue">#0A6AA1</color>
+    <color name="lightBlue">#D9ECFF</color>
+    <color name="cardWhite">#FFFFFF</color>
+    <color name="screenBg">#F5F7FA</color>
+
+    <color name="chipRed">#FDE0E0</color>
+    <color name="chipYellow">#FFF4D7</color>
+
+    <color name="textPrimary">#202124</color>
+    <color name="textSecondary">#70757A</color>
 </resources>

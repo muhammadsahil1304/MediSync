@@ -26,6 +26,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class SignupFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
+    private var role = "doctor"
     private lateinit var firestore: FirebaseFirestore
     @RequiresApi(Build.VERSION_CODES.FROYO)
     override fun onCreateView(
@@ -37,10 +38,11 @@ class SignupFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_signup, container, false)
         val progressBar =
             view.findViewById<ProgressBar>(R.id.progressBarSignup)
-
+        role = arguments?.getString("role") ?: "doctor"
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
-
+        val tvHeading = view.findViewById<TextView>(R.id.tvHeading)
+        val tvSubHeading = view.findViewById<TextView>(R.id.tvSubHeading)
         val etName = view.findViewById<EditText>(R.id.etFullName)
         val etEmail = view.findViewById<EditText>(R.id.etEmail)
         val etPhone = view.findViewById<EditText>(R.id.etPhone)
@@ -52,9 +54,26 @@ class SignupFragment : Fragment() {
         val tvLogin = view.findViewById<TextView>(R.id.tvLogin)
 
         tvLogin.setOnClickListener {
-            findNavController().navigate(R.id.navigation_login)
-        }
 
+            val bundle = Bundle().apply {
+                putString("role", role)
+            }
+
+            findNavController().navigate(
+                R.id.navigation_login,
+                bundle
+            )
+        }
+        if (role == "doctor") {
+
+            tvHeading.text = "Create Doctor Account"
+            tvSubHeading.text = "Enter your professional details to get started."
+
+        } else {
+
+            tvHeading.text = "Create Patient Account"
+            tvSubHeading.text = "Create your account to manage your health records."
+        }
         btnSignup.setOnClickListener {
 
             val name = etName.text.toString().trim()
@@ -121,7 +140,7 @@ class SignupFragment : Fragment() {
                                                 name = name,
                                                 email = email,
                                                 phone = phone,
-                                                role = "doctor"
+                                                role = role
                                             )
 
                                             firestore.collection("users")

@@ -21,6 +21,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 class LoginFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
+    private var role = "doctor"
     private lateinit var firestore: FirebaseFirestore
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,7 +30,7 @@ class LoginFragment : Fragment() {
     ): View {
 
         val view = inflater.inflate(R.layout.fragment_login, container, false)
-
+        role = arguments?.getString("role") ?: "doctor"
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         val btnLogin = view.findViewById<Button>(R.id.btnLogin)
@@ -45,7 +46,14 @@ class LoginFragment : Fragment() {
 
         tvCreateAccount.setOnClickListener {
 
-            findNavController().navigate(R.id.navigation_signup)
+            val bundle = Bundle().apply {
+                putString("role", role)
+            }
+
+            findNavController().navigate(
+                R.id.navigation_signup,
+                bundle
+            )
         }
 
         val progressBar =
@@ -148,17 +156,33 @@ class LoginFragment : Fragment() {
 
                 val role = document.getString("role")
 
-                if (role == "admin") {
+                when (role) {
 
-                    findNavController().navigate(
-                        R.id.action_navigation_login_to_adminHomeFragment
-                    )
+                    "admin" -> {
+                        findNavController().navigate(
+                            R.id.action_navigation_login_to_adminHomeFragment
+                        )
+                    }
 
-                } else {
+                    "doctor" -> {
+                        findNavController().navigate(
+                            R.id.action_navigation_login_to_navigation_home
+                        )
+                    }
 
-                    findNavController().navigate(
-                        R.id.action_navigation_login_to_navigation_home
-                    )
+                    "patient" -> {
+                        findNavController().navigate(
+                            R.id.action_navigation_login_to_patientHomeFragment
+                        )
+                    }
+
+                    else -> {
+                        SnackbarUtils.showTopSnackbar(
+                            requireView(),
+                            "Unknown user role",
+                            false
+                        )
+                    }
                 }
             }
             .addOnFailureListener {

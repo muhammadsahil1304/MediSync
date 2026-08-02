@@ -28,6 +28,7 @@ import android.util.Log
 import android.view.Window
 import android.widget.ImageView
 import com.example.newmedisync.room.VisitEntity
+import com.google.firebase.auth.FirebaseAuth
 import java.io.File
 class PatientProfileFragment : Fragment() {
 
@@ -279,11 +280,45 @@ class PatientProfileFragment : Fragment() {
             )
 
             CoroutineScope(Dispatchers.IO).launch {
+                val db = AppDatabase.getDatabase(requireContext())
+                db.visitDao().insertVisit(visit)
 
-                AppDatabase
-                    .getDatabase(requireContext())
-                    .visitDao()
-                    .insertVisit(visit)
+                // Sync to Firestore
+                try {
+                    val repository = com.example.newmedisync.firebase.PatientRepository()
+                    val patientUid = repository.getUidByPhone(patientPhone)
+                    if (patientUid != null) {
+                        val auth = FirebaseAuth.getInstance()
+                        val doctorUid = auth.currentUser?.uid ?: ""
+                        val doctorName = auth.currentUser?.displayName ?: "Doctor"
+                        
+                        // Parse date to set correct timestamp for ordering
+                        val sdf = SimpleDateFormat(
+                            "dd/MM/yyyy HH:mm",
+                            Locale.getDefault()
+                        )
+
+                        val dateTime = "${etVisitDate.text} ${etVisitTime.text}"
+
+                        val timestamp =
+                            sdf.parse(dateTime)?.time
+                                ?: System.currentTimeMillis()
+
+                        val firestoreVisit = com.example.newmedisync.model.VisitModel(
+                            patientUid = patientUid,
+                            doctorUid = doctorUid,
+                            patientName = patientName,
+                            doctorName = doctorName,
+                            date = etVisitDate.text.toString(),
+                            time = etVisitTime.text.toString(),
+                            purpose = etPurpose.text.toString(),
+                            timestamp = timestamp
+                        )
+                        repository.saveVisit(firestoreVisit)
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
             }
             Log.d("VISIT", "Inserted: $visit")
             dialog.dismiss()
@@ -295,4 +330,5 @@ class PatientProfileFragment : Fragment() {
         super.onDestroyView()
         _binding = null
     }
+
 }

@@ -67,4 +67,5 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore-ktx")
     implementation("com.github.bumptech.glide:glide:4.16.0")
     ksp("com.github.bumptech.glide:ksp:4.16.0")
+    implementation(libs.google.generativeai)
 }

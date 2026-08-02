@@ -10,17 +10,21 @@ import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
+import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.utils.SnackbarUtils
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
 
 class LoginFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
+    private val patientRepository = PatientRepository()
     private var role = "doctor"
     private lateinit var firestore: FirebaseFirestore
     override fun onCreateView(
@@ -159,31 +163,69 @@ class LoginFragment : Fragment() {
                 when (role) {
 
                     "admin" -> {
+
                         findNavController().navigate(
                             R.id.action_navigation_login_to_adminHomeFragment
                         )
+
                     }
 
                     "doctor" -> {
+
                         findNavController().navigate(
                             R.id.action_navigation_login_to_navigation_home
                         )
+
                     }
 
                     "patient" -> {
-                        findNavController().navigate(
-                            R.id.action_navigation_login_to_patientHomeFragment
-                        )
+
+                        viewLifecycleOwner.lifecycleScope.launch {
+
+                            try {
+
+                                val exists = patientRepository.patientExists()
+
+                                if (exists) {
+
+                                    findNavController().navigate(
+                                        R.id.action_navigation_login_to_patientHomeFragment
+                                    )
+
+                                } else {
+
+                                    findNavController().navigate(
+                                        R.id.action_navigation_login_to_completePatientProfileFragment
+                                    )
+
+                                }
+
+                            } catch (e: Exception) {
+
+                                SnackbarUtils.showTopSnackbar(
+                                    requireView(),
+                                    e.localizedMessage ?: "Something went wrong",
+                                    false
+                                )
+
+                            }
+
+                        }
+
                     }
 
                     else -> {
+
                         SnackbarUtils.showTopSnackbar(
                             requireView(),
                             "Unknown user role",
                             false
                         )
+
                     }
+
                 }
+
             }
             .addOnFailureListener {
 
@@ -192,6 +234,7 @@ class LoginFragment : Fragment() {
                     "Failed to fetch user role",
                     false
                 )
+
             }
     }
 }

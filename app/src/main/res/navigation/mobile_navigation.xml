@@ -36,6 +36,9 @@
         <action
             android:id="@+id/action_navigation_login_to_patientHomeFragment"
             app:destination="@id/navigation_patientHome"/>
+        <action
+            android:id="@+id/action_navigation_login_to_completePatientProfileFragment"
+            app:destination="@id/navigation_completePatientProfile"/>
     </fragment>
 
     <fragment
@@ -145,7 +148,28 @@
         android:name="com.example.newmedisync.ui.patient.PatientHomeFragment"
         android:label="Patient Home"
         tools:layout="@layout/fragment_patient_home" >
-
+        <action
+            android:id="@+id/action_patientHomeFragment_to_reportsFragment"
+            app:destination="@id/navigation_reports" />
+    </fragment>
+    <fragment
+        android:id="@+id/navigation_reports"
+        android:name="com.example.newmedisync.ui.patient.ReportsFragment"
+        android:label="Reports"
+        tools:layout="@layout/fragment_reports" />
+    <fragment
+        android:id="@+id/navigation_visits"
+        android:name="com.example.newmedisync.ui.patient.VisitsFragment"
+        android:label="Visits"
+        tools:layout="@layout/fragment_visits" />
+    <fragment
+        android:id="@+id/navigation_completePatientProfile"
+        android:name="com.example.newmedisync.ui.completepatient.CompletePatientProfileFragment"
+        android:label="Complete Patient Profile"
+        tools:layout="@layout/fragment_complete_patient_profile" >
+        <action
+            android:id="@+id/action_completePatientProfileFragment_to_patientHomeFragment"
+            app:destination="@id/navigation_patientHome" />
  </fragment>
     <fragment
         android:id="@+id/navigation_doctorVerifyDetails"

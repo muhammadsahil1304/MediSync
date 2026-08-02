@@ -5,6 +5,12 @@
     android:layout_height="match_parent"
     android:background="#F5F7FA"
     android:fillViewport="true">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true">
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -45,12 +51,14 @@
 
             </LinearLayout>
 
+
             <ImageView
-                android:id="@+id/imgSearch"
+                android:id="@+id/btnLogout"
                 android:layout_width="22dp"
                 android:layout_height="22dp"
                 android:layout_marginEnd="18dp"
-                android:src="@drawable/search" />
+                android:src="@drawable/logout"
+                app:tint="#D04545" />
 
             <ImageView
                 android:id="@+id/imgProfile"
@@ -88,36 +96,39 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp">
+            app:cardCornerRadius="24dp"
+            app:cardElevation="3dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="#F0F0F0">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
                 android:orientation="vertical"
-                android:padding="20dp">
+                android:padding="24dp">
 
                 <FrameLayout
-                    android:layout_width="110dp"
-                    android:layout_height="110dp">
+                    android:layout_width="120dp"
+                    android:layout_height="120dp">
 
                     <ImageView
                         android:id="@+id/imgPatient"
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
+                        android:layout_width="110dp"
+                        android:layout_height="110dp"
                         android:layout_gravity="center"
                         android:background="@drawable/bg_circle"
-                        android:padding="3dp"
+                        android:padding="4dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/add_pateinets" />
 
                     <ImageView
-                        android:layout_width="32dp"
-                        android:layout_height="32dp"
+                        android:layout_width="34dp"
+                        android:layout_height="34dp"
                         android:layout_gravity="bottom|end"
                         android:background="@drawable/bg_circle"
-                        android:padding="7dp"
+                        android:elevation="4dp"
+                        android:padding="8dp"
                         android:src="@drawable/pen"
                         app:tint="@color/primary" />
 
@@ -127,98 +138,98 @@
                     android:id="@+id/tvPatientName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="16dp"
                     android:text="Jane Smith"
                     android:textColor="#222222"
-                    android:textSize="18sp"
+                    android:textSize="24sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvPatientInfo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:text="32 years old • Female • Patient ID: #MS-8821"
+                    android:layout_marginTop="6dp"
+                    android:text="32 yrs • Female • B+ • 165cm • 60kg"
                     android:textColor="#777777"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <!-- Allergies -->
 
                 <LinearLayout
+                    android:id="@+id/layoutAllergies"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="20dp"
                     android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:layout_marginEnd="8dp"
-                        android:background="@drawable/bg_chip_red"
-                        android:gravity="center"
-                        android:paddingHorizontal="14dp"
-                        android:text="⚠ Penicillin"
-                        android:textColor="#D04545"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="32dp"
-                        android:background="@drawable/bg_chip_red"
-                        android:gravity="center"
-                        android:paddingHorizontal="14dp"
-                        android:text="⚠ Peanuts"
-                        android:textColor="#D04545"
-                        android:textSize="12sp" />
-
+                    <!-- Dynamic content -->
                 </LinearLayout>
 
                 <!-- Disease -->
 
-                <TextView
+                <LinearLayout
+                    android:id="@+id/layoutDiseases"
                     android:layout_width="wrap_content"
-                    android:layout_height="32dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/bg_chip_yellow"
-                    android:gravity="center"
-                    android:paddingHorizontal="18dp"
-                    android:text="⌁ Type 1 Diabetes"
-                    android:textColor="#8A5A00"
-                    android:textSize="12sp" />
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
+                    <!-- Dynamic content -->
+                </LinearLayout>
 
                 <!-- Current Meds -->
 
                 <LinearLayout
-                    android:layout_width="160dp"
+                    android:id="@+id/layoutMedications"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="18dp"
+                    android:layout_marginTop="26dp"
                     android:background="@drawable/bg_medication"
-                    android:orientation="vertical"
-                    android:padding="14dp">
+                    android:orientation="horizontal"
+                    android:padding="18dp"
+                    android:gravity="center_vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="CURRENT MEDS"
-                        android:textColor="#666666"
-                        android:textSize="10sp"
-                        android:textStyle="bold" />
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:background="@drawable/bg_ai_icon_blue"
+                        android:padding="12dp"
+                        android:src="@drawable/list_medi"
+                        app:tint="@android:color/white" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:text="Metformin 500mg"
-                        android:textColor="#222222"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:layout_weight="1"
+                        android:layout_marginStart="16dp"
+                        android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Twice Daily"
-                        android:textColor="#888888"
-                        android:textSize="11sp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="CURRENT MEDS"
+                            android:textColor="#666666"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05"/>
+
+                        <TextView
+                            android:id="@+id/tvMedication"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="Metformin 500mg"
+                            android:textColor="#222222"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvMedicationFrequency"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Twice Daily"
+                            android:textColor="#888888"
+                            android:textSize="13sp" />
+
+                    </LinearLayout>
 
                 </LinearLayout>
 
@@ -251,6 +262,7 @@
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:id="@+id/tvLastVisitDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Oct 12"
@@ -259,6 +271,7 @@
                     android:textSize="38sp"/>
 
                 <TextView
+                    android:id="@+id/tvLastVisitPurpose"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Routine Checkup"
@@ -294,6 +307,7 @@
                     android:layout_height="wrap_content"/>
 
                 <TextView
+                    android:id="@+id/tvFollowUpDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Nov 15"
@@ -302,6 +316,7 @@
                     android:textStyle="bold"/>
 
                 <TextView
+                    android:id="@+id/tvFollowUpAction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Schedule Sync →"
@@ -741,26 +756,11 @@
                     android:textColor="#202124"/>
 
                 <TextView
+                    android:id="@+id/tvAiSuggestions"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="• Continue Metformin 500mg twice daily"
-                    android:textColor="#555555"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="• Monitor fasting blood glucose every morning"
-                    android:textColor="#555555"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text="• Recommend HbA1c test after 3 months"
+                    android:text="Generating suggestions..."
                     android:textColor="#555555"
                     android:textSize="14sp"/>
 
@@ -865,5 +865,5 @@
             android:layout_height="24dp"/>
 
     </LinearLayout>
-
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

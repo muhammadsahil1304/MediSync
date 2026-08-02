@@ -35,21 +35,26 @@ class MainActivity : AppCompatActivity() {
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.navigation_splash -> {
-                    binding.bottomNavContainer.visibility = View.GONE
-                } R.id.navigation_login -> {
-                binding.bottomNavContainer.visibility = View.GONE
-                }
-                R.id.navigation_signup -> {
+                R.id.navigation_splash, R.id.navigation_login, R.id.navigation_signup,
+                R.id.navigation_doctorVerify, R.id.navigation_adminHome, R.id.navigation_completePatientProfile -> {
                     binding.bottomNavContainer.visibility = View.GONE
                 }
-                R.id.navigation_doctorVerify -> {
-                    binding.bottomNavContainer.visibility = View.GONE
+                R.id.navigation_patientHome, R.id.navigation_visits, R.id.navigation_reports -> {
+                    binding.bottomNavContainer.visibility = View.VISIBLE
+                    if (navView.menu.findItem(R.id.navigation_patientHome) == null) {
+                        navView.menu.clear()
+                        navView.inflateMenu(R.menu.patient_bottom_nav_menu)
+                        navView.setupWithNavController(navController)
+                    }
                 }
-                R.id.navigation_adminHome -> {
-                    binding.bottomNavContainer.visibility = View.GONE
+                R.id.navigation_home, R.id.navigation_patients, R.id.navigation_notifications -> {
+                    binding.bottomNavContainer.visibility = View.VISIBLE
+                    if (navView.menu.findItem(R.id.navigation_home) == null) {
+                        navView.menu.clear()
+                        navView.inflateMenu(R.menu.bottom_nav_menu)
+                        navView.setupWithNavController(navController)
+                    }
                 }
-
                 else -> {
                     binding.bottomNavContainer.visibility = View.VISIBLE
                 }

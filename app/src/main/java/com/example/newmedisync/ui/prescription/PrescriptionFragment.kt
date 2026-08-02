@@ -29,6 +29,7 @@ import java.io.FileOutputStream
 import com.example.newmedisync.databinding.FragmentPrescriptionBinding
 import com.example.newmedisync.room.PrescriptionEntity
 import com.google.firebase.auth.FirebaseAuth
+import android.net.Uri
 
 class PrescriptionBoardFragment : Fragment() {
 
@@ -458,29 +459,51 @@ private fun updateToolSelection(
     private fun savePrescriptionToRoom(
         imagePath: String
     ) {
-
+        val dateStr = SimpleDateFormat("dd MMM yyyy", Locale.getDefault()).format(Date())
         val prescription = PrescriptionEntity(
             patientName = selectedPatientName,
             patientPhone = selectedPatientPhone,
-            visitDate = SimpleDateFormat(
-                "dd MMM yyyy",
-                Locale.getDefault()
-            ).format(Date()),
+            visitDate = dateStr,
             imagePath = imagePath
         )
 
         CoroutineScope(Dispatchers.IO).launch {
-
             AppDatabase
                 .getDatabase(requireContext())
                 .prescriptionDao()
                 .insertPrescription(prescription)
 
-            Handler(Looper.getMainLooper()).post {
+            // Sync to Firestore
+            try {
+                val patientRepo = com.example.newmedisync.firebase.PatientRepository()
+                val patientUid = patientRepo.getUidByPhone(selectedPatientPhone)
+                
+                if (patientUid != null) {
+                    val doctorRepo = com.example.newmedisync.firebase.DoctorRepository()
+                    val imageUrl = doctorRepo.uploadFile(Uri.fromFile(File(imagePath)), "prescriptions")
+                    
+                    val auth = FirebaseAuth.getInstance()
+                    val doctorUid = auth.currentUser?.uid ?: ""
+                    val doctorName = auth.currentUser?.displayName ?: "Doctor"
 
+                    val record = com.example.newmedisync.model.PrescriptionRecord(
+                        patientUid = patientUid,
+                        doctorUid = doctorUid,
+                        doctorName = doctorName,
+                        date = dateStr,
+                        imageUrl = imageUrl,
+                        timestamp = System.currentTimeMillis()
+                    )
+                    patientRepo.savePrescription(record)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+
+            Handler(Looper.getMainLooper()).post {
                 Toast.makeText(
                     requireContext(),
-                    "Prescription Saved",
+                    "Prescription Saved and Synced",
                     Toast.LENGTH_LONG
                 ).show()
             }

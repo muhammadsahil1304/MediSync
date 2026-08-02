@@ -5,6 +5,13 @@
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/navigation_splash">
 
+    <action
+        android:id="@+id/action_global_navigation_welcome"
+        app:destination="@id/navigation_welcome"
+        app:launchSingleTop="true"
+        app:popUpTo="@id/navigation_splash"
+        app:popUpToInclusive="false" />
+
 
     <fragment
         android:id="@+id/navigation_splash"
@@ -12,10 +19,42 @@
         android:label="@string/splash"
         tools:layout="@layout/fragment_splash" >
         <action
-            android:id="@+id/action_navigation_splash_to_navigation_login"
+            android:id="@+id/action_navigation_splash_to_navigation_welcome"
+            app:destination="@id/navigation_welcome"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_adminHome"
+            app:destination="@id/navigation_adminHome"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_home"
+            app:destination="@id/navigation_home"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_patientHome"
+            app:destination="@id/navigation_patientHome"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true" />
+        <action
+            android:id="@+id/action_navigation_splash_to_navigation_completePatientProfile"
+            app:destination="@id/navigation_completePatientProfile"
+            app:popUpTo="@id/navigation_splash"
+            app:popUpToInclusive="true" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_welcome"
+        android:name="com.example.newmedisync.ui.welcome.WelcomeFragment"
+        android:label="Welcome"
+        tools:layout="@layout/fragment_welcome">
+        <action
+            android:id="@+id/action_navigation_welcome_to_navigation_login"
             app:destination="@id/navigation_login" />
         <action
-            android:id="@+id/action_navigation_splash_to_navigation_signup"
+            android:id="@+id/action_navigation_welcome_to_navigation_signup"
             app:destination="@id/navigation_signup" />
     </fragment>
 
@@ -71,12 +110,6 @@
             android:id="@+id/action_navigation_home_to_navigation_doctorVerification"
             app:destination="@id/navigation_doctorVerify" />
     </fragment>
-
-<!--    <fragment-->
-<!--        android:id="@+id/navigation_dashboard"-->
-<!--        android:name="com.example.newmedisync.ui.patients.PatientsFragment"-->
-<!--        android:label="@string/title_dashboard"-->
-<!--        tools:layout="@layout/fragment_patients" />-->
 
     <fragment
         android:id="@+id/navigation_notifications"
@@ -157,6 +190,11 @@
         android:name="com.example.newmedisync.ui.patient.ReportsFragment"
         android:label="Reports"
         tools:layout="@layout/fragment_reports" />
+    <fragment
+        android:id="@+id/navigation_reportScanner"
+        android:name="com.example.newmedisync.ui.patient.ReportScannerFragment"
+        android:label="Scan Report"
+        tools:layout="@layout/fragment_report_scanner" />
     <fragment
         android:id="@+id/navigation_visits"
         android:name="com.example.newmedisync.ui.patient.VisitsFragment"

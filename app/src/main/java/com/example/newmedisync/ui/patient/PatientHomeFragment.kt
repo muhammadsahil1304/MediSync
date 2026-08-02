@@ -52,7 +52,7 @@ class PatientHomeFragment : Fragment() {
                 .setMessage("Are you sure you want to logout?")
                 .setPositiveButton("Yes") { _, _ ->
                     FirebaseAuth.getInstance().signOut()
-                    findNavController().navigate(R.id.navigation_login)
+                    findNavController().navigate(R.id.action_global_navigation_welcome)
                 }
                 .setNegativeButton("No", null)
                 .show()
@@ -75,8 +75,11 @@ class PatientHomeFragment : Fragment() {
         }
 
         binding.btnScanNow.setOnClickListener {
-            // Future implementation for scanning
-            android.widget.Toast.makeText(requireContext(), "Scan AI coming soon...", android.widget.Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.navigation_reportScanner)
+        }
+        
+        binding.cardAiScan.setOnClickListener {
+            findNavController().navigate(R.id.navigation_reportScanner)
         }
     }
 

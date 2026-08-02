@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 class AIRepository {
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-1.5-flash",
+        modelName = "gemini-2.5-flash",
         apiKey = Constants.GEMINI_API_KEY
     )
 
@@ -44,6 +44,31 @@ class AIRepository {
 
     suspend fun getPrescriptionSuggestions(patientData: String): String = withContext(Dispatchers.IO) {
         val prompt = "Based on the following patient data (allergies, diseases, current medications), suggest 3 medical advice points or lifestyle changes. Keep it professional and concise. Patient Data: $patientData"
+        try {
+            val response = generativeModel.generateContent(prompt)
+            response.text ?: ""
+        } catch (e: Exception) {
+            ""
+        }
+    }
+
+    suspend fun analyzeMedicalReport(reportText: String): String = withContext(Dispatchers.IO) {
+        val prompt = """
+            You are an experienced physician.
+            Analyze the following medical report text and provide a structured analysis in ONLY JSON format.
+            {
+              "summary": "Brief overall summary",
+              "abnormalFindings": ["Finding 1", "Finding 2"],
+              "normalFindings": ["Finding 1", "Finding 2"],
+              "recommendations": ["Advice 1", "Advice 2"],
+              "severity": "Low/Moderate/High",
+              "followUp": "Suggested timeline"
+            }
+            
+            Medical Report Text:
+            $reportText
+        """.trimIndent()
+
         try {
             val response = generativeModel.generateContent(prompt)
             response.text ?: ""

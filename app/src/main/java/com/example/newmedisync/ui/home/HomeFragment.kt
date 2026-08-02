@@ -159,7 +159,7 @@ class HomeFragment : Fragment() {
                     FirebaseAuth.getInstance().signOut()
 
                     findNavController().navigate(
-                        R.id.navigation_login
+                        R.id.action_global_navigation_welcome
                     )
 
                     dialog.dismiss()

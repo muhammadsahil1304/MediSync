@@ -36,7 +36,8 @@ class MainActivity : AppCompatActivity() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
                 R.id.navigation_splash, R.id.navigation_login, R.id.navigation_signup,
-                R.id.navigation_doctorVerify, R.id.navigation_adminHome, R.id.navigation_completePatientProfile -> {
+                R.id.navigation_welcome, R.id.navigation_doctorVerify, R.id.navigation_adminHome, 
+                R.id.navigation_completePatientProfile -> {
                     binding.bottomNavContainer.visibility = View.GONE
                 }
                 R.id.navigation_patientHome, R.id.navigation_visits, R.id.navigation_reports -> {

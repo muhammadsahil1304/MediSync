@@ -1,137 +1,99 @@
-//package com.example.newmedisync.ui.splash
-//
-//import android.os.Bundle
-//import android.view.LayoutInflater
-//import android.view.View
-//import android.view.ViewGroup
-//import androidx.fragment.app.Fragment
-//import androidx.navigation.fragment.findNavController
-//import com.example.newmedisync.R
-//
-//
-//class SplashFragment : Fragment() {
-//
-//
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        arguments?.let {
-//
-//        }
-//    }
-//
-//    override fun onCreateView(
-//        inflater: LayoutInflater, container: ViewGroup?,
-//        savedInstanceState: Bundle?
-//    ): View? {
-//        // Inflate the layout for this fragment
-//        val view = inflater.inflate(R.layout.fragment_splash, container, false)
-//
-//        val btnSignIn = view.findViewById<View>(R.id.btnSignIn)
-//        val btnSignUp = view.findViewById<View>(R.id.btnJoinPractice)
-//
-//
-//        btnSignIn.setOnClickListener {
-//            findNavController().navigate(
-//                R.id.action_navigation_splash_to_navigation_login
-//            )
-//        }
-//        btnSignUp.setOnClickListener {
-//            findNavController().navigate(
-//                R.id.action_navigation_splash_to_navigation_signup
-//            )
-//        }
-//
-//        return view
-//    }
-//
-//
-//}
 package com.example.newmedisync.ui.splash
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
-import com.google.android.material.button.MaterialButton
+import com.example.newmedisync.databinding.FragmentSplashBinding
+import com.example.newmedisync.firebase.PatientRepository
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 class SplashFragment : Fragment() {
+
+    private var _binding: FragmentSplashBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        _binding = FragmentSplashBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
-        val view = inflater.inflate(R.layout.fragment_splash, container, false)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        val btnDoctorLogin =
-            view.findViewById<MaterialButton>(R.id.btnDoctorLogin)
+        // Simple animation
+        val fadeIn = AnimationUtils.loadAnimation(requireContext(), android.R.anim.fade_in)
+        binding.ivLogo.startAnimation(fadeIn)
 
-        val btnDoctorSignup =
-            view.findViewById<MaterialButton>(R.id.btnDoctorSignup)
+        // 3-second delay
+        Handler(Looper.getMainLooper()).postDelayed({
+            checkUserSession()
+        }, 3000)
+    }
 
-        val btnPatientLogin =
-            view.findViewById<MaterialButton>(R.id.btnPatientLogin)
+    private fun checkUserSession() {
+        val auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
 
-        val btnPatientSignup =
-            view.findViewById<MaterialButton>(R.id.btnPatientSignup)
-
-
-        // Doctor Login
-        btnDoctorLogin.setOnClickListener {
-
-            val bundle = Bundle().apply {
-                putString("role", "doctor")
-            }
-
-            findNavController().navigate(
-                R.id.action_navigation_splash_to_navigation_login,
-                bundle
-            )
+        if (currentUser != null && currentUser.isEmailVerified) {
+            // User is logged in, navigate based on role
+            navigateToHome(currentUser.uid)
+        } else {
+            // No user logged in, go to Welcome Screen
+            findNavController().navigate(R.id.action_navigation_splash_to_navigation_welcome)
         }
+    }
 
-        // Doctor Signup
-        btnDoctorSignup.setOnClickListener {
+    private fun navigateToHome(uid: String) {
+        val firestore = FirebaseFirestore.getInstance()
+        val patientRepository = PatientRepository()
 
-            val bundle = Bundle().apply {
-                putString("role", "doctor")
+        lifecycleScope.launch {
+            try {
+                val document = firestore.collection("users").document(uid).get().await()
+                val role = document.getString("role")
+
+                when (role) {
+                    "admin" -> {
+                        findNavController().navigate(R.id.action_navigation_splash_to_navigation_adminHome)
+                    }
+                    "doctor" -> {
+                        findNavController().navigate(R.id.action_navigation_splash_to_navigation_home)
+                    }
+                    "patient" -> {
+                        val exists = patientRepository.patientExists()
+                        if (exists) {
+                            findNavController().navigate(R.id.action_navigation_splash_to_navigation_patientHome)
+                        } else {
+                            findNavController().navigate(R.id.action_navigation_splash_to_navigation_completePatientProfile)
+                        }
+                    }
+                    else -> {
+                        findNavController().navigate(R.id.action_navigation_splash_to_navigation_welcome)
+                    }
+                }
+            } catch (e: Exception) {
+                findNavController().navigate(R.id.action_navigation_splash_to_navigation_welcome)
             }
-
-            findNavController().navigate(
-                R.id.action_navigation_splash_to_navigation_signup,
-                bundle
-            )
         }
+    }
 
-        // Patient Login
-        btnPatientLogin.setOnClickListener {
-
-            val bundle = Bundle().apply {
-                putString("role", "patient")
-            }
-
-            findNavController().navigate(
-                R.id.action_navigation_splash_to_navigation_login,
-                bundle
-            )
-        }
-
-        // Patient Signup
-        btnPatientSignup.setOnClickListener {
-
-            val bundle = Bundle().apply {
-                putString("role", "patient")
-            }
-
-            findNavController().navigate(
-                R.id.action_navigation_splash_to_navigation_signup,
-                bundle
-            )
-        }
-
-        return view
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

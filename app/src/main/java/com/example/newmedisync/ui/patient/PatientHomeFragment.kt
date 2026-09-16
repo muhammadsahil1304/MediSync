@@ -2,6 +2,7 @@ package com.example.newmedisync.ui.patient
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -85,6 +86,7 @@ class PatientHomeFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.aiResponse.observe(viewLifecycleOwner) { response ->
+            Log.d("GEMINI REsponse",response)
             android.app.AlertDialog.Builder(requireContext())
                 .setTitle("MediSync AI Assistant")
                 .setMessage(response)

@@ -17,6 +17,7 @@ firebaseAuthKtx = "23.2.1"
 navigationFragmentKtxVersion = "2.9.8"
 navigationUiKtxVersion = "2.9.8"
 generativeai = "0.9.0"
+secrets = "2.0.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,4 +40,5 @@ google-generativeai = { group = "com.google.ai.client.generativeai", name = "gen
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+secrets = { id = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin", version.ref = "secrets" }
 

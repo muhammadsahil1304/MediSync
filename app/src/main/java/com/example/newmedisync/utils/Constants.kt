@@ -1,5 +1,7 @@
 package com.example.newmedisync.utils
 
+import com.example.newmedisync.BuildConfig
+
 object Constants {
-    const val GEMINI_API_KEY = "AQ.Ab8RN6LZjpfakJQYMotnbZF1v86wS-SAVIY__1ZOpOHKWfrs8g"
+    val GEMINI_API_KEY = BuildConfig.GEMINI_API_KEY
 }

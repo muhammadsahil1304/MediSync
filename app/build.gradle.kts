@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("com.google.gms.google-services")
     alias(libs.plugins.ksp)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -17,6 +18,8 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField("String", "GEMINI_API_KEY", "\"\"")
     }
 
     buildTypes {
@@ -38,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         dataBinding = true
+        buildConfig = true
     }
 }
 

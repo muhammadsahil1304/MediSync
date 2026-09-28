@@ -56,31 +56,31 @@ class PatientViewModel : ViewModel() {
         }
     }
 
+    private var isGeneratingInsights = false
+
     fun generateAIInsights() {
+        if (_healthScore.value != null || isGeneratingInsights) return
         val p = _patient.value ?: return
+        isGeneratingInsights = true
         val data = "Age: ${p.age}, Gender: ${p.gender}, Blood: ${p.bloodGroup}, Height: ${p.height}, Weight: ${p.weight}, Allergies: ${p.allergies}, Diseases: ${p.diseases}"
         
         viewModelScope.launch {
-            // Risk Matrix
-            val riskJson = aiRepository.analyzeHealthRisk(data)
+            val jsonResult = aiRepository.getComprehensiveHealthAnalysis(data)
             try {
-                val heart = riskJson.substringAfter("\"heart\":").substringBefore(",").trim().filter { it.isDigit() }.toInt()
-                val diabetes = riskJson.substringAfter("\"diabetes\":").substringBefore(",").trim().filter { it.isDigit() }.toInt()
-                val kidney = riskJson.substringAfter("\"kidney\":").substringBefore("}").trim().filter { it.isDigit() }.toInt()
+                val heart = jsonResult.substringAfter("\"heart\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                val diabetes = jsonResult.substringAfter("\"diabetes\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                val kidney = jsonResult.substringAfter("\"kidney\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
                 _healthRisk.postValue(Triple(heart, diabetes, kidney))
-            } catch (e: Exception) {}
 
-            // Health Score
-            val scoreResult = aiRepository.getHealthScore(data)
-            try {
-                val parts = scoreResult.split(",")
-                val score = parts[0].trim().filter { it.isDigit() }.toInt()
-                val status = parts[1].trim()
+                val score = jsonResult.substringAfter("\"score\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 80
+                val status = jsonResult.substringAfter("\"status\":").substringBefore(",").replace("\"", "").trim()
                 _healthScore.postValue(Pair(score, status))
-            } catch (e: Exception) {}
 
-            // Prescription Suggestions
-            _aiPrescriptions.postValue(aiRepository.getPrescriptionSuggestions(data))
+                val suggestions = jsonResult.substringAfter("\"suggestions\":").substringBefore("}").replace("\"", "").trim()
+                _aiPrescriptions.postValue(suggestions)
+            } catch (e: Exception) {
+                isGeneratingInsights = false
+            }
         }
     }
 

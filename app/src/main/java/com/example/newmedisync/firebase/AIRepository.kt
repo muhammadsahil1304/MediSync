@@ -9,7 +9,7 @@ import kotlinx.coroutines.withContext
 class AIRepository {
 
     private val generativeModel = GenerativeModel(
-        modelName = "gemini-2.5-flash",
+        modelName = "gemini-3.8-flash",
         apiKey = Constants.GEMINI_API_KEY
     )
 
@@ -19,6 +19,27 @@ class AIRepository {
             response.text ?: "No response from AI"
         } catch (e: Exception) {
             "Error: ${e.localizedMessage}"
+        }
+    }
+
+    suspend fun getComprehensiveHealthAnalysis(patientData: String): String = withContext(Dispatchers.IO) {
+        val prompt = """
+            Analyze the following patient data and respond ONLY with a JSON object in this format:
+            {
+              "heart": 20,
+              "diabetes": 15,
+              "kidney": 10,
+              "score": 85,
+              "status": "Good",
+              "suggestions": "1. Drink more water\n2. Exercise 30 mins daily\n3. Reduce sodium intake"
+            }
+            Patient Data: $patientData
+        """.trimIndent()
+        try {
+            val response = generativeModel.generateContent(prompt)
+            response.text ?: ""
+        } catch (e: Exception) {
+            ""
         }
     }
 

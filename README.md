@@ -330,7 +330,7 @@ Make sure you have:
 2. Run the following commands:
 
    ```bash
-   git clone https://github.com/<your-username>/MediSync.git
+   git clone https://github.com/muhammadsahil1304/MediSync.git
    cd MediSync
    ```
 
@@ -508,4 +508,4 @@ Specify your license here, for example MIT. Add a `LICENSE` file to the reposito
 
 ## Contact
 
-Maintained by `<your name>`. Contact: `<your email or LinkedIn>`.
+Maintained by `Mohammad Sahil`. Contact: `muhammadsahil1304@gmail.com`.

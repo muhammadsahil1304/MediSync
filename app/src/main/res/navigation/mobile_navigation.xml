@@ -217,6 +217,79 @@
         <argument
             android:name="doctorUid"
             app:argType="string" />
- </fragment>
+    </fragment>
+
+    <!-- Appointment Destinations -->
+    <fragment
+        android:id="@+id/navigation_appointmentHome"
+        android:name="com.example.newmedisync.ui.appointment.AppointmentHomeFragment"
+        android:label="Book Appointments"
+        tools:layout="@layout/fragment_appointment_home" />
+
+    <fragment
+        android:id="@+id/navigation_doctorSearch"
+        android:name="com.example.newmedisync.ui.appointment.DoctorSearchFragment"
+        android:label="Find Doctor"
+        tools:layout="@layout/fragment_doctor_search" >
+        <argument
+            android:name="specialization"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_doctorProfile"
+        android:name="com.example.newmedisync.ui.appointment.DoctorProfileFragment"
+        android:label="Doctor Profile"
+        tools:layout="@layout/fragment_doctor_profile" >
+        <argument
+            android:name="doctorId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_selectSlot"
+        android:name="com.example.newmedisync.ui.appointment.SelectSlotFragment"
+        android:label="Select Slot"
+        tools:layout="@layout/fragment_select_slot" />
+
+    <fragment
+        android:id="@+id/navigation_appointmentSummary"
+        android:name="com.example.newmedisync.ui.appointment.AppointmentSummaryFragment"
+        android:label="Summary"
+        tools:layout="@layout/fragment_appointment_summary" />
+
+    <fragment
+        android:id="@+id/navigation_appointmentConfirmed"
+        android:name="com.example.newmedisync.ui.appointment.AppointmentConfirmedFragment"
+        android:label="Confirmed"
+        tools:layout="@layout/fragment_appointment_confirmed" >
+        <argument
+            android:name="appointmentId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/navigation_myAppointments"
+        android:name="com.example.newmedisync.ui.appointment.MyAppointmentsFragment"
+        android:label="My Appointments"
+        tools:layout="@layout/fragment_my_appointments" />
+
+    <fragment
+        android:id="@+id/navigation_appointmentDetails"
+        android:name="com.example.newmedisync.ui.appointment.AppointmentDetailsFragment"
+        android:label="Appointment Details"
+        tools:layout="@layout/fragment_appointment_details" >
+        <argument
+            android:name="appointmentId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 
 </navigation>

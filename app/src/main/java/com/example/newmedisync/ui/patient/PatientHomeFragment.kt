@@ -63,6 +63,10 @@ class PatientHomeFragment : Fragment() {
             findNavController().navigate(R.id.navigation_reports)
         }
 
+        binding.cardBookAppointments.setOnClickListener {
+            findNavController().navigate(R.id.navigation_appointmentHome)
+        }
+
         binding.cardTimeline.setOnClickListener {
             findNavController().navigate(R.id.navigation_visits)
         }

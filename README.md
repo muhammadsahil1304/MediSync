@@ -1,111 +1,142 @@
-# 🏥 MediSync
+# MediSync Technical Guide
 
-**A role-based, AI-powered healthcare management platform for Android.**
+**MediSync** is a native Android application for managing healthcare workflows. It provides separate, role-based experiences for patients, doctors, and administrators, and it uses generative AI to give patients health insights.
 
-## Table of Contents
+This document describes what MediSync does, how it is built, and how to set it up, run it, and extend it.
 
-1. [Overview](#1-overview)
-2. [Key Features](#2-key-features)
-3. [Technology Stack](#3-technology-stack)
-4. [System Architecture](#4-system-architecture)
-5. [Authentication & Role-Based Access](#5-authentication--role-based-access)
-6. [Data Layer](#6-data-layer)
-7. [AI Module](#7-ai-module)
-8. [Doctor Verification Workflow](#8-doctor-verification-workflow)
-9. [Project Structure](#9-project-structure)
-10. [Getting Started](#10-getting-started)
-11. [Design Principles](#11-design-principles)
-12. [Roadmap](#12-roadmap)
-13. [Contributing](#13-contributing)
-14. [License](#14-license)
+| | |
+|---|---|
+| **Document type** | Technical overview, setup guide, and reference |
+| **Platform** | Android |
+| **Language** | Kotlin (with XML layouts) |
+| **Architecture** | MVVM with the Repository pattern |
+| **Backend services** | Firebase Authentication, Cloud Firestore |
+| **AI service** | Google Gemini |
 
 ---
 
-## 1. Overview
+## Contents
 
-MediSync is a native Android healthcare management application built with **Kotlin** and **XML layouts**. It provides three separate workflows — for **patients**, **doctors**, and **administrators** — each with its own authentication-driven navigation and dashboard.
-
-- **Patients** manage their health profile, review medical history, visits, prescriptions and upcoming follow-ups, and use AI-powered health features.
-- **Doctors** manage patient information, record medical visits and prescriptions, and access patient records.
-- **Administrators** handle platform-level management, primarily the verification of doctor accounts.
-
-The project is built on **MVVM** combined with the **Repository Pattern**, uses **Firebase** for authentication and cloud storage, **Room** for local persistence, and integrates **Google Gemini** generative AI through a dedicated, isolated AI repository.
-
----
-
-## 2. Key Features
-
-### 👤 Patient
-- Create and manage a personal health profile
-- View medical history, past visits and prescriptions
-- Track upcoming follow-ups
-- Clinical AI Assistant, health-risk analysis, health-score generation and personalized health suggestions
-
-### 🩺 Doctor
-- Manage patient information
-- Add medical visits and prescriptions
-- Access patient records
-- Submit professional credentials for admin verification
-
-### 🛡️ Administrator
-- Review submitted doctor credentials
-- Approve or reject doctor accounts
-- Oversee platform-level management
-
-### 🤖 AI-Powered (Gemini)
-- Clinical AI Assistant
-- Health-risk analysis
-- Health-score generation
-- Personalized health suggestions
+1. [About this document](#1-about-this-document)
+2. [Product overview](#2-product-overview)
+3. [Architecture](#3-architecture)
+4. [Authentication and role-based routing](#4-authentication-and-role-based-routing)
+5. [Data management](#5-data-management)
+6. [AI module](#6-ai-module)
+7. [Doctor verification](#7-doctor-verification)
+8. [Set up and run the application](#8-set-up-and-run-the-application)
+9. [Extend the application](#9-extend-the-application)
+10. [Troubleshooting](#10-troubleshooting)
+11. [Security and privacy considerations](#11-security-and-privacy-considerations)
+12. [Limitations and planned work](#12-limitations-and-planned-work)
+13. [Glossary](#13-glossary)
 
 ---
 
-## 3. Technology Stack
+## 1. About this document
+
+### Audience
+
+This document is for:
+
+- **Android developers** who want to build, run, or extend MediSync.
+- **Technical reviewers** who want to understand the system design.
+
+### Prerequisites
+
+To use this document, you should be familiar with:
+
+- Kotlin and Android application development
+- The Model-View-ViewModel (MVVM) pattern
+- Basic Firebase concepts (projects, Authentication, Firestore)
+
+### Conventions
+
+| Convention | Meaning |
+|---|---|
+| `Monospace` | Class names, file names, commands, and values |
+| **Bold** | Interface elements and key terms on first use |
+| `> [!NOTE]` | Additional information |
+| `> [!IMPORTANT]` | Information required for success |
+| `> [!WARNING]` | Risk of data loss, security exposure, or failure |
+
+Procedures use numbered steps. Each procedure states its goal and, where relevant, how to verify the result.
+
+---
+
+## 2. Product overview
+
+### What MediSync does
+
+MediSync centralizes patient health records and clinical workflows in one mobile application. After sign-in, each user sees only the features that belong to their role.
+
+### User roles and capabilities
+
+| Role | Capabilities |
+|---|---|
+| **Patient** | Manage a health profile. View medical history, visits, and prescriptions. Track upcoming follow-ups. Use AI-powered health features. |
+| **Doctor** | Manage patient information. Add medical visits and prescriptions. Access patient records. Submit professional credentials for verification. |
+| **Administrator** | Review submitted doctor credentials. Approve or reject doctor accounts. Manage platform-level settings. |
+
+### AI-powered features
+
+| Feature | Description |
+|---|---|
+| Clinical AI Assistant | Answers healthcare questions in a conversational interface. |
+| Health-risk analysis | Assesses potential health risks from patient information. |
+| Health-score generation | Produces a summary score of a patient's health status. |
+| Personalized health suggestions | Recommends actions based on the patient's data. |
+
+> [!IMPORTANT]
+> AI-generated content is for informational purposes only. It is not a substitute for professional medical advice, diagnosis, or treatment.
+
+### Technology stack
 
 | Layer | Technology |
 |---|---|
-| Language | Kotlin |
-| UI | Android Fragments, XML layouts, View Binding |
+| User interface | Android Fragments, XML layouts, View Binding |
 | Navigation | Navigation Component |
-| Architecture | MVVM + Repository Pattern |
-| Reactive state | LiveData |
-| Concurrency | Kotlin Coroutines |
+| State management | ViewModel, LiveData |
+| Asynchronous processing | Kotlin Coroutines |
 | Authentication | Firebase Authentication |
 | Cloud database | Cloud Firestore |
 | Local database | Room |
-| Generative AI | Google Gemini (via `AIRepository`) |
+| Generative AI | Google Gemini |
 
 ---
 
-## 4. System Architecture
+## 3. Architecture
 
-MediSync separates presentation, business logic, data access and AI services so each can evolve independently.
+MediSync uses the **MVVM** architecture with the **Repository pattern**. This separates user interface code from business logic, data access, and AI services, so you can change one layer without rewriting the others.
 
-### 4.1 Layered Overview
+### Layers
 
 ```mermaid
 flowchart TD
-    subgraph Presentation["Presentation Layer"]
-        F[Fragments + XML + View Binding]
-        VM[ViewModels + LiveData]
+    subgraph P["Presentation layer"]
+        F["Fragments, XML layouts, View Binding"]
+        VM["ViewModels and LiveData"]
     end
 
-    subgraph Domain["Data Access Layer"]
-        R1[Auth / User Repository]
-        R2[Patient / Visit / Prescription Repository]
-        R3[Doctor Verification Repository]
-        R4[AIRepository]
+    subgraph R["Repository layer"]
+        R1["User and authentication repository"]
+        R2["Patient, visit, and prescription repositories"]
+        R3["Doctor verification repository"]
+        R4["AIRepository"]
     end
 
-    subgraph Sources["Data Sources"]
-        FA[(Firebase Auth)]
-        FS[(Cloud Firestore)]
-        RM[(Room DB)]
-        GM[[Google Gemini API]]
+    subgraph D["Data sources"]
+        FA[("Firebase Authentication")]
+        FS[("Cloud Firestore")]
+        RM[("Room database")]
+        GM[["Google Gemini API"]]
     end
 
     F --> VM
-    VM --> R1 & R2 & R3 & R4
+    VM --> R1
+    VM --> R2
+    VM --> R3
+    VM --> R4
     R1 --> FA
     R1 --> FS
     R2 --> FS
@@ -114,243 +145,367 @@ flowchart TD
     R4 --> GM
 ```
 
-### 4.2 Data Flow
+### Component responsibilities
+
+| Component | Responsibility | Must not |
+|---|---|---|
+| **Fragment** | Displays data, captures user input, observes `LiveData`. | Access Firestore, Room, or the AI service directly. |
+| **ViewModel** | Holds UI state, runs application logic, starts coroutines. | Hold references to views or the Android `Context`. |
+| **Repository** | Provides a single access point for a data type. Chooses between remote, local, and AI sources. | Contain UI logic. |
+| **Data source** | Performs the actual read, write, or API call. | Be called by anything other than a repository. |
+
+### Data flow
+
+Data moves through the layers in one direction. Results return to the interface through observable state.
 
 ```
-Fragment  →  ViewModel  →  Repository  →  Data Source
-   ▲                                            │
-   └──────────── LiveData (UI state) ◄──────────┘
+Fragment → ViewModel → Repository → Data source
+    ▲                                    │
+    └────────── LiveData ◄───────────────┘
 ```
 
-1. A **Fragment** captures user interaction and observes `LiveData` exposed by its ViewModel.
-2. The **ViewModel** holds UI state and application logic, launching **coroutines** for asynchronous work so the main thread is never blocked.
-3. The **Repository** abstracts where data comes from (Firestore, Room, or Gemini) and exposes a clean API to the ViewModel.
-4. The **Data Source** performs the actual I/O (network, database, or AI call).
+1. The user acts in a **Fragment**.
+2. The Fragment calls a **ViewModel** method.
+3. The ViewModel launches a **coroutine** and calls a **Repository**.
+4. The Repository reads from or writes to a **data source**.
+5. The ViewModel publishes the result through **LiveData**.
+6. The Fragment observes the `LiveData` and updates the screen.
 
-### 4.3 Responsibilities
-
-| Component | Responsibility |
-|---|---|
-| **Fragment / XML / View Binding** | Render UI, handle user input, observe state. Contains no data-access logic. |
-| **ViewModel** | Manage UI state, orchestrate use cases, survive configuration changes. |
-| **Repository** | Single source of truth; mediates between remote, local and AI sources. |
-| **Firestore / Room / Gemini** | Persistent cloud data, local/offline data, and generative AI respectively. |
+> [!NOTE]
+> Coroutines keep database, network, and AI calls off the main thread, which prevents the interface from freezing during long operations.
 
 ---
 
-## 5. Authentication & Role-Based Access
+## 4. Authentication and role-based routing
 
-Authentication uses **Firebase Authentication**. After sign-in, the app retrieves the user's **role** from Firestore and routes them to the appropriate dashboard.
-
-```mermaid
-flowchart LR
-    A[Login] --> B[Firebase Auth]
-    B --> C{Fetch role from Firestore}
-    C -->|ADMIN| D[Admin Dashboard]
-    C -->|DOCTOR| E[Doctor Home]
-    C -->|PATIENT| F[Patient Home]
-```
-
-- Each user is identified by a unique **Firebase UID**.
-- The UID is the key that associates medical records (profiles, visits, prescriptions) with the correct user.
-- Navigation is handled by the **Navigation Component**, with role-specific flows so each user type only reaches screens relevant to them.
-
-> **Security note:** Client-side routing is a UX measure, not a security boundary. Access to data must also be enforced with **Firestore Security Rules** (see [Roadmap](#12-roadmap)).
-
----
-
-## 6. Data Layer
-
-### 6.1 Cloud Firestore (primary store)
-
-Firestore stores the platform's core entities:
-
-| Entity | Description |
-|---|---|
-| `users` | Account data and the user's role |
-| `patient profiles` | Health profile for each patient |
-| `visits` | Medical visits recorded by doctors |
-| `prescriptions` | Prescriptions linked to patients and visits |
-| `doctor verification` | Separate collection holding submitted professional information and approval status |
-
-Records are linked through Firebase UIDs.
-
-### 6.2 Room (local persistence)
-
-Room provides local storage where required, supporting **offline-oriented** behavior and reducing dependence on network availability for frequently accessed data.
-
-### 6.3 Concurrency
-
-All repository operations are exposed through **Kotlin Coroutines**, keeping Firestore, Room and AI calls off the main thread. Results are delivered to the UI via **LiveData**.
-
----
-
-## 7. AI Module
-
-AI functionality is powered by **Google Gemini** and is encapsulated in a dedicated **`AIRepository`**.
+MediSync authenticates users with Firebase Authentication. After a successful sign-in, the application reads the user's role from Firestore and opens the matching dashboard.
 
 ```mermaid
 sequenceDiagram
-    participant UI as Fragment
+    participant U as User
+    participant A as Application
+    participant FA as Firebase Authentication
+    participant FS as Cloud Firestore
+
+    U->>A: Enter credentials
+    A->>FA: Authenticate
+    FA-->>A: Return user ID (UID)
+    A->>FS: Read user document by UID
+    FS-->>A: Return role
+    alt Role is Administrator
+        A-->>U: Open Admin Dashboard
+    else Role is Doctor
+        A-->>U: Open Doctor Home
+    else Role is Patient
+        A-->>U: Open Patient Home
+    end
+```
+
+### Role-to-destination mapping
+
+| Role | Destination |
+|---|---|
+| Administrator | Admin Dashboard |
+| Doctor | Doctor Home |
+| Patient | Patient Home |
+
+### User identifiers
+
+Firebase assigns each user a unique **UID**. MediSync uses the UID to associate profiles, visits, and prescriptions with the correct user.
+
+> [!WARNING]
+> Role-based routing controls which screens appear in the application. It does not protect data on its own. Enforce access control on the server by using Firestore Security Rules. See [Security and privacy considerations](#11-security-and-privacy-considerations).
+
+---
+
+## 5. Data management
+
+### Cloud Firestore
+
+Cloud Firestore is the primary data store.
+
+| Entity | Purpose | Linked by |
+|---|---|---|
+| Users | Account information and role | UID |
+| Patient profiles | Health profile of each patient | Patient UID |
+| Visits | Medical visits recorded by doctors | Patient UID |
+| Prescriptions | Prescriptions issued to patients | Patient UID |
+| Doctor verification | Submitted credentials and approval status | Doctor UID |
+
+### Room database
+
+Room stores data locally on the device. Use it for data that the application must read without a network connection. This supports offline-oriented behavior and reduces repeated network requests.
+
+### Choosing a data source
+
+| Requirement | Use |
+|---|---|
+| Data shared across devices or users | Cloud Firestore |
+| Data needed when offline | Room |
+| User identity and sessions | Firebase Authentication |
+| Generated insights | Google Gemini through `AIRepository` |
+
+---
+
+## 6. AI module
+
+The AI module integrates Google Gemini through a dedicated class, `AIRepository`. The user interface never calls the AI service directly.
+
+```mermaid
+sequenceDiagram
+    participant F as Fragment
     participant VM as ViewModel
     participant AI as AIRepository
     participant G as Gemini API
 
-    UI->>VM: User action (e.g. analyse health risk)
-    VM->>AI: Request with patient context
-    AI->>G: Prompt
-    G-->>AI: Generated response
-    AI-->>VM: Parsed result
-    VM-->>UI: LiveData update
+    F->>VM: Request analysis
+    VM->>AI: Pass request and patient context
+    AI->>G: Send prompt
+    G-->>AI: Return generated text
+    AI-->>VM: Return parsed result
+    VM-->>F: Publish result through LiveData
 ```
 
-### Current capabilities
-- **Clinical AI Assistant** — conversational healthcare assistant
-- **Health-risk analysis** — risk assessment from patient data
-- **Health-score generation** — summarized health indicator
-- **Personalized health suggestions** — tailored lifestyle and care guidance
+### Supported operations
 
-### Design benefits
-- The UI never talks to the AI service directly; Fragment → ViewModel → `AIRepository`.
-- Prompting, model configuration and response parsing live in one place.
-- New AI features can be added without touching existing screens.
+| Operation | Input | Output |
+|---|---|---|
+| Clinical AI Assistant | User question | Conversational answer |
+| Health-risk analysis | Patient health information | Risk assessment |
+| Health-score generation | Patient health information | Health score |
+| Personalized suggestions | Patient health information | Recommended actions |
 
-### Planned extensions
+### Why the AI layer is isolated
+
+- **Maintainability.** Prompts, model settings, and response parsing exist in one place.
+- **Replaceability.** You can change the model or provider by modifying only `AIRepository`.
+- **Extensibility.** You can add capabilities without changing existing screens.
+
+### Planned AI capabilities
+
 - Medical report analysis
 - OCR-based report extraction
 - AI-assisted report summarization
 
-> ⚠️ **Disclaimer:** AI-generated output is informational only and is **not a substitute for professional medical advice, diagnosis, or treatment.**
-
 ---
 
-## 8. Doctor Verification Workflow
+## 7. Doctor verification
 
-Doctor accounts require approval before gaining full access.
+Doctor accounts require administrator approval. Verification data is stored in a separate Firestore collection, which keeps credential information apart from general user data.
 
 ```mermaid
 flowchart LR
-    A[Doctor registers] --> B[Submits professional info]
-    B --> C[(Verification collection in Firestore)]
-    C --> D[Admin reviews]
-    D -->|Approve| E[Doctor account activated]
-    D -->|Reject| F[Doctor account rejected]
+    A["Doctor registers"] --> B["Doctor submits professional information"]
+    B --> C[("Verification collection")]
+    C --> D["Administrator reviews submission"]
+    D -->|Approve| E["Account approved"]
+    D -->|Reject| F["Account rejected"]
 ```
 
-Verification data is kept in a **separate Firestore collection**, isolating sensitive credential information from general user data.
+### Workflow steps
+
+1. A doctor creates an account and submits professional information.
+2. The application stores the submission in the verification collection.
+3. An administrator opens the **Admin Dashboard** and reviews the submission.
+4. The administrator approves or rejects the account.
+5. The application updates the verification status for that doctor.
 
 ---
 
-## 9. Project Structure
+## 8. Set up and run the application
 
-> Adjust folder and package names to match your repository.
+### Before you begin
 
-```
-app/
-└── src/main/
-    ├── java/<your.package>/
-    │   ├── ui/
-    │   │   ├── auth/            # Login, registration
-    │   │   ├── admin/           # Admin dashboard, doctor verification
-    │   │   ├── doctor/          # Doctor home, visits, prescriptions
-    │   │   └── patient/         # Patient home, profile, history, AI features
-    │   ├── viewmodel/           # ViewModels (LiveData + coroutines)
-    │   ├── repository/          # Repositories incl. AIRepository
-    │   ├── data/
-    │   │   ├── remote/          # Firebase Auth / Firestore
-    │   │   ├── local/           # Room DAOs, entities, database
-    │   │   └── model/           # Data classes
-    │   └── util/
-    └── res/
-        ├── layout/              # XML layouts
-        ├── navigation/          # Navigation graphs
-        └── ...
-```
+Make sure you have:
 
----
-
-## 10. Getting Started
-
-### Prerequisites
-- Android Studio (latest stable recommended)
-- JDK 17 (or the version required by your Gradle setup)
-- A Firebase project
+- Android Studio (current stable release)
+- A JDK version supported by your Android Gradle Plugin
+- An Android device or emulator
+- A Google account with access to the [Firebase console](https://console.firebase.google.com/)
 - A Google Gemini API key
 
-### Setup
+### Task 1: Clone the repository
 
-1. **Clone the repository**
+1. Open a terminal.
+2. Run the following commands:
+
    ```bash
-   git clone [https://github.com/muhammadsahil1304/MediSync.git]
+   git clone https://github.com/<your-username>/MediSync.git
    cd MediSync
    ```
 
-2. **Configure Firebase**
-   - Create a project in the [Firebase Console](https://console.firebase.google.com/).
-   - Register the Android app using the project's application ID.
-   - Enable **Authentication** (Email/Password) and **Cloud Firestore**.
-   - Download `google-services.json` and place it in `app/`.
+### Task 2: Configure Firebase
 
-3. **Configure the Gemini API key**
+**Goal:** Connect the application to your own Firebase project.
 
-   Add your key to `local.properties` (this file is git-ignored):
+1. In the Firebase console, create a project.
+2. Add an Android app to the project. Enter the application ID defined in `app/build.gradle`.
+3. Download `google-services.json`.
+4. Copy `google-services.json` into the `app/` directory.
+5. In the Firebase console, open **Authentication**, and enable the **Email/Password** sign-in method.
+6. Open **Firestore Database**, and create a database.
+
+> [!WARNING]
+> Do not commit `google-services.json` to a public repository unless you understand the exposure. Add it to `.gitignore` if the project is public.
+
+### Task 3: Configure the Gemini API key
+
+**Goal:** Allow `AIRepository` to call the Gemini API.
+
+1. Open `local.properties` in the project root. Create the file if it does not exist.
+2. Add the following line:
+
    ```properties
-   GEMINI_API_KEY=your_api_key_here
+   GEMINI_API_KEY=<your-api-key>
    ```
-   Expose it via `BuildConfig` in `app/build.gradle.kts`, and never commit it to version control.
 
-4. **Build and run**
-   - Sync Gradle, select a device or emulator, and run the `app` configuration.
+3. Make the key available to the application through `BuildConfig` in your module-level Gradle file.
 
-### Security checklist
-- [ ] `google-services.json` and `local.properties` are not committed
-- [ ] Firestore Security Rules are configured before any production use
-- [ ] API keys are restricted in their respective consoles
+> [!IMPORTANT]
+> `local.properties` is excluded from version control by default. Never place API keys in source files.
 
----
+### Task 4: Build and run
 
-## 11. Design Principles
+1. Open the project in Android Studio.
+2. Wait for Gradle sync to finish.
+3. Select a device or emulator.
+4. Click **Run**.
 
-- **Separation of concerns** — presentation, business logic, data access and AI are independent layers.
-- **Single source of truth** — repositories mediate all data access.
-- **Reactive UI** — LiveData drives UI updates from state changes.
-- **Non-blocking operations** — Coroutines keep the main thread responsive.
-- **Modularity and extensibility** — new features (e.g. report OCR) can be added without heavy coupling to existing UI.
-- **Role isolation** — dedicated flows for patients, doctors and administrators.
+**Verify the result:** The login screen appears. Create a test account, and confirm that the application opens the dashboard for the role you selected.
 
----
+### Create an administrator account
 
-## 12. Roadmap
+The role is stored in the user's Firestore document. To create an administrator:
 
-- [ ] Medical report analysis
-- [ ] OCR-based report extraction
-- [ ] AI-assisted report summarization
-- [ ] Firestore Security Rules enforcing role-based data access
-- [ ] Expanded offline support and Room ↔ Firestore sync
-- [ ] Unit and instrumentation tests for ViewModels and Repositories
-- [ ] Dependency injection (Hilt)
-- [ ] Appointment scheduling and notifications for follow-ups
+1. Register a normal account in the application.
+2. In the Firestore console, open the user's document in the users collection.
+3. Set the role field to the administrator value used by the application.
+4. Sign out and sign in again.
 
 ---
 
-## 13. Contributing
+## 9. Extend the application
 
-Contributions are welcome.
+To add a feature, follow the existing layer boundaries. The following procedure adds a new AI capability, such as report summarization.
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Commit your changes: `git commit -m "Add your feature"`
-4. Push the branch: `git push origin feature/your-feature`
-5. Open a Pull Request
+### Task: Add an AI capability
 
-Please follow the existing MVVM + Repository structure and keep UI, logic and data access separated.
+**Goal:** Expose a new AI operation to a screen without breaking layer separation.
+
+1. **Add a method to `AIRepository`.** Build the prompt, call Gemini, and return a parsed result.
+2. **Add a method to the relevant ViewModel.** Launch a coroutine, call the repository, and post the result to `LiveData`.
+3. **Observe the `LiveData` in the Fragment.** Update the interface when the result arrives.
+4. **Handle failures.** Return an error state from the repository, and display a message in the Fragment.
+
+### Illustrative pattern
+
+The following example shows the pattern. Names are illustrative and do not match the source exactly.
+
+```kotlin
+// Repository: owns the AI call
+class AIRepository {
+    suspend fun summarizeReport(text: String): Result<String> {
+        // Build the prompt, call the Gemini API, and parse the response.
+    }
+}
+
+// ViewModel: owns UI state
+class ReportViewModel(private val aiRepository: AIRepository) : ViewModel() {
+    private val _summary = MutableLiveData<Result<String>>()
+    val summary: LiveData<Result<String>> = _summary
+
+    fun summarize(text: String) {
+        viewModelScope.launch {
+            _summary.value = aiRepository.summarizeReport(text)
+        }
+    }
+}
+
+// Fragment: observes state
+viewModel.summary.observe(viewLifecycleOwner) { result ->
+    // Update the interface.
+}
+```
+
+### Guidelines
+
+- Keep AI logic in `AIRepository` only.
+- Never access Firestore or Room from a Fragment.
+- Expose state to the interface through `LiveData`.
 
 ---
 
-## 14. License
+## 10. Troubleshooting
 
-This project is licensed under the **[MIT License](LICENSE)** — replace with your chosen license.
+| Symptom | Probable cause | Resolution |
+|---|---|---|
+| Build fails with a missing Google services file error | `google-services.json` is missing or in the wrong directory. | Place the file in `app/`, and sync Gradle. |
+| Sign-in fails for every account | Email/Password provider is not enabled. | Enable it under **Authentication** in the Firebase console. |
+| Firestore operations fail with a permission error | Security rules deny the request. | Review and update your Firestore Security Rules. |
+| AI features return an error or empty result | Gemini API key is missing, invalid, or restricted. | Check `GEMINI_API_KEY` in `local.properties`, and rebuild the project. |
+| User opens the wrong dashboard | The role field in the user's document is incorrect. | Correct the role value in Firestore, and sign in again. |
+| Doctor cannot access doctor features | The account is not yet approved. | Have an administrator approve the account. |
 
 ---
 
-<p align="center">Built with ❤️ using Kotlin, Firebase, and Gemini.</p>
+## 11. Security and privacy considerations
+
+MediSync handles health-related data, which is sensitive. Review the following before any real-world use.
+
+| Area | Recommendation |
+|---|---|
+| **Access control** | Write Firestore Security Rules so that users can read and write only the records they are permitted to access. Do not rely on client-side routing. |
+| **Secrets** | Keep API keys out of source control. Restrict keys in their provider consoles. |
+| **AI data sharing** | Patient data sent to the Gemini API leaves the device. Share the minimum data required. |
+| **Regulatory compliance** | Health data is subject to regulations such as HIPAA or GDPR, depending on region. Assess compliance requirements before processing real patient data. |
+| **Medical reliability** | Present AI output as informational. Do not use it for clinical decisions. |
+
+> [!WARNING]
+> This project is intended for learning and demonstration. Do not use it with real patient data without a full security and compliance review.
+
+---
+
+## 12. Limitations and planned work
+
+### Current limitations
+
+- AI output depends on the model and the quality of the supplied data, and it can be incorrect.
+- Offline support is partial. Only data stored in Room is available without a network connection.
+- Access control must be completed in Firestore Security Rules for production use.
+
+### Planned work
+
+- Medical report analysis
+- OCR-based report extraction
+- AI-assisted report summarization
+- Expanded offline synchronization between Room and Firestore
+- Automated tests for ViewModels and repositories
+
+---
+
+## 13. Glossary
+
+| Term | Definition |
+|---|---|
+| **AIRepository** | The class that isolates all communication with the Gemini API. |
+| **Cloud Firestore** | A cloud NoSQL document database from Firebase. |
+| **Coroutine** | A Kotlin construct for asynchronous work that does not block the calling thread. |
+| **Fragment** | An Android component that represents a portion of the user interface. |
+| **Firebase Authentication** | A service that verifies user identity. |
+| **LiveData** | An observable data holder that is aware of the Android lifecycle. |
+| **MVVM** | Model-View-ViewModel, an architecture that separates interface, state, and data. |
+| **Navigation Component** | An Android library for managing screen navigation. |
+| **Repository pattern** | A design pattern that hides data-source details behind a single interface. |
+| **Room** | An Android library for local SQLite database access. |
+| **UID** | The unique identifier that Firebase assigns to each user. |
+| **View Binding** | A feature that generates type-safe references to layout views. |
+
+---
+
+## License
+
+Specify your license here, for example MIT. Add a `LICENSE` file to the repository root.
+
+## Contact
+
+Maintained by `<your name>`. Contact: `<your email or LinkedIn>`.

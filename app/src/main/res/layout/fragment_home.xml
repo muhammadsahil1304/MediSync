@@ -332,6 +332,7 @@
 
                 <!-- Card 4 -->
                 <androidx.cardview.widget.CardView
+                    android:id="@+id/cvAppointments"
                     android:layout_width="0dp"
                     android:layout_height="120dp"
                     android:layout_columnWeight="1"
@@ -348,15 +349,16 @@
                         <ImageView
                             android:layout_width="@dimen/_50dp"
                             android:layout_height="@dimen/_50dp"
-                            android:src="@drawable/history"
-                            android:padding="@dimen/_3dp"
-                            android:background="@drawable/bg_quickaction_history"/>
+                            android:src="@drawable/calender"
+                            android:padding="8dp"
+                            android:background="@drawable/bg_quickaction_history"
+                            app:tint="@color/primaryBlue"/>
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
-                            android:text="Visit History"
+                            android:text="Appointments"
                             android:textColor="@color/black"
                             android:textSize="12sp"
                             android:gravity="center" />

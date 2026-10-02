@@ -103,12 +103,15 @@
             <action
                 android:id="@+id/action_navigation_home_to_navigation_Add_patients"
                 app:destination="@id/navigation_addPatients" />
-        <action
+            <action
                 android:id="@+id/action_navigation_home_to_navigation_patient"
                 app:destination="@id/navigation_patients" />
-        <action
-            android:id="@+id/action_navigation_home_to_navigation_doctorVerification"
-            app:destination="@id/navigation_doctorVerify" />
+            <action
+                android:id="@+id/action_navigation_home_to_navigation_doctorVerification"
+                app:destination="@id/navigation_doctorVerify" />
+            <action
+                android:id="@+id/action_navigation_home_to_navigation_doctorAppointments"
+                app:destination="@id/navigation_doctorAppointments" />
     </fragment>
 
     <fragment
@@ -290,6 +293,28 @@
             app:argType="string"
             app:nullable="true"
             android:defaultValue="@null" />
+    </fragment>
+
+    <!-- Doctor Appointment Destinations -->
+    <fragment
+        android:id="@+id/navigation_doctorAppointments"
+        android:name="com.example.newmedisync.ui.doctorAppointment.DoctorAppointmentsFragment"
+        android:label="Doctor Appointments"
+        tools:layout="@layout/fragment_doctor_appointments" />
+
+    <fragment
+        android:id="@+id/navigation_doctorAppointmentDetails"
+        android:name="com.example.newmedisync.ui.doctorAppointment.DoctorAppointmentDetailsFragment"
+        android:label="Doctor Appointment Details"
+        tools:layout="@layout/fragment_doctor_appointment_details" >
+        <argument
+            android:name="appointmentId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_doctorAppointmentDetails_to_patientProfile"
+            app:destination="@id/navigation_patientProfile" />
     </fragment>
 
 </navigation>

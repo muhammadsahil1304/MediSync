@@ -143,6 +143,44 @@ class AppointmentRepository {
         }
     }
 
+    suspend fun getDoctorAppointments(doctorId: String): List<Appointment> {
+        return try {
+            val snapshot = firestore.collection("appointments")
+                .whereEqualTo("doctorId", doctorId)
+                .get()
+                .await()
+            snapshot.toObjects(Appointment::class.java).sortedBy { it.timestamp }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    fun listenDoctorAppointments(doctorId: String, onUpdate: (List<Appointment>) -> Unit, onError: (Exception) -> Unit) {
+        firestore.collection("appointments")
+            .whereEqualTo("doctorId", doctorId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    onError(error)
+                    return@addSnapshotListener
+                }
+                if (snapshot != null) {
+                    val list = snapshot.toObjects(Appointment::class.java).sortedBy { it.timestamp }
+                    onUpdate(list)
+                }
+            }
+    }
+
+    suspend fun updateAppointmentStatus(appointmentId: String, status: String) {
+        firestore.collection("appointments")
+            .document(appointmentId)
+            .update("status", status)
+            .await()
+    }
+
+    fun getCurrentDoctorUid(): String? {
+        return auth.currentUser?.uid
+    }
+
     fun getCurrentPatientUid(): String? {
         return auth.currentUser?.uid
     }

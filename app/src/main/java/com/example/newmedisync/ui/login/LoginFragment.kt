@@ -160,6 +160,10 @@ class LoginFragment : Fragment() {
 
                 val role = document.getString("role")
 
+                context?.let { ctx ->
+                    com.example.newmedisync.utils.NotificationHelper.startAppointmentNotificationListener(ctx)
+                }
+
                 when (role) {
 
                     "admin" -> {

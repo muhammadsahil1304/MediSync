@@ -367,6 +367,43 @@
 
                 </androidx.cardview.widget.CardView>
 
+                <!-- Card 5: My Schedule -->
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/cvSchedule"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="6dp"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="20dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <ImageView
+                            android:layout_width="@dimen/_50dp"
+                            android:layout_height="@dimen/_50dp"
+                            android:src="@drawable/board"
+                            android:padding="8dp"
+                            android:background="@drawable/bg_quickaction_add"
+                            app:tint="@color/primaryBlue"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:text="My Schedule"
+                            android:textColor="@color/black"
+                            android:textSize="12sp"
+                            android:gravity="center" />
+
+                    </LinearLayout>
+
+                </androidx.cardview.widget.CardView>
+
             </GridLayout>
 
             <!-- Upcoming Next -->

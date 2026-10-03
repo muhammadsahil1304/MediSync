@@ -129,6 +129,13 @@ class HomeFragment : Fragment() {
                 )
             }
         }
+        binding.cvSchedule.setOnClickListener {
+            checkAccess {
+                findNavController().navigate(
+                    R.id.action_navigation_home_to_navigation_doctorSchedule
+                )
+            }
+        }
         binding.addPatients.setOnClickListener {
             checkAccess {
                 findNavController().navigate(

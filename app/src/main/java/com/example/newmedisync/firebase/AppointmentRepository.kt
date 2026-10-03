@@ -177,6 +177,31 @@ class AppointmentRepository {
             .await()
     }
 
+    suspend fun saveDoctorAvailability(availability: com.example.newmedisync.model.DoctorAvailability) {
+        val docId = availability.locationId.ifBlank { "default_${availability.doctorId}" }
+        firestore.collection("doctor_verifications")
+            .document(availability.doctorId)
+            .collection("availabilities")
+            .document(docId)
+            .set(availability)
+            .await()
+    }
+
+    suspend fun getDoctorAvailability(doctorId: String, locationId: String): com.example.newmedisync.model.DoctorAvailability? {
+        return try {
+            val docId = locationId.ifBlank { "default_${doctorId}" }
+            val doc = firestore.collection("doctor_verifications")
+                .document(doctorId)
+                .collection("availabilities")
+                .document(docId)
+                .get()
+                .await()
+            doc.toObject(com.example.newmedisync.model.DoctorAvailability::class.java)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     fun getCurrentDoctorUid(): String? {
         return auth.currentUser?.uid
     }

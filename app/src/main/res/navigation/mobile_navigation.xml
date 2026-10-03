@@ -112,6 +112,9 @@
             <action
                 android:id="@+id/action_navigation_home_to_navigation_doctorAppointments"
                 app:destination="@id/navigation_doctorAppointments" />
+            <action
+                android:id="@+id/action_navigation_home_to_navigation_doctorSchedule"
+                app:destination="@id/navigation_doctorSchedule" />
     </fragment>
 
     <fragment
@@ -316,5 +319,11 @@
             android:id="@+id/action_doctorAppointmentDetails_to_patientProfile"
             app:destination="@id/navigation_patientProfile" />
     </fragment>
+
+    <fragment
+        android:id="@+id/navigation_doctorSchedule"
+        android:name="com.example.newmedisync.ui.doctorSchedule.DoctorScheduleFragment"
+        android:label="My Schedule"
+        tools:layout="@layout/fragment_doctor_schedule" />
 
 </navigation>

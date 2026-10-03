@@ -54,6 +54,9 @@ class AppointmentViewModel : ViewModel() {
     private val _timeSlots = MutableLiveData<List<TimeSlot>>()
     val timeSlots: LiveData<List<TimeSlot>> = _timeSlots
 
+    private val _slotEmptyMessage = MutableLiveData<String>()
+    val slotEmptyMessage: LiveData<String> = _slotEmptyMessage
+
     // Selected Time Slot
     private val _selectedTimeSlot = MutableLiveData<TimeSlot?>()
     val selectedTimeSlot: LiveData<TimeSlot?> = _selectedTimeSlot
@@ -163,41 +166,60 @@ class AppointmentViewModel : ViewModel() {
     }
 
     fun generateAvailableDates() {
-        val dateItems = mutableListOf<DateItem>()
-        val calendar = Calendar.getInstance()
+        val doctor = _selectedDoctor.value ?: return
+        val location = _selectedLocation.value ?: return
 
-        val fullSdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
-        val dayOfWeekSdf = SimpleDateFormat("EEE", Locale.getDefault())
-        val dayNumSdf = SimpleDateFormat("dd", Locale.getDefault())
-        val monthSdf = SimpleDateFormat("MMM", Locale.getDefault())
+        viewModelScope.launch {
+            val availability = appointmentRepository.getDoctorAvailability(doctor.uid, location.id)
+            val dateItems = mutableListOf<DateItem>()
+            val calendar = Calendar.getInstance()
 
-        val location = _selectedLocation.value
-        val availableDays = location?.availableDays ?: emptyList()
+            val fullSdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val dayOfWeekSdf = SimpleDateFormat("EEE", Locale.getDefault())
+            val fullDaySdf = SimpleDateFormat("EEEE", Locale.getDefault())
+            val dayNumSdf = SimpleDateFormat("dd", Locale.getDefault())
+            val monthSdf = SimpleDateFormat("MMM", Locale.getDefault())
 
-        for (i in 0 until 14) {
-            val date = calendar.time
-            val dateString = fullSdf.format(date)
-            val dayOfWeek = dayOfWeekSdf.format(date).uppercase(Locale.getDefault())
-            val dayNum = dayNumSdf.format(date)
-            val monthStr = monthSdf.format(date).uppercase(Locale.getDefault())
+            val availableDays = location.availableDays
 
-            val isDayAvailable = if (availableDays.isEmpty()) true else {
-                availableDays.any { dayOfWeek.startsWith(it, ignoreCase = true) }
-            }
+            for (i in 0 until 14) {
+                val date = calendar.time
+                val dateString = fullSdf.format(date)
+                val dayOfWeek = dayOfWeekSdf.format(date).uppercase(Locale.getDefault())
+                val fullDayName = fullDaySdf.format(date)
+                val dayNum = dayNumSdf.format(date)
+                val monthStr = monthSdf.format(date).uppercase(Locale.getDefault())
 
-            dateItems.add(
-                DateItem(
-                    date = date,
-                    dateString = dateString,
-                    dayOfWeek = dayOfWeek,
-                    dayNum = dayNum,
-                    monthStr = monthStr,
-                    isAvailable = isDayAvailable
+                val isDayAvailable = if (availability != null && availability.schedules.isNotEmpty()) {
+                    val daySched = availability.schedules[fullDayName]
+                    daySched?.enabled == true
+                } else if (availableDays.isNotEmpty()) {
+                    availableDays.any { dayOfWeek.startsWith(it, ignoreCase = true) }
+                } else {
+                    true
+                }
+
+                dateItems.add(
+                    DateItem(
+                        date = date,
+                        dateString = dateString,
+                        dayOfWeek = dayOfWeek,
+                        dayNum = dayNum,
+                        monthStr = monthStr,
+                        isAvailable = isDayAvailable
+                    )
                 )
-            )
-            calendar.add(Calendar.DAY_OF_YEAR, 1)
+                calendar.add(Calendar.DAY_OF_YEAR, 1)
+            }
+            _availableDates.value = dateItems
+
+            if (_selectedDate.value == null) {
+                val firstAvail = dateItems.firstOrNull { it.isAvailable }
+                if (firstAvail != null) {
+                    selectDate(firstAvail)
+                }
+            }
         }
-        _availableDates.value = dateItems
     }
 
     fun selectDate(dateItem: DateItem) {
@@ -208,24 +230,100 @@ class AppointmentViewModel : ViewModel() {
 
     private fun loadAvailableTimeSlots(dateItem: DateItem) {
         val doctor = _selectedDoctor.value ?: return
+        val location = _selectedLocation.value ?: return
         val dateStr = dateItem.dateString
 
+        val fullDaySdf = SimpleDateFormat("EEEE", Locale.getDefault())
+        val fullDayName = fullDaySdf.format(dateItem.date)
+
         viewModelScope.launch {
+            val availability = appointmentRepository.getDoctorAvailability(doctor.uid, location.id)
+            val daySched = availability?.schedules?.get(fullDayName)
+
+            if (availability != null && (daySched == null || !daySched.enabled)) {
+                _timeSlots.value = emptyList()
+                _slotEmptyMessage.value = "No appointments available on $fullDayName."
+                return@launch
+            }
+
+            val startStr = daySched?.startTime ?: "09:00 AM"
+            val endStr = daySched?.endTime ?: "05:00 PM"
+
+            val startMin = parseTimeToMinutes(startStr) ?: 540
+            val endMin = parseTimeToMinutes(endStr) ?: 1020
+
+            val isToday = isTodayDate(dateItem.date)
+            val currentMin = if (isToday) {
+                val now = Calendar.getInstance()
+                now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE)
+            } else {
+                -1
+            }
+
+            val candidateSlots = mutableListOf<String>()
+            var currMin = startMin
+            val slotDuration = 30
+
+            while (currMin + slotDuration <= endMin) {
+                if (!isToday || currMin > currentMin) {
+                    candidateSlots.add(formatMinutesTo12H(currMin))
+                }
+                currMin += slotDuration
+            }
+
+            if (candidateSlots.isEmpty()) {
+                _timeSlots.value = emptyList()
+                _slotEmptyMessage.value = if (isToday) "No remaining slots for today." else "No appointments available on $fullDayName."
+                return@launch
+            }
+
             val bookedSlots = appointmentRepository.getBookedTimeSlots(doctor.uid, dateStr)
 
-            val baseSlots = listOf(
-                "09:00 AM", "09:30 AM", "10:00 AM", "10:30 AM", "11:00 AM", "11:30 AM",
-                "04:00 PM", "04:30 PM", "05:00 PM", "05:30 PM", "06:00 PM", "06:30 PM", "07:00 PM"
-            )
-
-            val slots = baseSlots.map { time ->
+            val slots = candidateSlots.map { time ->
                 TimeSlot(
                     time = time,
                     isAvailable = !bookedSlots.contains(time)
                 )
             }
+
+            val hasAvailableSlot = slots.any { it.isAvailable }
+            if (!hasAvailableSlot) {
+                _slotEmptyMessage.value = "No available slots for this day."
+            } else {
+                _slotEmptyMessage.value = ""
+            }
+
             _timeSlots.value = slots
         }
+    }
+
+    private fun isTodayDate(date: java.util.Date): Boolean {
+        val today = Calendar.getInstance()
+        val target = Calendar.getInstance().apply { time = date }
+        return today.get(Calendar.YEAR) == target.get(Calendar.YEAR) &&
+                today.get(Calendar.DAY_OF_YEAR) == target.get(Calendar.DAY_OF_YEAR)
+    }
+
+    private fun parseTimeToMinutes(timeStr: String): Int? {
+        return try {
+            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+            val date = sdf.parse(timeStr) ?: return null
+            val cal = Calendar.getInstance().apply { time = date }
+            cal.get(Calendar.HOUR_OF_DAY) * 60 + cal.get(Calendar.MINUTE)
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    private fun formatMinutesTo12H(minutes: Int): String {
+        val hours = minutes / 60
+        val mins = minutes % 60
+        val cal = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hours)
+            set(Calendar.MINUTE, mins)
+        }
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        return sdf.format(cal.time).uppercase(Locale.getDefault())
     }
 
     fun selectTimeSlot(slot: TimeSlot) {
@@ -262,6 +360,15 @@ class AppointmentViewModel : ViewModel() {
         _isLoading.value = true
         viewModelScope.launch {
             try {
+                // Double-booking check: verify slot is still free in Firestore
+                val currentBooked = appointmentRepository.getBookedTimeSlots(doctor.uid, date.dateString)
+                if (currentBooked.contains(slot.time)) {
+                    _isLoading.value = false
+                    _bookingResult.value = Pair(false, "This time slot has just been booked by another patient. Please select a different time slot.")
+                    loadAvailableTimeSlots(date)
+                    return@launch
+                }
+
                 val appointment = Appointment(
                     patientId = patientUid,
                     patientName = _patientName.value ?: "Patient",

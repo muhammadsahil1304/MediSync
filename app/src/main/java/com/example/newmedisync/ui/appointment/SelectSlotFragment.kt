@@ -95,6 +95,19 @@ class SelectSlotFragment : Fragment() {
 
         viewModel.timeSlots.observe(viewLifecycleOwner) { slots ->
             timeSlotAdapter.updateSlots(slots)
+            if (slots.isNullOrEmpty()) {
+                binding.rvTimeSlots.visibility = View.GONE
+                binding.tvEmptySlots.visibility = View.VISIBLE
+            } else {
+                binding.rvTimeSlots.visibility = View.VISIBLE
+                binding.tvEmptySlots.visibility = View.GONE
+            }
+        }
+
+        viewModel.slotEmptyMessage.observe(viewLifecycleOwner) { msg ->
+            if (msg.isNotBlank()) {
+                binding.tvEmptySlots.text = msg
+            }
         }
 
         viewModel.selectedTimeSlot.observe(viewLifecycleOwner) { slot ->

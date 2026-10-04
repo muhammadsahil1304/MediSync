@@ -17,7 +17,7 @@
             android:orientation="vertical"
             android:paddingBottom="24dp">
 
-            <!-- Top Header -->
+            <!-- Top Header Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -41,15 +41,24 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginStart="12dp"
-                    android:text="Appointment Details"
+                    android:text="Digital Prescription"
                     android:textColor="@color/textPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
             </LinearLayout>
 
-            <!-- Patient & Appointment Summary Card -->
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="32dp"
+                android:visibility="gone" />
+
+            <!-- Prescription Document Card -->
             <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardPrescriptionDocument"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
@@ -66,73 +75,47 @@
                     android:orientation="vertical"
                     android:padding="20dp">
 
+                    <!-- MediSync Doctor Header -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
                         android:gravity="center_vertical">
 
-                        <com.google.android.material.imageview.ShapeableImageView
-                            android:id="@+id/imgPatient"
-                            android:layout_width="56dp"
-                            android:layout_height="56dp"
-                            android:scaleType="centerCrop"
-                            android:src="@drawable/patients"
-                            app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.Corner.Full" />
+                        <ImageView
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:src="@drawable/medisynclogo" />
 
                         <LinearLayout
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:layout_marginStart="14dp"
+                            android:layout_marginStart="12dp"
                             android:orientation="vertical">
 
                             <TextView
-                                android:id="@+id/tvPatientName"
+                                android:id="@+id/tvDoctorName"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Mohammad Sahil"
+                                android:text="Dr. Rahul Sharma"
                                 android:textColor="@color/textPrimary"
                                 android:textSize="18sp"
                                 android:textStyle="bold" />
 
                             <TextView
-                                android:id="@+id/tvPatientSub"
+                                android:id="@+id/tvDoctorSpec"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="Patient Consultation"
+                                android:text="General Physician"
                                 android:textColor="@color/primaryBlue"
                                 android:textSize="13sp"
                                 android:textStyle="bold" />
 
                         </LinearLayout>
 
-                        <TextView
-                            android:id="@+id/tvStatusBadge"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Upcoming"
-                            android:textColor="#1565C0"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
-                            android:background="@drawable/bg_chip_blue"
-                            android:paddingHorizontal="10dp"
-                            android:paddingVertical="4dp" />
-
                     </LinearLayout>
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/btnViewPatient"
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:layout_marginTop="16dp"
-                        android:text="View Patient Medical Profile"
-                        android:textColor="@color/primaryBlue"
-                        android:textSize="13sp"
-                        app:cornerRadius="22dp"
-                        android:backgroundTint="@color/lightBlue"
-                        style="@style/Widget.MaterialComponents.Button.TextButton" />
 
                     <View
                         android:layout_width="match_parent"
@@ -140,11 +123,36 @@
                         android:layout_marginVertical="16dp"
                         android:background="#F0F0F0" />
 
-                    <!-- Date & Time -->
+                    <!-- Patient & Date Info -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Patient Name"
+                                android:textColor="@color/textSecondary"
+                                android:textSize="12sp" />
+
+                            <TextView
+                                android:id="@+id/tvPatientName"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="2dp"
+                                android:text="Mohammad Sahil"
+                                android:textColor="@color/textPrimary"
+                                android:textSize="15sp"
+                                android:textStyle="bold" />
+
+                        </LinearLayout>
 
                         <LinearLayout
                             android:layout_width="0dp"
@@ -164,32 +172,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginTop="2dp"
-                                android:text="30 September 2026"
-                                android:textColor="@color/textPrimary"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Time Slot"
-                                android:textColor="@color/textSecondary"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvTimeSlot"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="06:30 PM"
+                                android:text="04 Oct 2026"
                                 android:textColor="@color/textPrimary"
                                 android:textSize="15sp"
                                 android:textStyle="bold" />
@@ -204,95 +187,128 @@
                         android:layout_marginVertical="16dp"
                         android:background="#F0F0F0" />
 
-                    <!-- Hospital & Fee -->
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Hospital / Practice Location"
-                        android:textColor="@color/textSecondary"
-                        android:textSize="12sp" />
-
-                    <TextView
-                        android:id="@+id/tvLocationName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="Fortis Hospital, Jaipur"
-                        android:textColor="@color/textPrimary"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/tvLocationAddress"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="2dp"
-                        android:text="JLN Marg, Malviya Nagar"
-                        android:textColor="@color/textSecondary"
-                        android:textSize="13sp" />
-
-                    <View
+                    <!-- Diagnosis Section -->
+                    <LinearLayout
+                        android:id="@+id/layoutDiagnosisSection"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:layout_marginVertical="16dp"
-                        android:background="#F0F0F0" />
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="DIAGNOSIS"
+                            android:textColor="@color/primaryBlue"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05" />
+
+                        <TextView
+                            android:id="@+id/tvDiagnosis"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="• Viral Fever"
+                            android:textColor="@color/textPrimary"
+                            android:textSize="15sp" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginVertical="16dp"
+                            android:background="#F0F0F0" />
+
+                    </LinearLayout>
+
+                    <!-- Medicines Section -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PRESCRIBED MEDICINES"
+                        android:textColor="@color/primaryBlue"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
 
                     <LinearLayout
+                        android:id="@+id/layoutMedicines"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="12dp"
+                        android:orientation="vertical" />
 
-                        <LinearLayout
-                            android:layout_width="0dp"
+                    <!-- Instructions Section -->
+                    <LinearLayout
+                        android:id="@+id/layoutInstructionsSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="#F0F0F0" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
+                            android:text="ADDITIONAL INSTRUCTIONS"
+                            android:textColor="@color/primaryBlue"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:letterSpacing="0.05" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Consultation Fee"
-                                android:textColor="@color/textSecondary"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvFee"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="₹800"
-                                android:textColor="@color/primaryBlue"
-                                android:textSize="18sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="0dp"
+                        <TextView
+                            android:id="@+id/tvInstructions"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:orientation="vertical">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Appointment ID"
-                                android:textColor="@color/textSecondary"
-                                android:textSize="12sp" />
-
-                            <TextView
-                                android:id="@+id/tvAppointmentId"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="APT_12345"
-                                android:textColor="@color/textPrimary"
-                                android:textSize="14sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
+                            android:layout_marginTop="4dp"
+                            android:text="Drink plenty of fluids and take rest."
+                            android:textColor="@color/textPrimary"
+                            android:textSize="14sp" />
 
                     </LinearLayout>
+
+                    <!-- Follow-Up Section -->
+                    <LinearLayout
+                        android:id="@+id/layoutFollowUpSection"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:orientation="vertical">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginBottom="16dp"
+                            android:background="#F0F0F0" />
+
+                        <TextView
+                            android:id="@+id/tvFollowUp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Follow-up in 5 Days"
+                            android:textColor="@color/textSecondary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginVertical="16dp"
+                        android:background="#F0F0F0" />
+
+                    <TextView
+                        android:id="@+id/tvPrescribedBy"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Prescribed by: Dr. Rahul Sharma"
+                        android:textColor="@color/textSecondary"
+                        android:textSize="12sp" />
 
                 </LinearLayout>
 
@@ -308,51 +324,34 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:padding="16dp"
         android:background="@color/cardWhite"
         android:elevation="8dp">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:visibility="gone" />
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnShare"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Share"
+            android:textColor="@color/primaryBlue"
+            android:textSize="14sp"
+            app:cornerRadius="26dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnWritePrescription"
-            android:layout_width="match_parent"
+            android:id="@+id/btnShowPharmacist"
+            android:layout_width="0dp"
             android:layout_height="52dp"
-            android:text="Write Prescription"
+            android:layout_weight="1.4"
+            android:layout_marginStart="8dp"
+            android:text="Show to Pharmacist"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:cornerRadius="26dp"
             android:backgroundTint="@color/primaryBlue" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnMarkCompleted"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:text="Mark as Completed"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:cornerRadius="26dp"
-            android:backgroundTint="#2E7D32" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCancelAppointment"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:layout_marginTop="8dp"
-            android:text="Cancel Appointment"
-            android:textColor="#D32F2F"
-            android:textSize="16sp"
-            app:cornerRadius="26dp"
-            app:strokeColor="#D32F2F"
-            app:strokeWidth="1dp"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
     </LinearLayout>
 

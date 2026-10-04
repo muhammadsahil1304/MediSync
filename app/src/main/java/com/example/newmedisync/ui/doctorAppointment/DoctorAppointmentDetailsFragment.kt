@@ -55,6 +55,20 @@ class DoctorAppointmentDetailsFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.btnWritePrescription.setOnClickListener {
+            val appt = currentAppointment
+            if (appt != null) {
+                val bundle = Bundle().apply {
+                    putString("appointmentId", appt.appointmentId)
+                    putString("patientUid", appt.patientId)
+                    putString("name", appt.patientName)
+                    putString("phone", "")
+                    putString("doctorId", appt.doctorId)
+                }
+                findNavController().navigate(R.id.action_doctorAppointmentDetails_to_prescription, bundle)
+            }
+        }
+
         binding.btnMarkCompleted.setOnClickListener {
             showMarkCompletedDialog()
         }
@@ -106,13 +120,15 @@ class DoctorAppointmentDetailsFragment : Fragment() {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#1565C0"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
                 binding.layoutBottomBar.visibility = View.VISIBLE
+                binding.btnWritePrescription.visibility = View.VISIBLE
                 binding.btnMarkCompleted.visibility = View.VISIBLE
                 binding.btnCancelAppointment.visibility = View.VISIBLE
             }
             "COMPLETED" -> {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#2E7D32"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
-                binding.layoutBottomBar.visibility = View.GONE
+                binding.layoutBottomBar.visibility = View.VISIBLE
+                binding.btnWritePrescription.visibility = View.VISIBLE
                 binding.btnMarkCompleted.visibility = View.GONE
                 binding.btnCancelAppointment.visibility = View.GONE
             }
@@ -120,6 +136,7 @@ class DoctorAppointmentDetailsFragment : Fragment() {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#C62828"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_red)
                 binding.layoutBottomBar.visibility = View.GONE
+                binding.btnWritePrescription.visibility = View.GONE
                 binding.btnMarkCompleted.visibility = View.GONE
                 binding.btnCancelAppointment.visibility = View.GONE
             }
@@ -127,6 +144,7 @@ class DoctorAppointmentDetailsFragment : Fragment() {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#1565C0"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
                 binding.layoutBottomBar.visibility = View.VISIBLE
+                binding.btnWritePrescription.visibility = View.VISIBLE
                 binding.btnMarkCompleted.visibility = View.VISIBLE
                 binding.btnCancelAppointment.visibility = View.VISIBLE
             }

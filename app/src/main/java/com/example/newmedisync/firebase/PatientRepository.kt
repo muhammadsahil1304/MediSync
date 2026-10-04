@@ -59,8 +59,37 @@ class PatientRepository {
         docRef.set(visit.copy(id = docRef.id)).await()
     }
 
+    suspend fun getPrescriptionByAppointmentId(appointmentId: String): PrescriptionRecord? {
+        if (appointmentId.isBlank()) return null
+        return try {
+            val snapshot = firestore.collection("prescriptions")
+                .whereEqualTo("appointmentId", appointmentId)
+                .get()
+                .await()
+            snapshot.toObjects(PrescriptionRecord::class.java).firstOrNull()
+        } catch (e: Exception) {
+            null
+        }
+    }
+
     suspend fun savePrescription(prescription: PrescriptionRecord) {
-        val docRef = firestore.collection("prescriptions").document()
+        if (prescription.appointmentId.isNotBlank()) {
+            val existingSnapshot = firestore.collection("prescriptions")
+                .whereEqualTo("appointmentId", prescription.appointmentId)
+                .get()
+                .await()
+            val existingDoc = existingSnapshot.documents.firstOrNull()
+            if (existingDoc != null) {
+                val finalPrescription = prescription.copy(id = existingDoc.id)
+                firestore.collection("prescriptions").document(existingDoc.id).set(finalPrescription).await()
+                return
+            }
+        }
+        val docRef = if (prescription.id.isNotBlank()) {
+            firestore.collection("prescriptions").document(prescription.id)
+        } else {
+            firestore.collection("prescriptions").document()
+        }
         docRef.set(prescription.copy(id = docRef.id)).await()
     }
 

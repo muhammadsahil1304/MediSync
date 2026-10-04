@@ -195,7 +195,11 @@
         android:id="@+id/navigation_reports"
         android:name="com.example.newmedisync.ui.patient.ReportsFragment"
         android:label="Reports"
-        tools:layout="@layout/fragment_reports" />
+        tools:layout="@layout/fragment_reports" >
+        <action
+            android:id="@+id/action_reportsFragment_to_patientPrescriptionDetails"
+            app:destination="@id/navigation_patientPrescriptionDetails" />
+    </fragment>
     <fragment
         android:id="@+id/navigation_reportScanner"
         android:name="com.example.newmedisync.ui.patient.ReportScannerFragment"
@@ -318,6 +322,9 @@
         <action
             android:id="@+id/action_doctorAppointmentDetails_to_patientProfile"
             app:destination="@id/navigation_patientProfile" />
+        <action
+            android:id="@+id/action_doctorAppointmentDetails_to_prescription"
+            app:destination="@id/navigation_prescription" />
     </fragment>
 
     <fragment
@@ -325,5 +332,17 @@
         android:name="com.example.newmedisync.ui.doctorSchedule.DoctorScheduleFragment"
         android:label="My Schedule"
         tools:layout="@layout/fragment_doctor_schedule" />
+
+    <fragment
+        android:id="@+id/navigation_patientPrescriptionDetails"
+        android:name="com.example.newmedisync.ui.patient.PatientPrescriptionDetailsFragment"
+        android:label="Digital Prescription"
+        tools:layout="@layout/fragment_patient_prescription_details" >
+        <argument
+            android:name="prescriptionId"
+            app:argType="string"
+            app:nullable="true"
+            android:defaultValue="@null" />
+    </fragment>
 
 </navigation>

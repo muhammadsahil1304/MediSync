@@ -5,24 +5,29 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
-import androidx.lifecycle.Observer
-import com.example.newmedisync.room.AppDatabase
-import com.example.newmedisync.room.PatientEntity
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.medisync.model.Patient
 import com.example.newmedisync.R
 import com.example.newmedisync.adapter.PatientsAdapter
 import com.example.newmedisync.databinding.FragmentPatientsBinding
+import com.example.newmedisync.firebase.AppointmentRepository
+import com.example.newmedisync.model.DoctorPatientItem
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.launch
 
 class PatientsFragment : Fragment() {
 
     private var _binding: FragmentPatientsBinding? = null
     private val binding get() = _binding!!
+
+    private val appointmentRepository = AppointmentRepository()
+    private lateinit var adapter: PatientsAdapter
+
+    private var allPatients: List<DoctorPatientItem> = emptyList()
+    private var searchQuery: String = ""
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,96 +41,86 @@ class PatientsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val dao = AppDatabase
-            .getDatabase(requireContext())
-            .patientDao()
-        val uid = FirebaseAuth.getInstance().currentUser!!.uid
+        setupRecyclerView()
+        setupListeners()
+        loadDoctorPatients()
+    }
 
-
-        val adapter = PatientsAdapter(emptyList()) { patient ->
-
-            val bundle = Bundle()
-
-            bundle.putString("name", patient.name)
-            bundle.putString("phone", patient.phone)
-            bundle.putString("age", patient.age)
-            bundle.putString("blood", patient.bloodGroup)
-            bundle.putString("gender", patient.gender)
-
+    private fun setupRecyclerView() {
+        adapter = PatientsAdapter(emptyList()) { patient ->
+            val bundle = Bundle().apply {
+                putString("patientUid", patient.patientUid)
+                putString("name", patient.name)
+                putString("phone", patient.phone)
+                putString("age", if (patient.age > 0) "${patient.age}" else "")
+                putString("blood", patient.bloodGroup)
+                putString("gender", patient.gender)
+            }
             findNavController().navigate(
                 R.id.action_navigation_patients_to_navigation_patientProfile,
                 bundle
             )
         }
 
-        binding.recyclerPatients.layoutManager =
-            LinearLayoutManager(requireContext())
-
+        binding.recyclerPatients.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerPatients.adapter = adapter
+    }
 
-        // Default all patients
-        dao.getAllPatients(uid).observe(viewLifecycleOwner) { patients ->
-            adapter.updateList(patients)
-        }
-
-        binding.ivAdd.setOnClickListener{
+    private fun setupListeners() {
+        binding.ivAdd.setOnClickListener {
             findNavController().navigate(R.id.action_navigation_patients_to_navigation_addPatients)
         }
-        // Search
+
         binding.etSearch.addTextChangedListener(object : TextWatcher {
-
-            override fun beforeTextChanged(
-                s: CharSequence?,
-                start: Int,
-                count: Int,
-                after: Int
-            ) {}
-
-            override fun onTextChanged(
-                s: CharSequence?,
-                start: Int,
-                before: Int,
-                count: Int
-            ) {
-
-                val query = s.toString().trim()
-
-                if (query.isEmpty()) {
-
-                    dao.getAllPatients(uid)
-                        .observe(viewLifecycleOwner) {
-                            adapter.updateList(it)
-
-                            if (it.isEmpty()) {
-                                binding.tvEmpty.visibility = View.VISIBLE
-                                binding.recyclerPatients.visibility = View.GONE
-                            } else {
-                                binding.tvEmpty.visibility = View.GONE
-                                binding.recyclerPatients.visibility = View.VISIBLE
-                            }
-                        }
-
-                } else {
-
-                    dao.searchPatients(query)
-                        .observe(viewLifecycleOwner) {
-                            adapter.updateList(it)
-
-                            if (it.isEmpty()) {
-                                binding.tvEmpty.visibility = View.VISIBLE
-                                binding.recyclerPatients.visibility = View.GONE
-                            } else {
-                                binding.tvEmpty.visibility = View.GONE
-                                binding.recyclerPatients.visibility = View.VISIBLE
-                            }
-                        }
-                }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                searchQuery = s?.toString()?.trim() ?: ""
+                filterAndDisplayPatients()
             }
-
             override fun afterTextChanged(s: Editable?) {}
         })
+    }
 
+    private fun loadDoctorPatients() {
+        val doctorUid = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
+        lifecycleScope.launch {
+            try {
+                val list = appointmentRepository.getDoctorPatients(doctorUid)
+                _binding?.let {
+                    allPatients = list
+                    filterAndDisplayPatients()
+                }
+            } catch (e: Exception) {
+                _binding?.let {
+                    binding.tvEmpty.visibility = View.VISIBLE
+                    binding.recyclerPatients.visibility = View.GONE
+                }
+            }
+        }
+    }
+
+    private fun filterAndDisplayPatients() {
+        val filtered = if (searchQuery.isBlank()) {
+            allPatients
+        } else {
+            allPatients.filter { p ->
+                p.name.contains(searchQuery, ignoreCase = true) ||
+                        p.phone.contains(searchQuery, ignoreCase = true) ||
+                        p.email.contains(searchQuery, ignoreCase = true) ||
+                        p.bloodGroup.contains(searchQuery, ignoreCase = true)
+            }
+        }
+
+        adapter.updateList(filtered)
+
+        if (filtered.isEmpty()) {
+            binding.tvEmpty.visibility = View.VISIBLE
+            binding.recyclerPatients.visibility = View.GONE
+        } else {
+            binding.tvEmpty.visibility = View.GONE
+            binding.recyclerPatients.visibility = View.VISIBLE
+        }
     }
 
     override fun onDestroyView() {

@@ -283,6 +283,88 @@ class AppointmentRepository {
         }
     }
 
+    suspend fun getDoctorPatients(doctorUid: String): List<com.example.newmedisync.model.DoctorPatientItem> {
+        return try {
+            val apptSnapshot = firestore.collection("appointments")
+                .whereEqualTo("doctorId", doctorUid)
+                .get()
+                .await()
+            val appointments = apptSnapshot.toObjects(Appointment::class.java)
+
+            val prescSnapshot = firestore.collection("prescriptions")
+                .whereEqualTo("doctorUid", doctorUid)
+                .get()
+                .await()
+            val prescriptions = prescSnapshot.toObjects(com.example.newmedisync.model.PrescriptionRecord::class.java)
+
+            // Gather all unique patient UIDs
+            val patientUids = mutableSetOf<String>()
+            appointments.forEach { if (it.patientId.isNotBlank()) patientUids.add(it.patientId) }
+            prescriptions.forEach { if (it.patientUid.isNotBlank()) patientUids.add(it.patientUid) }
+
+            val now = System.currentTimeMillis()
+            val resultList = mutableListOf<com.example.newmedisync.model.DoctorPatientItem>()
+
+            for (pUid in patientUids) {
+                val userDoc = firestore.collection("users").document(pUid).get().await()
+                val patientDoc = firestore.collection("patients").document(pUid).get().await()
+
+                val userName = userDoc.getString("name") ?: ""
+                val userPhone = userDoc.getString("phone") ?: ""
+                val userEmail = userDoc.getString("email") ?: ""
+
+                val patientModel = patientDoc.toObject(com.example.newmedisync.model.PatientModel::class.java)
+
+                val patientAppts = appointments.filter { it.patientId == pUid }
+                val patientPrescs = prescriptions.filter { it.patientUid == pUid }
+
+                val lastAppt = patientAppts.filter { it.timestamp <= now }.maxByOrNull { it.timestamp }
+                val nextAppt = patientAppts.filter { it.timestamp > now && it.status.equals("Upcoming", ignoreCase = true) }
+                    .minByOrNull { it.timestamp }
+
+                val lastPresc = patientPrescs.maxByOrNull { it.timestamp }
+
+                val lastVisitTs = maxOf(
+                    lastAppt?.timestamp ?: 0L,
+                    lastPresc?.timestamp ?: 0L
+                )
+
+                val lastVisitDateStr = when {
+                    lastAppt != null -> "${lastAppt.date} • ${lastAppt.timeSlot}"
+                    lastPresc != null -> lastPresc.date
+                    else -> "No past visits"
+                }
+
+                val nextApptStr = if (nextAppt != null) "${nextAppt.date} • ${nextAppt.timeSlot}" else ""
+
+                val displayName = if (userName.isNotBlank()) userName else {
+                    patientAppts.firstOrNull()?.patientName ?: patientPrescs.firstOrNull()?.patientName ?: "Patient"
+                }
+
+                resultList.add(
+                    com.example.newmedisync.model.DoctorPatientItem(
+                        patientUid = pUid,
+                        name = displayName,
+                        phone = userPhone,
+                        email = userEmail,
+                        age = patientModel?.age ?: 0,
+                        gender = patientModel?.gender ?: "",
+                        bloodGroup = patientModel?.bloodGroup ?: "",
+                        profileImageUrl = patientModel?.profileImageUrl ?: "",
+                        lastVisitDate = lastVisitDateStr,
+                        lastVisitTimestamp = lastVisitTs,
+                        nextAppointmentDate = nextApptStr,
+                        appointmentCount = patientAppts.size
+                    )
+                )
+            }
+
+            resultList.sortedByDescending { it.lastVisitTimestamp }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     fun getCurrentDoctorUid(): String? {
         return auth.currentUser?.uid
     }

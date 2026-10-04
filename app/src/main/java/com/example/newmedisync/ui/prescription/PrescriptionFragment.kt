@@ -74,6 +74,7 @@ class PrescriptionBoardFragment : Fragment() {
         setupHeaderInfo()
         setupMedicineRecyclerView()
         setupListeners()
+        loadExistingPrescriptionIfAny()
     }
 
     private fun setupBackPressHandler() {
@@ -133,6 +134,38 @@ class PrescriptionBoardFragment : Fragment() {
                     .observe(viewLifecycleOwner) { patients ->
                         setupPatientsSpinner(patients)
                     }
+            }
+        }
+    }
+
+    private fun loadExistingPrescriptionIfAny() {
+        if (appointmentId.isBlank()) return
+
+        lifecycleScope.launch {
+            try {
+                val existing = patientRepository.getPrescriptionByAppointmentId(appointmentId)
+                if (existing != null) {
+                    if (existing.diagnosis.isNotEmpty()) {
+                        diagnosisList.clear()
+                        diagnosisList.addAll(existing.diagnosis)
+                        renderDiagnosisChips()
+                    }
+                    if (existing.medicines.isNotEmpty()) {
+                        medicinesList.clear()
+                        medicinesList.addAll(existing.medicines)
+                        medicineAdapter.updateList(medicinesList)
+                        updateMedicinesEmptyState()
+                    }
+                    if (existing.instructions.isNotBlank()) {
+                        binding.etAdditionalInstructions.setText(existing.instructions)
+                    }
+                    if (existing.followUpDate.isNotBlank()) {
+                        binding.etFollowUp.setText(existing.followUpDate)
+                    }
+                    Toast.makeText(requireContext(), "Loaded existing prescription for this appointment.", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                // Ignore fallback
             }
         }
     }

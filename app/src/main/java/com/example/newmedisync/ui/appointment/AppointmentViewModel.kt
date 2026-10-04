@@ -171,6 +171,8 @@ class AppointmentViewModel : ViewModel() {
 
         viewModelScope.launch {
             val availability = appointmentRepository.getDoctorAvailability(doctor.uid, location.id)
+            val exceptions = appointmentRepository.getDoctorExceptions(doctor.uid, location.id)
+
             val dateItems = mutableListOf<DateItem>()
             val calendar = Calendar.getInstance()
 
@@ -190,7 +192,15 @@ class AppointmentViewModel : ViewModel() {
                 val dayNum = dayNumSdf.format(date)
                 val monthStr = monthSdf.format(date).uppercase(Locale.getDefault())
 
-                val isDayAvailable = if (availability != null && availability.schedules.isNotEmpty()) {
+                val normDateStr = normalizeDateString(dateString)
+
+                val fullDayExc = exceptions.firstOrNull { exc ->
+                    normalizeDateString(exc.date) == normDateStr && exc.type.equals("FULL_DAY", ignoreCase = true)
+                }
+
+                val isDayAvailable = if (fullDayExc != null) {
+                    false
+                } else if (availability != null && availability.schedules.isNotEmpty()) {
                     val daySched = availability.schedules[fullDayName]
                     daySched?.enabled == true
                 } else if (availableDays.isNotEmpty()) {
@@ -232,12 +242,26 @@ class AppointmentViewModel : ViewModel() {
         val doctor = _selectedDoctor.value ?: return
         val location = _selectedLocation.value ?: return
         val dateStr = dateItem.dateString
+        val normDateStr = normalizeDateString(dateStr)
 
         val fullDaySdf = SimpleDateFormat("EEEE", Locale.getDefault())
         val fullDayName = fullDaySdf.format(dateItem.date)
 
         viewModelScope.launch {
             val availability = appointmentRepository.getDoctorAvailability(doctor.uid, location.id)
+            val exceptions = appointmentRepository.getDoctorExceptions(doctor.uid, location.id)
+
+            val fullDayExc = exceptions.firstOrNull { exc ->
+                normalizeDateString(exc.date) == normDateStr && exc.type.equals("FULL_DAY", ignoreCase = true)
+            }
+
+            if (fullDayExc != null) {
+                _timeSlots.value = emptyList()
+                val reasonSuffix = if (fullDayExc.reason.isNotBlank()) " (${fullDayExc.reason})" else ""
+                _slotEmptyMessage.value = "Doctor is unavailable on $normDateStr$reasonSuffix."
+                return@launch
+            }
+
             val daySched = availability?.schedules?.get(fullDayName)
 
             if (availability != null && (daySched == null || !daySched.enabled)) {
@@ -260,20 +284,39 @@ class AppointmentViewModel : ViewModel() {
                 -1
             }
 
+            val blockTimeExceptions = exceptions.filter { exc ->
+                normalizeDateString(exc.date) == normDateStr && exc.type.equals("BLOCK_TIME", ignoreCase = true)
+            }
+
             val candidateSlots = mutableListOf<String>()
             var currMin = startMin
             val slotDuration = 30
 
             while (currMin + slotDuration <= endMin) {
-                if (!isToday || currMin > currentMin) {
+                val slotEndMin = currMin + slotDuration
+
+                val isPast = isToday && currMin <= currentMin
+
+                val isBlockedByException = blockTimeExceptions.any { exc ->
+                    val excStartMin = parseTimeToMinutes(exc.startTime) ?: -1
+                    val excEndMin = parseTimeToMinutes(exc.endTime) ?: -1
+                    if (excStartMin != -1 && excEndMin != -1) {
+                        currMin < excEndMin && slotEndMin > excStartMin
+                    } else {
+                        false
+                    }
+                }
+
+                if (!isPast && !isBlockedByException) {
                     candidateSlots.add(formatMinutesTo12H(currMin))
                 }
+
                 currMin += slotDuration
             }
 
             if (candidateSlots.isEmpty()) {
                 _timeSlots.value = emptyList()
-                _slotEmptyMessage.value = if (isToday) "No remaining slots for today." else "No appointments available on $fullDayName."
+                _slotEmptyMessage.value = if (isToday) "No remaining slots for today." else "No appointments available on this day."
                 return@launch
             }
 
@@ -294,6 +337,16 @@ class AppointmentViewModel : ViewModel() {
             }
 
             _timeSlots.value = slots
+        }
+    }
+
+    private fun normalizeDateString(dateStr: String): String {
+        return try {
+            val sdf = SimpleDateFormat("dd MMM yyyy", Locale.getDefault())
+            val date = sdf.parse(dateStr) ?: return dateStr.trim()
+            sdf.format(date)
+        } catch (e: Exception) {
+            dateStr.trim()
         }
     }
 
@@ -360,6 +413,38 @@ class AppointmentViewModel : ViewModel() {
         _isLoading.value = true
         viewModelScope.launch {
             try {
+                val exceptions = appointmentRepository.getDoctorExceptions(doctor.uid, location.id)
+                val normDateStr = normalizeDateString(date.dateString)
+
+                val fullDayExc = exceptions.firstOrNull { exc ->
+                    normalizeDateString(exc.date) == normDateStr && exc.type.equals("FULL_DAY", ignoreCase = true)
+                }
+
+                if (fullDayExc != null) {
+                    _isLoading.value = false
+                    _bookingResult.value = Pair(false, "Doctor is unavailable on this date. Please select another date.")
+                    generateAvailableDates()
+                    return@launch
+                }
+
+                val slotMin = parseTimeToMinutes(slot.time) ?: -1
+                val blockExc = exceptions.firstOrNull { exc ->
+                    if (normalizeDateString(exc.date) == normDateStr && exc.type.equals("BLOCK_TIME", ignoreCase = true)) {
+                        val sMin = parseTimeToMinutes(exc.startTime) ?: -1
+                        val eMin = parseTimeToMinutes(exc.endTime) ?: -1
+                        slotMin >= sMin && slotMin < eMin
+                    } else {
+                        false
+                    }
+                }
+
+                if (blockExc != null) {
+                    _isLoading.value = false
+                    _bookingResult.value = Pair(false, "This time slot is no longer available. Please select another slot.")
+                    loadAvailableTimeSlots(date)
+                    return@launch
+                }
+
                 // Double-booking check: verify slot is still free in Firestore
                 val currentBooked = appointmentRepository.getBookedTimeSlots(doctor.uid, date.dateString)
                 if (currentBooked.contains(slot.time)) {

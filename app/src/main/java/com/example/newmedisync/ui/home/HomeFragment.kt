@@ -37,33 +37,36 @@ class HomeFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-
         ViewModelProvider(this)[HomeViewModel::class.java]
-
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
+        return binding.root
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val firebaseUser = FirebaseAuth.getInstance().currentUser
         val doctorName = firebaseUser?.displayName ?: "Doctor"
         Log.d("HomeFragment", "Doctor Name: $doctorName")
 
         binding.tvDoctorName.text = "DR. ${doctorName.uppercase()}"
 
         val currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
-
         val greeting = when {
             currentHour in 5..11 -> "Good Morning,"
             currentHour in 12..16 -> "Good Afternoon,"
             currentHour in 17..20 -> "Good Evening,"
             else -> "Good Night,"
         }
-
         binding.greetingText.text = greeting
 
         val database = AppDatabase.getDatabase(requireContext())
-        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val uid = firebaseUser?.uid ?: ""
 
-        database.patientDao().getPatientsCount(uid).observe(viewLifecycleOwner) { count ->
-            binding.tvTotalPatients.text = count.toString()
+        if (uid.isNotBlank()) {
+            database.patientDao().getPatientsCount(uid).observe(viewLifecycleOwner) { count ->
+                binding.tvTotalPatients.text = count.toString()
+            }
         }
 
         setupRecyclerViewAndListeners()
@@ -111,8 +114,6 @@ class HomeFragment : Fragment() {
 
         checkVerificationStatus()
         loadTodayAppointments()
-
-        return binding.root
     }
 
     private fun setupRecyclerViewAndListeners() {
@@ -179,7 +180,7 @@ class HomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             try {
-                val uid = FirebaseAuth.getInstance().currentUser!!.uid
+                val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return@launch
                 val doctor = repository.getDoctorVerification(uid)
 
                 when (doctor.status) {
@@ -201,11 +202,13 @@ class HomeFragment : Fragment() {
                     }
                 }
             } catch (e: Exception) {
-                binding.cardVerification.visibility = View.VISIBLE
-                binding.tvVerificationTitle.text = "🔴 Account Not Verified"
-                binding.tvVerificationMessage.text = "Complete your professional verification."
-                binding.btnGetVerified.visibility = View.VISIBLE
-                binding.btnGetVerified.text = "Get Verified"
+                _binding?.let {
+                    binding.cardVerification.visibility = View.VISIBLE
+                    binding.tvVerificationTitle.text = "🔴 Account Not Verified"
+                    binding.tvVerificationMessage.text = "Complete your professional verification."
+                    binding.btnGetVerified.visibility = View.VISIBLE
+                    binding.btnGetVerified.text = "Get Verified"
+                }
             }
         }
     }

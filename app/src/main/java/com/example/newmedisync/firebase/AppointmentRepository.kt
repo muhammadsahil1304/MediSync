@@ -221,6 +221,68 @@ class AppointmentRepository {
         }
     }
 
+    suspend fun saveDoctorException(exception: com.example.newmedisync.model.ScheduleException): String {
+        val collectionRef = firestore.collection("doctor_verifications")
+            .document(exception.doctorId)
+            .collection("exceptions")
+
+        val docRef = if (exception.id.isNotBlank()) {
+            collectionRef.document(exception.id)
+        } else {
+            collectionRef.document()
+        }
+
+        val finalException = exception.copy(id = docRef.id)
+        docRef.set(finalException).await()
+        return docRef.id
+    }
+
+    suspend fun getDoctorExceptions(doctorId: String, locationId: String): List<com.example.newmedisync.model.ScheduleException> {
+        return try {
+            val snapshot = firestore.collection("doctor_verifications")
+                .document(doctorId)
+                .collection("exceptions")
+                .get()
+                .await()
+            val targetLoc = locationId.ifBlank { "default_${doctorId}" }
+            snapshot.toObjects(com.example.newmedisync.model.ScheduleException::class.java)
+                .filter { exc ->
+                    exc.locationId.isBlank() ||
+                            exc.locationId == locationId ||
+                            exc.locationId == targetLoc ||
+                            locationId.isBlank() ||
+                            locationId == "default_${doctorId}"
+                }
+                .sortedBy { it.date }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
+    suspend fun deleteDoctorException(doctorId: String, exceptionId: String) {
+        firestore.collection("doctor_verifications")
+            .document(doctorId)
+            .collection("exceptions")
+            .document(exceptionId)
+            .delete()
+            .await()
+    }
+
+    suspend fun getUpcomingAppointmentsForDate(doctorId: String, locationId: String, dateStr: String): List<Appointment> {
+        return try {
+            val snapshot = firestore.collection("appointments")
+                .whereEqualTo("doctorId", doctorId)
+                .whereEqualTo("practiceLocationId", locationId)
+                .whereEqualTo("date", dateStr)
+                .whereEqualTo("status", "Upcoming")
+                .get()
+                .await()
+            snapshot.toObjects(Appointment::class.java)
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     fun getCurrentDoctorUid(): String? {
         return auth.currentUser?.uid
     }

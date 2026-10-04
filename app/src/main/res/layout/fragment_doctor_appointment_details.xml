@@ -330,6 +330,19 @@
             app:cornerRadius="26dp"
             android:backgroundTint="#2E7D32" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCancelAppointment"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="8dp"
+            android:text="Cancel Appointment"
+            android:textColor="#D32F2F"
+            android:textSize="16sp"
+            app:cornerRadius="26dp"
+            app:strokeColor="#D32F2F"
+            app:strokeWidth="1dp"
+            style="@style/Widget.Material3.Button.OutlinedButton" />
+
     </LinearLayout>
 
 </RelativeLayout>

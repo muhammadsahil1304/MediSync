@@ -14,7 +14,6 @@ import androidx.navigation.fragment.findNavController
 import com.example.newmedisync.R
 import com.example.newmedisync.databinding.FragmentDoctorAppointmentDetailsBinding
 import com.example.newmedisync.firebase.AppointmentRepository
-import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.model.Appointment
 import com.example.newmedisync.model.PatientModel
 import com.google.firebase.firestore.FirebaseFirestore
@@ -60,6 +59,10 @@ class DoctorAppointmentDetailsFragment : Fragment() {
             showMarkCompletedDialog()
         }
 
+        binding.btnCancelAppointment.setOnClickListener {
+            showCancelConfirmationDialog()
+        }
+
         binding.btnViewPatient.setOnClickListener {
             navigateToPatientProfile()
         }
@@ -102,22 +105,30 @@ class DoctorAppointmentDetailsFragment : Fragment() {
             "UPCOMING" -> {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#1565C0"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
+                binding.layoutBottomBar.visibility = View.VISIBLE
                 binding.btnMarkCompleted.visibility = View.VISIBLE
+                binding.btnCancelAppointment.visibility = View.VISIBLE
             }
             "COMPLETED" -> {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#2E7D32"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
+                binding.layoutBottomBar.visibility = View.GONE
                 binding.btnMarkCompleted.visibility = View.GONE
+                binding.btnCancelAppointment.visibility = View.GONE
             }
             "CANCELLED" -> {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#C62828"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_red)
+                binding.layoutBottomBar.visibility = View.GONE
                 binding.btnMarkCompleted.visibility = View.GONE
+                binding.btnCancelAppointment.visibility = View.GONE
             }
             else -> {
                 binding.tvStatusBadge.setTextColor(Color.parseColor("#1565C0"))
                 binding.tvStatusBadge.background = ContextCompat.getDrawable(requireContext(), R.drawable.bg_chip_blue)
+                binding.layoutBottomBar.visibility = View.VISIBLE
                 binding.btnMarkCompleted.visibility = View.VISIBLE
+                binding.btnCancelAppointment.visibility = View.VISIBLE
             }
         }
     }
@@ -137,6 +148,7 @@ class DoctorAppointmentDetailsFragment : Fragment() {
         val appt = currentAppointment ?: return
         binding.progressBar.visibility = View.VISIBLE
         binding.btnMarkCompleted.isEnabled = false
+        binding.btnCancelAppointment.isEnabled = false
 
         lifecycleScope.launch {
             try {
@@ -151,7 +163,44 @@ class DoctorAppointmentDetailsFragment : Fragment() {
             } catch (e: Exception) {
                 binding.progressBar.visibility = View.GONE
                 binding.btnMarkCompleted.isEnabled = true
+                binding.btnCancelAppointment.isEnabled = true
                 Toast.makeText(requireContext(), "Unable to update appointment. Please try again.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showCancelConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Cancel Appointment?")
+            .setMessage("Are you sure you want to cancel this appointment?")
+            .setNegativeButton("Keep Appointment", null)
+            .setPositiveButton("Cancel Appointment") { _, _ ->
+                cancelAppointment()
+            }
+            .show()
+    }
+
+    private fun cancelAppointment() {
+        val appt = currentAppointment ?: return
+        binding.progressBar.visibility = View.VISIBLE
+        binding.btnMarkCompleted.isEnabled = false
+        binding.btnCancelAppointment.isEnabled = false
+
+        lifecycleScope.launch {
+            try {
+                repository.cancelAppointment(appt.appointmentId, "DOCTOR")
+                binding.progressBar.visibility = View.GONE
+
+                val updatedAppt = appt.copy(status = "Cancelled", cancelledBy = "DOCTOR")
+                currentAppointment = updatedAppt
+                displayAppointment(updatedAppt)
+
+                Toast.makeText(requireContext(), "Appointment cancelled successfully.", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                binding.progressBar.visibility = View.GONE
+                binding.btnMarkCompleted.isEnabled = true
+                binding.btnCancelAppointment.isEnabled = true
+                Toast.makeText(requireContext(), e.localizedMessage ?: "Unable to cancel appointment. Please try again.", Toast.LENGTH_SHORT).show()
             }
         }
     }

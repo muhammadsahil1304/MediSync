@@ -16,5 +16,8 @@ data class Appointment(
     val timestamp: Long = 0L,
     val status: String = "Upcoming", // "Upcoming", "Completed", "Cancelled"
     val consultationFee: Double = 0.0,
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = System.currentTimeMillis(),
+    val cancelledBy: String = "", // "PATIENT" or "DOCTOR"
+    val cancelledAt: Long = 0L,
+    val cancelReason: String = ""
 )

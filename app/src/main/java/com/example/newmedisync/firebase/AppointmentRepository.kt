@@ -177,6 +177,25 @@ class AppointmentRepository {
             .await()
     }
 
+    suspend fun cancelAppointment(appointmentId: String, cancelledBy: String, cancelReason: String = "") {
+        val docRef = firestore.collection("appointments").document(appointmentId)
+        val snapshot = docRef.get().await()
+        val currentStatus = snapshot.getString("status") ?: "Upcoming"
+
+        if (currentStatus.equals("Completed", ignoreCase = true) || currentStatus.equals("Cancelled", ignoreCase = true)) {
+            throw IllegalStateException("Appointment is already $currentStatus and cannot be cancelled.")
+        }
+
+        val updates = mapOf(
+            "status" to "Cancelled",
+            "cancelledBy" to cancelledBy,
+            "cancelledAt" to System.currentTimeMillis(),
+            "cancelReason" to cancelReason
+        )
+
+        docRef.update(updates).await()
+    }
+
     suspend fun saveDoctorAvailability(availability: com.example.newmedisync.model.DoctorAvailability) {
         val docId = availability.locationId.ifBlank { "default_${availability.doctorId}" }
         firestore.collection("doctor_verifications")

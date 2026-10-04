@@ -141,6 +141,16 @@ object NotificationHelper {
                             "New Appointment Received! 📅",
                             "$patientName has booked an appointment for ${appt.date} at ${appt.timeSlot}."
                         )
+                    } else if (change.type == DocumentChange.Type.MODIFIED) {
+                        val appt = change.document.toObject(Appointment::class.java)
+                        if (appt.status.equals("Cancelled", ignoreCase = true) && appt.cancelledBy.equals("PATIENT", ignoreCase = true)) {
+                            val patientName = if (appt.patientName.isNotBlank()) appt.patientName else "A patient"
+                            showNotification(
+                                context,
+                                "Appointment Cancelled ❌",
+                                "Your appointment with $patientName on ${appt.date} at ${appt.timeSlot} has been cancelled."
+                            )
+                        }
                     }
                 }
             }
@@ -169,6 +179,13 @@ object NotificationHelper {
                                 context,
                                 "Appointment Completed! ✓",
                                 "Your appointment with $doctorName on ${appt.date} at ${appt.timeSlot} has been marked as completed."
+                            )
+                        } else if (appt.status.equals("Cancelled", ignoreCase = true) && appt.cancelledBy.equals("DOCTOR", ignoreCase = true)) {
+                            val doctorName = if (appt.doctorName.isNotBlank()) appt.doctorName else "Doctor"
+                            showNotification(
+                                context,
+                                "Appointment Cancelled ❌",
+                                "Dr. $doctorName has cancelled your appointment on ${appt.date} at ${appt.timeSlot}."
                             )
                         }
                     }

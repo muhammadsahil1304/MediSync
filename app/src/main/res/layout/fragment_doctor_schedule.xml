@@ -123,7 +123,7 @@
                     android:textSize="12sp"
                     app:cornerRadius="16dp"
                     android:backgroundTint="@color/lightBlue"
-                    style="@style/Widget.Material3.Button.TextButton" />
+                    style="@style/Widget.MaterialComponents.Button.TextButton" />
 
             </LinearLayout>
 

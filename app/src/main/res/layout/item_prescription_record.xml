@@ -3,15 +3,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
     android:layout_marginVertical="8dp"
     app:cardCornerRadius="16dp"
-    app:cardElevation="2dp">
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/cardWhite"
+    app:strokeColor="#E0E0E0"
+    app:strokeWidth="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -29,38 +33,79 @@
                     android:id="@+id/tvDoctorName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Dr. John Doe"
-                    android:textColor="#222222"
-                    android:textSize="16sp"
+                    android:text="Dr. Rahul Sharma"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="17sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvDate"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="15 Oct 2024"
-                    android:textColor="#777777"
+                    android:layout_marginTop="2dp"
+                    android:text="15 Oct 2026"
+                    android:textColor="@color/textSecondary"
                     android:textSize="12sp" />
 
             </LinearLayout>
 
             <ImageButton
                 android:id="@+id/btnDownload"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/save"
-                app:tint="@color/primary" />
+                android:src="@drawable/ic_history"
+                app:tint="@color/primaryBlue" />
 
         </LinearLayout>
 
+        <!-- Structured Details Layout -->
+        <LinearLayout
+            android:id="@+id/layoutStructuredDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvDiagnosis"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Diagnosis: Viral Fever"
+                android:textColor="@color/primaryBlue"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvMedicinesSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="• Paracetamol 500 mg (1 tablet • 3 times daily)\n• Cetirizine 10 mg (1 tablet • Bedtime)"
+                android:textColor="@color/textPrimary"
+                android:textSize="13sp"
+                android:lineSpacingExtra="3dp" />
+
+            <TextView
+                android:id="@+id/tvInstructionsSummary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="Instructions: Drink plenty of fluids."
+                android:textColor="@color/textSecondary"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <!-- Legacy Image View -->
         <ImageView
             android:id="@+id/ivPrescription"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_marginTop="12dp"
             android:scaleType="centerCrop"
-            android:background="#F0F0F0" />
+            android:background="#F0F0F0"
+            android:visibility="gone" />
 
     </LinearLayout>
 

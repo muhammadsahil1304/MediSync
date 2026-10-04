@@ -132,7 +132,7 @@
             android:textColor="@color/primaryBlue"
             android:textSize="15sp"
             app:cornerRadius="25dp"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
     </LinearLayout>
 

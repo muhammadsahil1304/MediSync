@@ -60,7 +60,7 @@
                 android:textSize="13sp"
                 app:cornerRadius="12dp"
                 android:backgroundTint="@color/lightBlue"
-                style="@style/Widget.Material3.Button.TextButton" />
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -81,7 +81,7 @@
                 android:textSize="13sp"
                 app:cornerRadius="12dp"
                 android:backgroundTint="@color/lightBlue"
-                style="@style/Widget.Material3.Button.TextButton" />
+                style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         </LinearLayout>
 

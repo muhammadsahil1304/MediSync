@@ -281,7 +281,7 @@
             app:cornerRadius="26dp"
             app:strokeColor="#D32F2F"
             app:strokeWidth="1dp"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
     </LinearLayout>
 

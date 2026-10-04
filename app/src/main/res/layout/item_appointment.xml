@@ -138,7 +138,7 @@
                 app:cornerRadius="16dp"
                 android:backgroundTint="@color/lightBlue"
                 android:paddingHorizontal="12dp"
-                style="@style/Widget.Material3.Button.TextButton"/>
+                style="@style/Widget.MaterialComponents.Button.TextButton"/>
 
         </LinearLayout>
 

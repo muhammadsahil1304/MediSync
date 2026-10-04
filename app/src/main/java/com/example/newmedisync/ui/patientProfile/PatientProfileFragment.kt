@@ -166,7 +166,7 @@ class PatientProfileFragment : Fragment() {
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 
         dialog.setContentView(
-            R.layout.dialog_prescription_preview
+            R.layout.dialog_legacy_prescription_preview
         )
 
         dialog.window?.setLayout(

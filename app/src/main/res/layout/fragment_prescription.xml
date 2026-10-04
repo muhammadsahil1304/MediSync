@@ -1,397 +1,305 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F7F7F7"
-    android:fitsSystemWindows="true">
+    android:background="@color/screenBg">
 
-    <FrameLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/layoutBottomBar"
+        android:fillViewport="true">
 
-        <!-- NORMAL SCREEN -->
-        <ScrollView
-            android:id="@+id/mainScroll"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fillViewport="true">
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="24dp">
 
+            <!-- Top Header Bar -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="18dp">
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:background="@color/cardWhite"
+                android:elevation="2dp"
+                android:gravity="center_vertical">
 
-                <!-- TOP BAR -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="38dp"
-                            android:layout_height="38dp"
-                            android:background="@drawable/bg_quickaction_medi"
-                            android:padding="5dp"
-                            android:src="@drawable/people" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="10dp"
-                            android:text="MediTrack"
-                            android:textColor="#0A70A2"
-                            android:textSize="18sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <!-- TITLE -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
-                    android:text="CLINICAL TOOL"
-                    android:textColor="#4E97C2"
-                    android:textSize="12sp"
-                    android:textStyle="bold" />
+                <ImageView
+                    android:id="@+id/btnBack"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_history"
+                    app:tint="@color/textPrimary" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="PrescriptionBoard"
-                    android:textColor="#222222"
-                    android:textSize="38sp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="12dp"
+                    android:text="Digital Prescription Board"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <!-- FORM -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    app:cardBackgroundColor="@color/card_bg"
-                    app:cardCornerRadius="20dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="18dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="FULL PATIENT NAME"
-                            android:textColor="#7B7B7B"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_marginTop="10dp"
-                            app:cardCornerRadius="14dp">
-
-                            <Spinner
-                                android:id="@+id/spPatients"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/bg_spinner_white"
-                                android:popupBackground="@drawable/bg_spinner_white"
-                                android:spinnerMode="dropdown" />
-
-                        </androidx.cardview.widget.CardView>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="18dp"
-                            android:text="CONTACT NUMBER"
-                            android:textColor="@color/black"
-                            android:textSize="11sp"
-                            android:textStyle="bold" />
-
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_marginTop="10dp"
-                            app:cardCornerRadius="14dp">
-
-                            <EditText
-                                android:id="@+id/etPatientPhone"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:background="@color/white"
-                                android:focusable="false"
-                                android:clickable="false"
-                                android:hint="Patient phone number"
-                                android:gravity="center_vertical"
-                                android:paddingHorizontal="16dp"
-                                android:textColor="@color/black"
-                                android:textColorHint="#B9B9B9" />
-
-                        </androidx.cardview.widget.CardView>
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
-
-                <!-- DRAWING AREA -->
-                <androidx.cardview.widget.CardView
-                    android:layout_width="match_parent"
-                    android:layout_height="360dp"
-                    android:layout_marginTop="20dp"
-                    app:cardCornerRadius="28dp">
-
-                    <FrameLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.example.newmedisync.views.DrawingView
-                            android:id="@+id/drawingView"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:background="@drawable/bg_drawing_dots" />
-
-                        <!-- TOOLBAR -->
-                        <androidx.cardview.widget.CardView
-                            android:layout_width="match_parent"
-                            android:layout_height="56dp"
-                            android:layout_marginHorizontal="@dimen/_15dp"
-                            android:layout_gravity="top|center_horizontal"
-                            android:layout_marginTop="14dp"
-                            app:cardBackgroundColor="@color/card_bg"
-                            app:cardCornerRadius="28dp">
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:gravity="center"
-                                android:orientation="horizontal">
-
-                                <ImageView
-                                    android:id="@+id/btnPen"
-                                    android:layout_width="36dp"
-                                    android:layout_height="36dp"
-                                    android:background="@null"
-                                    android:padding="8dp"
-                                    android:src="@drawable/pen"
-                                     />
-
-                                <ImageView
-                                    android:id="@+id/btnErase"
-                                    android:layout_width="36dp"
-                                    android:layout_height="36dp"
-                                    android:layout_marginStart="18dp"
-                                    android:background="@null"
-                                    android:padding="8dp"
-                                    android:src="@drawable/eraser"
-                                     />
-                                <ImageView
-                                    android:id="@+id/btnUndo"
-                                    android:layout_width="36dp"
-                                    android:layout_height="36dp"
-                                    android:layout_marginStart="18dp"
-                                    android:background="@null"
-                                    android:padding="8dp"
-                                    android:src="@drawable/undo"
-                                     />
-
-                                <ImageView
-                                    android:id="@+id/btnClear"
-                                    android:layout_width="22dp"
-                                    android:layout_height="22dp"
-                                    android:layout_marginStart="18dp"
-                                    android:src="@drawable/delete"
-                                     />
-
-                                <ImageView
-                                    android:id="@+id/btnFullscreen"
-                                    android:layout_width="22dp"
-                                    android:layout_height="22dp"
-                                    android:layout_marginStart="18dp"
-                                    android:src="@drawable/full_screen"
-                                   />
-
-                                <View
-                                    android:layout_width="1dp"
-                                    android:layout_height="24dp"
-                                    android:layout_marginHorizontal="16dp"
-                                    android:background="#DDDDDD" />
-
-                                <View
-                                    android:id="@+id/blueColor"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:background="@drawable/bg_blue_selected" />
-                                <View
-                                    android:id="@+id/redColor"
-                                    android:layout_width="24dp"
-                                    android:layout_height="24dp"
-                                    android:layout_marginStart="12dp"
-                                    android:background="@drawable/bg_red_unselected" />
-                            </LinearLayout>
-
-                        </androidx.cardview.widget.CardView>
-
-                    </FrameLayout>
-
-                </androidx.cardview.widget.CardView>
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/btnSaveGallery"
-                    android:layout_width="250dp"
-                    android:layout_height="54dp"
-                    android:layout_gravity="center_horizontal"
-                    android:layout_marginTop="20dp"
-                    app:cardCornerRadius="16dp"
-                    app:cardElevation="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="@drawable/bg_signin_gradient"
-                        android:gravity="center"
-                        android:orientation="horizontal">
-
-                        <ImageView
-                            android:layout_width="20dp"
-                            android:layout_height="20dp"
-                            android:layout_marginEnd="10dp"
-                            android:src="@drawable/pdf"
-                            app:tint="@android:color/white" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/save_as_image"
-                            android:textColor="#FFFFFF"
-                            android:textSize="15sp"
-                            android:textStyle="bold" />
-
-                    </LinearLayout>
-
-                </androidx.cardview.widget.CardView>
 
             </LinearLayout>
 
-        </ScrollView>
-
-        <!-- FULLSCREEN MODE -->
-        <FrameLayout
-            android:id="@+id/fullscreenContainer"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FFFFFF"
-            android:visibility="gone">
-
-            <com.example.newmedisync.views.DrawingView
-                android:id="@+id/fullscreenDrawingView"
+            <!-- Patient Information Card -->
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_drawing_dots" />
-
-            <!-- FULLSCREEN TOOLBAR -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="320dp"
-                android:layout_height="58dp"
-                android:layout_gravity="top|center_horizontal"
-                android:layout_marginTop="20dp"
-                app:cardBackgroundColor="@color/card_bg"
-                app:cardCornerRadius="30dp">
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                app:cardBackgroundColor="@color/cardWhite"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="horizontal">
-                    <ImageView
-                        android:id="@+id/btnFullPen"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:background="@null"
-                        android:padding="8dp"
-                        android:src="@drawable/pen"
-                        />
-                    <View
-                        android:layout_width="12dp"
-                        android:layout_height="1dp" />
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
 
-                    <ImageView
-                        android:id="@+id/fullBlue"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/bg_blue_dot" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PATIENT INFORMATION"
+                        android:textColor="@color/primaryBlue"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
 
-                    <View
-                        android:layout_width="12dp"
-                        android:layout_height="1dp" />
+                    <LinearLayout
+                        android:id="@+id/layoutPatientSelector"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:orientation="vertical">
 
-                    <ImageView
-                        android:id="@+id/fullRed"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:background="@drawable/bg_red_dot" />
+                        <Spinner
+                            android:id="@+id/spPatients"
+                            android:layout_width="match_parent"
+                            android:layout_height="48dp"
+                            android:background="@drawable/bg_spinner" />
 
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="1dp" />
+                        <EditText
+                            android:id="@+id/etPatientPhone"
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/bg_edittext"
+                            android:focusable="false"
+                            android:clickable="false"
+                            android:hint="Patient phone number"
+                            android:paddingHorizontal="12dp"
+                            android:textSize="13sp" />
 
-                    <ImageView
-                        android:id="@+id/fullErase"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/eraser"
-                         />
+                    </LinearLayout>
 
-                    <View
-                        android:layout_width="12dp"
-                        android:layout_height="1dp" />
-
-                    <ImageView
-                        android:id="@+id/fullUndo"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/undo"
-                         />
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="1dp" />
-
-                    <ImageView
-                        android:id="@+id/fullClear"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/delete"
-                       />
-
-                    <View
-                        android:layout_width="24dp"
-                        android:layout_height="1dp" />
-
-                    <ImageView
-                        android:id="@+id/btnCloseFullscreen"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:src="@drawable/cancel"
-                        app:tint="#222222" />
+                    <TextView
+                        android:id="@+id/tvPatientHeaderDetails"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp"
+                        android:text="Mohammad Sahil • Date: Today"
+                        android:textColor="@color/textPrimary"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
-        </FrameLayout>
+            <!-- Diagnosis Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
 
-    </FrameLayout>
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Diagnosis"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddDiagnosis"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ Add Diagnosis"
+                    android:textColor="@color/primaryBlue"
+                    android:textSize="12sp"
+                    app:cornerRadius="16dp"
+                    android:backgroundTint="@color/lightBlue"
+                    style="@style/Widget.MaterialComponents.Button.TextButton" />
+
+            </LinearLayout>
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/cgDiagnosis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="6dp" />
+
+            <!-- Prescribed Medicines Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="24dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Prescribed Medicines"
+                    android:textColor="@color/textPrimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnAddMedicine"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+ Add Medicine"
+                    android:textColor="@color/white"
+                    android:textSize="12sp"
+                    app:cornerRadius="16dp"
+                    android:backgroundTint="@color/primaryBlue" />
+
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvMedicines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:nestedScrollingEnabled="false" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/cardEmptyMedicines"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/cardWhite"
+                app:strokeColor="#E0E0E0"
+                app:strokeWidth="1dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="20dp"
+                    android:gravity="center"
+                    android:text="No medicines added yet. Tap '+ Add Medicine' to prescribe."
+                    android:textColor="@color/textSecondary"
+                    android:textSize="13sp" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Additional Instructions Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="24dp"
+                android:text="Additional Advice &amp; Instructions"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etAdditionalInstructions"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="e.g. Drink plenty of fluids, take adequate rest, avoid cold drinks."
+                android:gravity="top|start"
+                android:padding="12dp"
+                android:textSize="14sp"
+                android:inputType="textMultiLine" />
+
+            <!-- Follow-up Section -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="20dp"
+                android:text="Recommended Follow-up"
+                android:textColor="@color/textPrimary"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/etFollowUp"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_edittext"
+                android:hint="e.g. 5 Days / 1 Week"
+                android:paddingHorizontal="12dp"
+                android:textSize="14sp"
+                android:inputType="text" />
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Bottom Action Bar -->
+    <LinearLayout
+        android:id="@+id/layoutBottomBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:background="@color/cardWhite"
+        android:elevation="8dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPreview"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:text="Preview"
+            android:textColor="@color/primaryBlue"
+            android:textSize="14sp"
+            app:cornerRadius="26dp"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnIssuePrescription"
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_weight="1.2"
+            android:layout_marginStart="8dp"
+            android:text="Issue Prescription"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:cornerRadius="26dp"
+            android:backgroundTint="@color/primaryBlue" />
+
+    </LinearLayout>
+
+</RelativeLayout>

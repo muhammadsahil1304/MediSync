@@ -35,7 +35,7 @@
         android:textSize="14sp"
         app:cornerRadius="12dp"
         android:backgroundTint="@color/lightBlue"
-        style="@style/Widget.Material3.Button.TextButton" />
+        style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     <!-- Type Selector -->
     <TextView
@@ -91,7 +91,7 @@
             android:textSize="13sp"
             app:cornerRadius="12dp"
             android:backgroundTint="@color/lightBlue"
-            style="@style/Widget.Material3.Button.TextButton" />
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -112,7 +112,7 @@
             android:textSize="13sp"
             app:cornerRadius="12dp"
             android:backgroundTint="@color/lightBlue"
-            style="@style/Widget.Material3.Button.TextButton" />
+            style="@style/Widget.MaterialComponents.Button.TextButton" />
 
     </LinearLayout>
 
@@ -153,7 +153,7 @@
             android:text="Cancel"
             android:textColor="@color/textSecondary"
             app:cornerRadius="24dp"
-            style="@style/Widget.Material3.Button.OutlinedButton" />
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"

@@ -120,6 +120,30 @@ class PatientRepository {
             .set(patient)
             .await()
     }
+
+    suspend fun updateFullPatientProfile(user: User, patient: PatientModel) {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not logged in")
+
+        val userUpdates = mapOf(
+            "name" to user.name,
+            "phone" to user.phone
+        )
+        firestore.collection("users").document(uid).update(userUpdates).await()
+
+        firestore.collection("patients").document(uid).set(patient).await()
+    }
+
+    suspend fun getPatientFullProfile(): Pair<User, PatientModel?> {
+        val uid = auth.currentUser?.uid ?: throw Exception("User not logged in")
+
+        val userDoc = firestore.collection("users").document(uid).get().await()
+        val patientDoc = firestore.collection("patients").document(uid).get().await()
+
+        val user = userDoc.toObject(User::class.java) ?: User(uid = uid)
+        val patientModel = if (patientDoc.exists()) patientDoc.toObject(PatientModel::class.java) else null
+
+        return Pair(user, patientModel)
+    }
     suspend fun patientExists(): Boolean {
 
         val uid = auth.currentUser?.uid

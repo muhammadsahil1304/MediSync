@@ -47,6 +47,14 @@ class PatientHomeFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
+        binding.btnEditProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
+        }
+
+        binding.imgPatient.setOnClickListener {
+            findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
+        }
+
         binding.btnLogout.setOnClickListener {
             android.app.AlertDialog.Builder(requireContext())
                 .setTitle("Logout")

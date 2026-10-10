@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newmedisync.R
 import com.example.newmedisync.adapter.UnifiedHealthRecordsAdapter
 import com.example.newmedisync.databinding.FragmentHealthRecordsBinding
+import com.example.newmedisync.firebase.AppointmentRepository
 import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.firebase.ReportRepository
 import com.example.newmedisync.model.HealthRecordItem
@@ -23,13 +24,14 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-class ReportsFragment : Fragment() {
+class HealthRecordsFragment : Fragment() {
 
     private var _binding: FragmentHealthRecordsBinding? = null
     private val binding get() = _binding!!
 
     private val patientRepository = PatientRepository()
     private val reportRepository = ReportRepository()
+    private val appointmentRepository = AppointmentRepository()
 
     private lateinit var adapter: UnifiedHealthRecordsAdapter
 
@@ -205,7 +207,7 @@ class ReportsFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putString("prescriptionId", presc.id)
                 }
-                findNavController().navigate(R.id.action_reportsFragment_to_patientPrescriptionDetails, bundle)
+                findNavController().navigate(R.id.navigation_patientPrescriptionDetails, bundle)
             }
             HealthRecordType.REPORT -> {
                 val report = item.rawReport ?: return

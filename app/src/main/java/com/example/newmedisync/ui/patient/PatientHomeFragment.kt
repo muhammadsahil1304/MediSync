@@ -16,8 +16,10 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.newmedisync.R
+import com.example.newmedisync.adapter.MyDoctorsAdapter
 import com.example.newmedisync.databinding.FragmentPatientHomeBinding
 import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.VisitModel
@@ -31,6 +33,7 @@ class PatientHomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: PatientViewModel
+    private lateinit var myDoctorsAdapter: MyDoctorsAdapter
     private var currentPatient: PatientModel? = null
 
     override fun onCreateView(
@@ -47,10 +50,22 @@ class PatientHomeFragment : Fragment() {
 
         viewModel = ViewModelProvider(requireActivity())[PatientViewModel::class.java]
 
+        setupMyDoctorsRecyclerView()
         setupObservers()
         setupClickListeners()
 
         viewModel.loadPatient()
+    }
+
+    private fun setupMyDoctorsRecyclerView() {
+        myDoctorsAdapter = MyDoctorsAdapter(emptyList()) { doctor ->
+            val bundle = Bundle().apply {
+                putString("doctorId", doctor.doctorId)
+            }
+            findNavController().navigate(R.id.navigation_doctorProfile, bundle)
+        }
+        binding.rvMyDoctors.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvMyDoctors.adapter = myDoctorsAdapter
     }
 
     private fun setupClickListeners() {
@@ -72,6 +87,10 @@ class PatientHomeFragment : Fragment() {
 
         binding.btnCallEmergency.setOnClickListener {
             confirmAndCallEmergencyContact()
+        }
+
+        binding.btnFindMoreDoctors.setOnClickListener {
+            findNavController().navigate(R.id.navigation_doctorSearch)
         }
 
         binding.btnLogout.setOnClickListener {
@@ -174,6 +193,17 @@ class PatientHomeFragment : Fragment() {
                 .setMessage(response)
                 .setPositiveButton("OK", null)
                 .show()
+        }
+
+        viewModel.myDoctors.observe(viewLifecycleOwner) { doctors ->
+            if (doctors.isNullOrEmpty()) {
+                binding.rvMyDoctors.visibility = View.GONE
+                binding.tvNoMyDoctors.visibility = View.VISIBLE
+            } else {
+                binding.rvMyDoctors.visibility = View.VISIBLE
+                binding.tvNoMyDoctors.visibility = View.GONE
+                myDoctorsAdapter.updateList(doctors)
+            }
         }
 
         viewModel.healthRisk.observe(viewLifecycleOwner) { risk ->

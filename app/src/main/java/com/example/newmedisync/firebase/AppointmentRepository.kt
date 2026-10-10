@@ -365,6 +365,72 @@ class AppointmentRepository {
         }
     }
 
+    suspend fun getPatientDoctors(patientUid: String): List<com.example.newmedisync.model.MyDoctorItem> {
+        return try {
+            val snapshot = firestore.collection("appointments")
+                .whereEqualTo("patientId", patientUid)
+                .get()
+                .await()
+            val allAppts = snapshot.toObjects(Appointment::class.java)
+
+            // Exclude cancelled-only appointments
+            val validAppts = allAppts.filter {
+                it.status.equals("Completed", ignoreCase = true) ||
+                        it.status.equals("Upcoming", ignoreCase = true)
+            }
+
+            val doctorGroups = validAppts.groupBy { it.doctorId }
+            val resultList = mutableListOf<com.example.newmedisync.model.MyDoctorItem>()
+
+            for ((dId, appts) in doctorGroups) {
+                if (dId.isBlank()) continue
+
+                // Fetch latest doctor verification info for photo / specialization if updated
+                var docPhoto = appts.firstOrNull { it.doctorProfileImageUrl.isNotBlank() }?.doctorProfileImageUrl ?: ""
+                var docSpec = appts.firstOrNull { it.doctorSpecialization.isNotBlank() }?.doctorSpecialization ?: "Specialist"
+
+                try {
+                    val docDoc = firestore.collection("doctor_verifications").document(dId).get().await()
+                    if (docDoc.exists()) {
+                        val verif = docDoc.toObject(com.example.newmedisync.model.DoctorVerification::class.java)
+                        if (verif != null) {
+                            if (verif.profileImageUrl.isNotBlank()) docPhoto = verif.profileImageUrl
+                            if (verif.specialization.isNotBlank()) docSpec = verif.specialization
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Fallback to appointment data
+                }
+
+                val latestAppt = appts.maxByOrNull { it.timestamp }
+                val lastLocName = latestAppt?.locationName?.ifBlank { "Clinic Location" } ?: "Clinic Location"
+                val lastDateStr = latestAppt?.date ?: ""
+                val hasUpcoming = appts.any { it.status.equals("Upcoming", ignoreCase = true) }
+
+                val dName = latestAppt?.doctorName ?: "Doctor"
+                val formattedName = if (dName.startsWith("Dr.")) dName else "Dr. $dName"
+
+                resultList.add(
+                    com.example.newmedisync.model.MyDoctorItem(
+                        doctorId = dId,
+                        doctorName = formattedName,
+                        specialization = docSpec,
+                        profileImageUrl = docPhoto,
+                        lastLocationName = lastLocName,
+                        lastVisitDate = lastDateStr,
+                        lastVisitTimestamp = latestAppt?.timestamp ?: 0L,
+                        appointmentCount = appts.size,
+                        hasUpcoming = hasUpcoming
+                    )
+                )
+            }
+
+            resultList.sortedByDescending { it.lastVisitTimestamp }
+        } catch (e: Exception) {
+            emptyList()
+        }
+    }
+
     fun getCurrentDoctorUid(): String? {
         return auth.currentUser?.uid
     }

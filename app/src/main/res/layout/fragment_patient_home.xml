@@ -417,6 +417,54 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- MY DOCTORS SECTION -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="My Doctors"
+                android:textColor="#202124"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/btnFindMoreDoctors"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Find Doctors →"
+                android:textColor="#0A6AA1"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvMyDoctors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:nestedScrollingEnabled="false" />
+
+        <TextView
+            android:id="@+id/tvNoMyDoctors"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="You haven't visited any doctors yet."
+            android:textColor="#70757A"
+            android:textSize="13sp"
+            android:visibility="gone" />
+
         <!-- LAST VISIT -->
 
         <com.google.android.material.card.MaterialCardView

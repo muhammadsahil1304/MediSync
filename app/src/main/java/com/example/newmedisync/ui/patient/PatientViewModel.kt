@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.newmedisync.firebase.AppointmentRepository
 import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.firebase.AIRepository
+import com.example.newmedisync.model.MyDoctorItem
 import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.PrescriptionRecord
 import com.example.newmedisync.model.VisitModel
@@ -14,6 +16,7 @@ import kotlinx.coroutines.launch
 class PatientViewModel : ViewModel() {
 
     private val repository = PatientRepository()
+    private val appointmentRepository = AppointmentRepository()
     private val aiRepository = AIRepository()
 
     private val _patient = MutableLiveData<PatientModel>()
@@ -33,6 +36,9 @@ class PatientViewModel : ViewModel() {
 
     private val _prescriptions = MutableLiveData<List<PrescriptionRecord>>()
     val prescriptions: LiveData<List<PrescriptionRecord>> = _prescriptions
+
+    private val _myDoctors = MutableLiveData<List<MyDoctorItem>>()
+    val myDoctors: LiveData<List<MyDoctorItem>> = _myDoctors
 
     private val _aiResponse = MutableLiveData<String>()
     val aiResponse: LiveData<String> = _aiResponse
@@ -96,6 +102,7 @@ class PatientViewModel : ViewModel() {
                 
                 loadVisits(user.uid)
                 loadPrescriptions(user.uid)
+                loadMyDoctors(user.uid)
             } catch (e: Exception) {
                 // Handle error
             }
@@ -108,6 +115,17 @@ class PatientViewModel : ViewModel() {
             onFailure = {
             }
         )
+    }
+
+    fun loadMyDoctors(patientUid: String) {
+        viewModelScope.launch {
+            try {
+                val doctors = appointmentRepository.getPatientDoctors(patientUid)
+                _myDoctors.value = doctors
+            } catch (e: Exception) {
+                _myDoctors.value = emptyList()
+            }
+        }
     }
 
     private fun loadVisits(uid: String) {

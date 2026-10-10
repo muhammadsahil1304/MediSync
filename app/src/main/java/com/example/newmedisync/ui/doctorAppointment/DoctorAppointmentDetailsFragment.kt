@@ -55,6 +55,23 @@ class DoctorAppointmentDetailsFragment : Fragment() {
             findNavController().popBackStack()
         }
 
+        binding.btnRecordConsultation.setOnClickListener {
+            val appt = currentAppointment ?: return@setOnClickListener
+            val dialog = RecordConsultationDialogFragment.newInstance(
+                patientUid = appt.patientId,
+                patientName = appt.patientName,
+                doctorUid = appt.doctorId,
+                doctorName = appt.doctorName,
+                appointmentId = appt.appointmentId,
+                visitDate = appt.date,
+                visitTime = appt.timeSlot
+            )
+            dialog.onConsultationSaved = {
+                loadAppointmentDetails()
+            }
+            dialog.show(parentFragmentManager, "RecordConsultation")
+        }
+
         binding.btnWritePrescription.setOnClickListener {
             val appt = currentAppointment
             if (appt != null) {

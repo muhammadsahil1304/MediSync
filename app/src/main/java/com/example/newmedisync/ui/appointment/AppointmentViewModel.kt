@@ -472,6 +472,34 @@ class AppointmentViewModel : ViewModel() {
                 )
 
                 val appointmentId = appointmentRepository.bookAppointment(appointment)
+
+                // Sync linked follow-up recommendation
+                try {
+                    val followUpRepo = com.example.newmedisync.firebase.FollowUpRepository()
+                    val pendingFollowUps = followUpRepo.getPatientFollowUps(patientUid)
+                        .filter { it.doctorId == doctor.uid && it.status == "RECOMMENDED" }
+
+                    val nearestFollowUp = pendingFollowUps.firstOrNull()
+                    if (nearestFollowUp != null) {
+                        followUpRepo.updateFollowUpStatus(nearestFollowUp.followUpId, "BOOKED", appointmentId)
+                    }
+
+                    // Persistent Notification for Doctor
+                    val notif = com.example.newmedisync.model.NotificationItem(
+                        recipientUid = doctor.uid,
+                        recipientRole = "doctor",
+                        title = "Follow-up Appointment Booked 📅",
+                        message = "${_patientName.value ?: "A patient"} has booked a follow-up appointment for ${date.dateString} at ${slot.time}.",
+                        type = "APPOINTMENT_BOOKED",
+                        relatedAppointmentId = appointmentId,
+                        timestamp = System.currentTimeMillis(),
+                        isRead = false
+                    )
+                    com.example.newmedisync.firebase.NotificationRepository().saveNotification(notif)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+
                 _isLoading.value = false
                 _bookingResult.value = Pair(true, appointmentId)
             } catch (e: Exception) {

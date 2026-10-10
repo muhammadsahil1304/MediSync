@@ -299,94 +299,22 @@ class PatientProfileFragment : Fragment() {
     }
 
     private fun showAddVisitDialog() {
-        val dialog = Dialog(requireContext())
-        dialog.setContentView(R.layout.dialog_visit_preview)
+        val currentDoctorUid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        val currentDoctorName = FirebaseAuth.getInstance().currentUser?.displayName ?: "Doctor"
 
-        val etVisitDate = dialog.findViewById<EditText>(R.id.etVisitDate)
-        val etVisitTime = dialog.findViewById<EditText>(R.id.etVisitTime)
-        val etPurpose = dialog.findViewById<EditText>(R.id.etPurpose)
-        val btnSaveVisit = dialog.findViewById<Button>(R.id.btnSaveVisit)
-
-        val calendar = Calendar.getInstance()
-
-        etVisitDate.setOnClickListener {
-            DatePickerDialog(
-                requireContext(),
-                { _, year, month, day ->
-                    val selectedDate = "$day/${month + 1}/$year"
-                    etVisitDate.setText(selectedDate)
-                },
-                calendar.get(Calendar.YEAR),
-                calendar.get(Calendar.MONTH),
-                calendar.get(Calendar.DAY_OF_MONTH)
-            ).show()
-        }
-
-        etVisitTime.setOnClickListener {
-            TimePickerDialog(
-                requireContext(),
-                { _, hour, minute ->
-                    etVisitTime.setText(
-                        String.format(
-                            Locale.getDefault(),
-                            "%02d:%02d",
-                            hour,
-                            minute
-                        )
-                    )
-                },
-                calendar.get(Calendar.HOUR_OF_DAY),
-                calendar.get(Calendar.MINUTE),
-                false
-            ).show()
-        }
-
-        btnSaveVisit.setOnClickListener {
-            val visit = VisitEntity(
-                patientName = patientName,
-                patientPhone = patientPhone,
-                visitDate = etVisitDate.text.toString(),
-                visitTime = etVisitTime.text.toString(),
-                purpose = etPurpose.text.toString()
-            )
-
-            CoroutineScope(Dispatchers.IO).launch {
-                val db = AppDatabase.getDatabase(requireContext())
-                db.visitDao().insertVisit(visit)
-
-                try {
-                    val pUid = if (patientUid.isNotBlank()) patientUid else patientRepository.getUidByPhone(patientPhone)
-                    if (pUid != null) {
-                        val auth = FirebaseAuth.getInstance()
-                        val doctorUid = auth.currentUser?.uid ?: ""
-                        val doctorName = auth.currentUser?.displayName ?: "Doctor"
-
-                        val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
-                        val dateTime = "${etVisitDate.text} ${etVisitTime.text}"
-                        val timestamp = sdf.parse(dateTime)?.time ?: System.currentTimeMillis()
-
-                        val firestoreVisit = com.example.newmedisync.model.VisitModel(
-                            patientUid = pUid,
-                            doctorUid = doctorUid,
-                            patientName = patientName,
-                            doctorName = doctorName,
-                            date = etVisitDate.text.toString(),
-                            time = etVisitTime.text.toString(),
-                            purpose = etPurpose.text.toString(),
-                            timestamp = timestamp
-                        )
-                        patientRepository.saveVisit(firestoreVisit)
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
-            Toast.makeText(requireContext(), "Visit added successfully", Toast.LENGTH_SHORT).show()
-            dialog.dismiss()
+        val dialog = com.example.newmedisync.ui.doctorAppointment.RecordConsultationDialogFragment.newInstance(
+            patientUid = patientUid,
+            patientName = patientName,
+            doctorUid = currentDoctorUid,
+            doctorName = currentDoctorName,
+            appointmentId = "",
+            visitDate = "",
+            visitTime = ""
+        )
+        dialog.onConsultationSaved = {
             loadConsultationHistory()
         }
-
-        dialog.show()
+        dialog.show(parentFragmentManager, "RecordConsultationProfile")
     }
 
     override fun onDestroyView() {

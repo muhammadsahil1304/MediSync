@@ -13,11 +13,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.newmedisync.R
 import com.example.newmedisync.adapter.UnifiedHealthRecordsAdapter
 import com.example.newmedisync.databinding.FragmentHealthRecordsBinding
-import com.example.newmedisync.firebase.AppointmentRepository
 import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.firebase.ReportRepository
 import com.example.newmedisync.model.HealthRecordItem
 import com.example.newmedisync.model.HealthRecordType
+import com.example.newmedisync.model.VisitModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -31,7 +31,6 @@ class HealthRecordsFragment : Fragment() {
 
     private val patientRepository = PatientRepository()
     private val reportRepository = ReportRepository()
-    private val appointmentRepository = AppointmentRepository()
 
     private lateinit var adapter: UnifiedHealthRecordsAdapter
 
@@ -136,7 +135,7 @@ class HealthRecordsFragment : Fragment() {
                 // Process Visits
                 visits.forEach { visit ->
                     val docName = if (visit.doctorName.startsWith("Dr.")) visit.doctorName else "Dr. ${visit.doctorName}"
-                    val purposeStr = visit.purpose.ifBlank { "Consultation Visit" }
+                    val purposeStr = if (visit.diagnosis.isNotBlank()) "Diagnosis: ${visit.diagnosis}" else if (visit.purpose.isNotBlank()) visit.purpose else "Consultation Visit"
 
                     recordItems.add(
                         HealthRecordItem(
@@ -247,13 +246,37 @@ class HealthRecordsFragment : Fragment() {
             .show()
     }
 
-    private fun showVisitDetailsDialog(visit: com.example.newmedisync.model.VisitModel) {
+    private fun showVisitDetailsDialog(visit: VisitModel) {
         val docName = if (visit.doctorName.startsWith("Dr.")) visit.doctorName else "Dr. ${visit.doctorName}"
-        val msg = "Doctor: $docName\nDate: ${visit.date} ${visit.time}\nPurpose: ${visit.purpose.ifBlank { "General Consultation" }}"
+        val sb = StringBuilder()
+        sb.append("Doctor: $docName\n")
+        sb.append("Date & Time: ${visit.date} ${visit.time}\n\n")
+
+        if (visit.chiefComplaint.isNotBlank()) sb.append("CHIEF COMPLAINT:\n${visit.chiefComplaint}\n\n")
+        if (visit.symptoms.isNotBlank()) sb.append("SYMPTOMS:\n${visit.symptoms}\n\n")
+        if (visit.diagnosis.isNotBlank()) sb.append("DIAGNOSIS:\n${visit.diagnosis}\n\n")
+        if (visit.treatmentPlan.isNotBlank()) sb.append("TREATMENT PLAN & ADVICE:\n${visit.treatmentPlan}\n\n")
+
+        val vitalsList = mutableListOf<String>()
+        if (visit.bpSystolic > 0 && visit.bpDiastolic > 0) vitalsList.add("BP: ${visit.bpSystolic}/${visit.bpDiastolic} mmHg")
+        if (visit.pulseRate > 0) vitalsList.add("Pulse: ${visit.pulseRate} bpm")
+        if (visit.temperature > 0.0) vitalsList.add("Temp: ${visit.temperature} °F")
+        if (visit.spO2 > 0) vitalsList.add("SpO2: ${visit.spO2}%")
+        if (visit.respiratoryRate > 0) vitalsList.add("Resp Rate: ${visit.respiratoryRate} bpm")
+        if (visit.height > 0.0) vitalsList.add("Height: ${visit.height} cm")
+        if (visit.weight > 0.0) vitalsList.add("Weight: ${visit.weight} kg")
+
+        if (vitalsList.isNotEmpty()) {
+            sb.append("RECORDED VITALS:\n${vitalsList.joinToString("\n• ", "• ")}\n\n")
+        }
+
+        if (visit.followUpDate.isNotBlank()) {
+            sb.append("RECOMMENDED FOLLOW-UP: ${visit.followUpDate}\n")
+        }
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Consultation Visit")
-            .setMessage(msg)
+            .setTitle("Consultation Visit Details")
+            .setMessage(sb.toString().trim())
             .setPositiveButton("Close", null)
             .show()
     }

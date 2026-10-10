@@ -5,8 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.newmedisync.firebase.AppointmentRepository
+import com.example.newmedisync.firebase.FollowUpRepository
 import com.example.newmedisync.firebase.PatientRepository
 import com.example.newmedisync.firebase.AIRepository
+import com.example.newmedisync.model.FollowUpItem
 import com.example.newmedisync.model.MyDoctorItem
 import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.PrescriptionRecord
@@ -17,6 +19,7 @@ class PatientViewModel : ViewModel() {
 
     private val repository = PatientRepository()
     private val appointmentRepository = AppointmentRepository()
+    private val followUpRepository = FollowUpRepository()
     private val aiRepository = AIRepository()
 
     private val _patient = MutableLiveData<PatientModel>()
@@ -30,6 +33,9 @@ class PatientViewModel : ViewModel() {
 
     private val _followUp = MutableLiveData<VisitModel?>()
     val followUp: LiveData<VisitModel?> = _followUp
+
+    private val _followUpItem = MutableLiveData<FollowUpItem?>()
+    val followUpItem: LiveData<FollowUpItem?> = _followUpItem
 
     private val _allVisits = MutableLiveData<List<VisitModel>>()
     val allVisits: LiveData<List<VisitModel>> = _allVisits
@@ -103,6 +109,7 @@ class PatientViewModel : ViewModel() {
                 loadVisits(user.uid)
                 loadPrescriptions(user.uid)
                 loadMyDoctors(user.uid)
+                loadPendingFollowUp(user.uid)
             } catch (e: Exception) {
                 // Handle error
             }
@@ -115,6 +122,18 @@ class PatientViewModel : ViewModel() {
             onFailure = {
             }
         )
+    }
+
+    fun loadPendingFollowUp(patientUid: String) {
+        viewModelScope.launch {
+            try {
+                val list = followUpRepository.getPatientFollowUps(patientUid)
+                val pending = list.firstOrNull { it.status == "RECOMMENDED" } ?: list.firstOrNull()
+                _followUpItem.value = pending
+            } catch (e: Exception) {
+                _followUpItem.value = null
+            }
+        }
     }
 
     fun loadMyDoctors(patientUid: String) {

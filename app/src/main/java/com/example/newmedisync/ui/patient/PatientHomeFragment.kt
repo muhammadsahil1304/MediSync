@@ -102,6 +102,18 @@ class PatientHomeFragment : Fragment() {
             findNavController().navigate(R.id.navigation_doctorSearch)
         }
 
+        binding.btnBookFollowUp.setOnClickListener {
+            val fu = viewModel.followUpItem.value
+            if (fu != null && fu.status == "RECOMMENDED") {
+                val bundle = Bundle().apply {
+                    putString("doctorId", fu.doctorId)
+                }
+                findNavController().navigate(R.id.navigation_doctorProfile, bundle)
+            } else {
+                findNavController().navigate(R.id.navigation_myAppointments)
+            }
+        }
+
         binding.btnLogout.setOnClickListener {
             android.app.AlertDialog.Builder(requireContext())
                 .setTitle("Logout")
@@ -227,6 +239,28 @@ class PatientHomeFragment : Fragment() {
                 binding.rvMyDoctors.visibility = View.VISIBLE
                 binding.tvNoMyDoctors.visibility = View.GONE
                 myDoctorsAdapter.updateList(doctors)
+            }
+        }
+
+        viewModel.followUpItem.observe(viewLifecycleOwner) { fu ->
+            if (fu != null) {
+                binding.tvFollowUpDate.text = fu.recommendedDate
+                binding.tvFollowUpAction.text = "${fu.doctorName} • ${fu.reason.ifBlank { "Recommended Follow-up" }}"
+                binding.tvFollowUpStatusBadge.text = fu.status
+                if (fu.status == "RECOMMENDED") {
+                    binding.btnBookFollowUp.text = "Book Follow-up Appointment"
+                    binding.btnBookFollowUp.visibility = View.VISIBLE
+                } else if (fu.status == "BOOKED") {
+                    binding.btnBookFollowUp.text = "View Appointments"
+                    binding.btnBookFollowUp.visibility = View.VISIBLE
+                } else {
+                    binding.btnBookFollowUp.visibility = View.GONE
+                }
+            } else {
+                binding.tvFollowUpDate.text = "--"
+                binding.tvFollowUpAction.text = "No pending follow-up recommendations"
+                binding.tvFollowUpStatusBadge.text = "NONE"
+                binding.btnBookFollowUp.visibility = View.GONE
             }
         }
 

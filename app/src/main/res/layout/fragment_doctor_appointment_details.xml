@@ -321,9 +321,20 @@
             android:visibility="gone" />
 
         <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnRecordConsultation"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="📝 Record Consultation &amp; Vitals"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:cornerRadius="26dp"
+            android:backgroundTint="#0A70A2" />
+
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnWritePrescription"
             android:layout_width="match_parent"
             android:layout_height="52dp"
+            android:layout_marginTop="8dp"
             android:text="Write Prescription"
             android:textColor="@color/white"
             android:textSize="16sp"

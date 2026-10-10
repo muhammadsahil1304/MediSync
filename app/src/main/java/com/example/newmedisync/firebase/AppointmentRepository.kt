@@ -175,6 +175,12 @@ class AppointmentRepository {
             .document(appointmentId)
             .update("status", status)
             .await()
+
+        try {
+            FollowUpRepository().syncFollowUpOnAppointmentStatusChange(appointmentId, status)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun cancelAppointment(appointmentId: String, cancelledBy: String, cancelReason: String = "") {
@@ -194,6 +200,12 @@ class AppointmentRepository {
         )
 
         docRef.update(updates).await()
+
+        try {
+            FollowUpRepository().syncFollowUpOnAppointmentStatusChange(appointmentId, "Cancelled")
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun saveDoctorAvailability(availability: com.example.newmedisync.model.DoctorAvailability) {

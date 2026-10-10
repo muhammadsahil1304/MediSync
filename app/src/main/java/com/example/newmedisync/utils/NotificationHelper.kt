@@ -15,11 +15,16 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import com.example.newmedisync.MainActivity
 import com.example.newmedisync.R
+import com.example.newmedisync.firebase.NotificationRepository
 import com.example.newmedisync.model.Appointment
+import com.example.newmedisync.model.NotificationItem
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 object NotificationHelper {
 
@@ -29,6 +34,7 @@ object NotificationHelper {
     private const val PERMISSION_REQUEST_CODE = 1001
 
     private var listenerRegistration: ListenerRegistration? = null
+    private val notificationRepository = NotificationRepository()
 
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -136,20 +142,21 @@ object NotificationHelper {
                     if (change.type == DocumentChange.Type.ADDED) {
                         val appt = change.document.toObject(Appointment::class.java)
                         val patientName = if (appt.patientName.isNotBlank()) appt.patientName else "A patient"
-                        showNotification(
-                            context,
-                            "New Appointment Received! 📅",
-                            "$patientName has booked an appointment for ${appt.date} at ${appt.timeSlot}."
-                        )
+                        val title = "New Appointment Received! 📅"
+                        val msg = "$patientName has booked an appointment for ${appt.date} at ${appt.timeSlot}."
+                        
+                        showNotification(context, title, msg)
+                        persistNotif(doctorUid, "doctor", title, msg, "APPOINTMENT_BOOKED", appt.appointmentId)
+
                     } else if (change.type == DocumentChange.Type.MODIFIED) {
                         val appt = change.document.toObject(Appointment::class.java)
                         if (appt.status.equals("Cancelled", ignoreCase = true) && appt.cancelledBy.equals("PATIENT", ignoreCase = true)) {
                             val patientName = if (appt.patientName.isNotBlank()) appt.patientName else "A patient"
-                            showNotification(
-                                context,
-                                "Appointment Cancelled ❌",
-                                "Your appointment with $patientName on ${appt.date} at ${appt.timeSlot} has been cancelled."
-                            )
+                            val title = "Appointment Cancelled ❌"
+                            val msg = "Your appointment with $patientName on ${appt.date} at ${appt.timeSlot} has been cancelled."
+                            
+                            showNotification(context, title, msg)
+                            persistNotif(doctorUid, "doctor", title, msg, "APPOINTMENT_CANCELLED", appt.appointmentId)
                         }
                     }
                 }
@@ -175,22 +182,50 @@ object NotificationHelper {
                         val appt = change.document.toObject(Appointment::class.java)
                         if (appt.status.equals("Completed", ignoreCase = true)) {
                             val doctorName = if (appt.doctorName.isNotBlank()) appt.doctorName else "Doctor"
-                            showNotification(
-                                context,
-                                "Appointment Completed! ✓",
-                                "Your appointment with $doctorName on ${appt.date} at ${appt.timeSlot} has been marked as completed."
-                            )
+                            val title = "Appointment Completed! ✓"
+                            val msg = "Your appointment with $doctorName on ${appt.date} at ${appt.timeSlot} has been marked as completed."
+                            
+                            showNotification(context, title, msg)
+                            persistNotif(patientUid, "patient", title, msg, "APPOINTMENT_COMPLETED", appt.appointmentId)
+
                         } else if (appt.status.equals("Cancelled", ignoreCase = true) && appt.cancelledBy.equals("DOCTOR", ignoreCase = true)) {
                             val doctorName = if (appt.doctorName.isNotBlank()) appt.doctorName else "Doctor"
-                            showNotification(
-                                context,
-                                "Appointment Cancelled ❌",
-                                "Dr. $doctorName has cancelled your appointment on ${appt.date} at ${appt.timeSlot}."
-                            )
+                            val title = "Appointment Cancelled ❌"
+                            val msg = "Dr. $doctorName has cancelled your appointment on ${appt.date} at ${appt.timeSlot}."
+                            
+                            showNotification(context, title, msg)
+                            persistNotif(patientUid, "patient", title, msg, "APPOINTMENT_CANCELLED", appt.appointmentId)
                         }
                     }
                 }
             }
+    }
+
+    private fun persistNotif(
+        recipientUid: String,
+        role: String,
+        title: String,
+        msg: String,
+        type: String,
+        appointmentId: String
+    ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val notif = NotificationItem(
+                    recipientUid = recipientUid,
+                    recipientRole = role,
+                    title = title,
+                    message = msg,
+                    type = type,
+                    relatedAppointmentId = appointmentId,
+                    timestamp = System.currentTimeMillis(),
+                    isRead = false
+                )
+                notificationRepository.saveNotification(notif)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 
     fun stopAppointmentNotificationListener() {

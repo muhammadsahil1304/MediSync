@@ -16,8 +16,10 @@ import com.example.newmedisync.adapter.DoctorAppointmentAdapter
 import com.example.newmedisync.databinding.FragmentHomeBinding
 import com.example.newmedisync.firebase.AppointmentRepository
 import com.example.newmedisync.firebase.DoctorVerificationRepository
+import com.example.newmedisync.firebase.NotificationRepository
 import com.example.newmedisync.room.AppDatabase
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -30,6 +32,9 @@ class HomeFragment : Fragment() {
 
     private val binding get() = _binding!!
     private val appointmentRepository = AppointmentRepository()
+    private val notificationRepository = NotificationRepository()
+    private var notifListenerRegistration: ListenerRegistration? = null
+
     private lateinit var todayAdapter: DoctorAppointmentAdapter
 
     override fun onCreateView(
@@ -67,10 +72,26 @@ class HomeFragment : Fragment() {
             database.patientDao().getPatientsCount(uid).observe(viewLifecycleOwner) { count ->
                 binding.tvTotalPatients.text = count.toString()
             }
+
+            notifListenerRegistration = notificationRepository.listenToNotifications(uid) { list ->
+                _binding?.let {
+                    val unreadCount = list.count { !it.isRead }
+                    if (unreadCount > 0) {
+                        binding.tvUnreadBadge.visibility = View.VISIBLE
+                        binding.tvUnreadBadge.text = unreadCount.toString()
+                    } else {
+                        binding.tvUnreadBadge.visibility = View.GONE
+                    }
+                }
+            }
         }
 
         setupRecyclerViewAndListeners()
         setupLogout()
+
+        binding.btnNotificationInbox.setOnClickListener {
+            findNavController().navigate(R.id.navigation_notifications)
+        }
 
         binding.viewPatients.setOnClickListener {
             checkAccess {
@@ -230,6 +251,8 @@ class HomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        notifListenerRegistration?.remove()
+        notifListenerRegistration = null
         _binding = null
     }
 }

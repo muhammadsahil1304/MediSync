@@ -21,9 +21,11 @@ import com.bumptech.glide.Glide
 import com.example.newmedisync.R
 import com.example.newmedisync.adapter.MyDoctorsAdapter
 import com.example.newmedisync.databinding.FragmentPatientHomeBinding
+import com.example.newmedisync.firebase.NotificationRepository
 import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.VisitModel
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.ListenerRegistration
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -35,6 +37,9 @@ class PatientHomeFragment : Fragment() {
     private lateinit var viewModel: PatientViewModel
     private lateinit var myDoctorsAdapter: MyDoctorsAdapter
     private var currentPatient: PatientModel? = null
+
+    private val notificationRepository = NotificationRepository()
+    private var notifListenerRegistration: ListenerRegistration? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,6 +74,10 @@ class PatientHomeFragment : Fragment() {
     }
 
     private fun setupClickListeners() {
+        binding.btnNotificationInbox.setOnClickListener {
+            findNavController().navigate(R.id.navigation_notifications)
+        }
+
         binding.btnEditProfile.setOnClickListener {
             findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
         }
@@ -186,6 +195,21 @@ class PatientHomeFragment : Fragment() {
     }
 
     private fun setupObservers() {
+        val uid = FirebaseAuth.getInstance().currentUser?.uid ?: ""
+        if (uid.isNotBlank()) {
+            notifListenerRegistration = notificationRepository.listenToNotifications(uid) { list ->
+                _binding?.let {
+                    val unreadCount = list.count { !it.isRead }
+                    if (unreadCount > 0) {
+                        binding.tvUnreadBadge.visibility = View.VISIBLE
+                        binding.tvUnreadBadge.text = unreadCount.toString()
+                    } else {
+                        binding.tvUnreadBadge.visibility = View.GONE
+                    }
+                }
+            }
+        }
+
         viewModel.aiResponse.observe(viewLifecycleOwner) { response ->
             Log.d("GEMINI REsponse", response)
             android.app.AlertDialog.Builder(requireContext())
@@ -382,6 +406,8 @@ class PatientHomeFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        notifListenerRegistration?.remove()
+        notifListenerRegistration = null
         _binding = null
     }
 }

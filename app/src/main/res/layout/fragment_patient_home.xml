@@ -235,6 +235,136 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- EMERGENCY CONTACT QUICK CARD -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardEmergencyContact"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="#FEF2F2"
+            app:strokeColor="#FCA5A5"
+            app:strokeWidth="1dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="18dp">
+
+                <!-- Header -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/phone"
+                        app:tint="#DC2626" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_marginStart="10dp"
+                        android:text="EMERGENCY CONTACT"
+                        android:textColor="#DC2626"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:letterSpacing="0.05" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnEditEmergency"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Edit"
+                        android:textColor="#DC2626"
+                        android:textSize="12sp"
+                        app:cornerRadius="14dp"
+                        style="@style/Widget.MaterialComponents.Button.TextButton"
+                        android:visibility="gone" />
+
+                </LinearLayout>
+
+                <!-- Configured Contact View -->
+                <LinearLayout
+                    android:id="@+id/layoutContactInfo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:id="@+id/tvEmergencyName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="John Doe"
+                        android:textColor="#1F2937"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvEmergencyPhone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:text="+91 98765 43210"
+                        android:textColor="#4B5563"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCallEmergency"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="12dp"
+                        android:text="📞 Call Emergency Contact"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        app:cornerRadius="24dp"
+                        android:backgroundTint="#DC2626" />
+
+                </LinearLayout>
+
+                <!-- Unconfigured Contact View -->
+                <LinearLayout
+                    android:id="@+id/layoutNoContact"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="No emergency contact configured."
+                        android:textColor="#6B7280"
+                        android:textSize="13sp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnAddEmergency"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:layout_marginTop="10dp"
+                        android:text="+ Configure Emergency Contact"
+                        android:textColor="#DC2626"
+                        android:textSize="13sp"
+                        app:cornerRadius="22dp"
+                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                        app:strokeColor="#DC2626" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- BOOK APPOINTMENT QUICK CARD -->
 
         <com.google.android.material.card.MaterialCardView

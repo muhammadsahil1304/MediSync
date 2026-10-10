@@ -1,6 +1,9 @@
 package com.example.newmedisync.ui.patient
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
@@ -9,12 +12,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.newmedisync.R
 import com.example.newmedisync.databinding.FragmentPatientHomeBinding
+import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.VisitModel
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
@@ -26,6 +31,7 @@ class PatientHomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var viewModel: PatientViewModel
+    private var currentPatient: PatientModel? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,6 +60,18 @@ class PatientHomeFragment : Fragment() {
 
         binding.imgPatient.setOnClickListener {
             findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
+        }
+
+        binding.btnEditEmergency.setOnClickListener {
+            findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
+        }
+
+        binding.btnAddEmergency.setOnClickListener {
+            findNavController().navigate(R.id.action_patientHomeFragment_to_editPatientProfile)
+        }
+
+        binding.btnCallEmergency.setOnClickListener {
+            confirmAndCallEmergencyContact()
         }
 
         binding.btnLogout.setOnClickListener {
@@ -109,6 +127,45 @@ class PatientHomeFragment : Fragment() {
         }
     }
 
+    private fun confirmAndCallEmergencyContact() {
+        val patient = currentPatient
+        val phone = patient?.emergencyPhone?.trim() ?: ""
+        val name = patient?.emergencyName?.ifBlank { "Emergency Contact" } ?: "Emergency Contact"
+
+        if (phone.isBlank()) {
+            Toast.makeText(requireContext(), "No emergency phone number available.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        android.app.AlertDialog.Builder(requireContext())
+            .setTitle("Call Emergency Contact")
+            .setMessage("Are you sure you want to call $name ($phone)?\n\nThis will open your phone dialer.")
+            .setPositiveButton("Call Now") { _, _ ->
+                initiatePhoneDial(phone)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun initiatePhoneDial(phoneNumber: String) {
+        val cleanNumber = phoneNumber.replace("[^0-9+]".toRegex(), "")
+        if (cleanNumber.isBlank()) {
+            Toast.makeText(requireContext(), "Invalid phone number format.", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            val dialIntent = Intent(Intent.ACTION_DIAL).apply {
+                data = Uri.parse("tel:$cleanNumber")
+            }
+            startActivity(dialIntent)
+        } catch (e: ActivityNotFoundException) {
+            Toast.makeText(requireContext(), "No dialer application found on this device.", Toast.LENGTH_SHORT).show()
+        } catch (e: Exception) {
+            Toast.makeText(requireContext(), "Unable to open phone dialer: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun setupObservers() {
         viewModel.aiResponse.observe(viewLifecycleOwner) { response ->
             Log.d("GEMINI REsponse", response)
@@ -146,6 +203,7 @@ class PatientHomeFragment : Fragment() {
         }
 
         viewModel.patient.observe(viewLifecycleOwner) { patient ->
+            currentPatient = patient
             viewModel.generateAIInsights()
 
             binding.tvPatientInfo.text = "${patient.age} yrs • ${patient.gender} • ${patient.bloodGroup} • ${patient.height}cm • ${patient.weight}kg"
@@ -155,6 +213,19 @@ class PatientHomeFragment : Fragment() {
                     .load(patient.profileImageUrl)
                     .placeholder(R.drawable.patients)
                     .into(binding.imgPatient)
+            }
+
+            // Emergency Contact Card Display
+            if (patient.emergencyName.isNotBlank() || patient.emergencyPhone.isNotBlank()) {
+                binding.layoutContactInfo.visibility = View.VISIBLE
+                binding.btnEditEmergency.visibility = View.VISIBLE
+                binding.layoutNoContact.visibility = View.GONE
+                binding.tvEmergencyName.text = if (patient.emergencyName.isNotBlank()) patient.emergencyName else "Emergency Contact"
+                binding.tvEmergencyPhone.text = if (patient.emergencyPhone.isNotBlank()) patient.emergencyPhone else "No phone provided"
+            } else {
+                binding.layoutContactInfo.visibility = View.GONE
+                binding.btnEditEmergency.visibility = View.GONE
+                binding.layoutNoContact.visibility = View.VISIBLE
             }
 
             // Allergies

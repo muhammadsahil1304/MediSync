@@ -15,6 +15,7 @@ import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.newmedisync.R
 import com.example.newmedisync.databinding.FragmentPatientHomeBinding
+import com.example.newmedisync.model.VisitModel
 import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -67,7 +68,15 @@ class PatientHomeFragment : Fragment() {
                 .show()
         }
 
+        binding.cardMedicalHistory.setOnClickListener {
+            findNavController().navigate(R.id.action_patientHomeFragment_to_medicalHistory)
+        }
+
         binding.cardReports.setOnClickListener {
+            findNavController().navigate(R.id.navigation_reports)
+        }
+
+        binding.btnGeneratePrescription.setOnClickListener {
             findNavController().navigate(R.id.navigation_reports)
         }
 
@@ -76,6 +85,10 @@ class PatientHomeFragment : Fragment() {
         }
 
         binding.cardTimeline.setOnClickListener {
+            findNavController().navigate(R.id.navigation_visits)
+        }
+
+        binding.btnViewTimeline.setOnClickListener {
             findNavController().navigate(R.id.navigation_visits)
         }
 
@@ -90,7 +103,7 @@ class PatientHomeFragment : Fragment() {
         binding.btnScanNow.setOnClickListener {
             findNavController().navigate(R.id.navigation_reportScanner)
         }
-        
+
         binding.cardAiScan.setOnClickListener {
             findNavController().navigate(R.id.navigation_reportScanner)
         }
@@ -98,7 +111,7 @@ class PatientHomeFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.aiResponse.observe(viewLifecycleOwner) { response ->
-            Log.d("GEMINI REsponse",response)
+            Log.d("GEMINI REsponse", response)
             android.app.AlertDialog.Builder(requireContext())
                 .setTitle("MediSync AI Assistant")
                 .setMessage(response)
@@ -108,16 +121,24 @@ class PatientHomeFragment : Fragment() {
 
         viewModel.healthRisk.observe(viewLifecycleOwner) { risk ->
             binding.progressHeart.progress = risk.first
-            // Assuming other progress bars have IDs or I'll just use these for now
+            binding.progressDiabetes.progress = risk.second
+            binding.progressKidney.progress = risk.third
         }
 
         viewModel.healthScore.observe(viewLifecycleOwner) { score ->
-            binding.tvHealthScore.text = score.first.toString()
-            // Status update
+            if (score.first > 0) {
+                binding.tvHealthScore.text = score.first.toString()
+                binding.tvHealthStatus.text = score.second
+            } else {
+                binding.tvHealthScore.text = "--"
+                binding.tvHealthStatus.text = "Assessment Pending"
+            }
         }
 
         viewModel.aiPrescriptions.observe(viewLifecycleOwner) { suggestions ->
-            binding.tvAiSuggestions.text = suggestions
+            if (suggestions.isNotBlank()) {
+                binding.tvAiSuggestions.text = suggestions
+            }
         }
 
         viewModel.userName.observe(viewLifecycleOwner) { name ->
@@ -126,10 +147,9 @@ class PatientHomeFragment : Fragment() {
 
         viewModel.patient.observe(viewLifecycleOwner) { patient ->
             viewModel.generateAIInsights()
-            // Update Basic Info
+
             binding.tvPatientInfo.text = "${patient.age} yrs • ${patient.gender} • ${patient.bloodGroup} • ${patient.height}cm • ${patient.weight}kg"
 
-            // Profile Image
             if (patient.profileImageUrl.isNotEmpty()) {
                 Glide.with(this)
                     .load(patient.profileImageUrl)
@@ -173,6 +193,10 @@ class PatientHomeFragment : Fragment() {
             }
         }
 
+        viewModel.allVisits.observe(viewLifecycleOwner) { visits ->
+            renderDynamicTimeline(visits)
+        }
+
         viewModel.lastVisit.observe(viewLifecycleOwner) { visit ->
             if (visit != null) {
                 binding.tvLastVisitDate.text = formatDate(visit.date)
@@ -190,6 +214,29 @@ class PatientHomeFragment : Fragment() {
             } else {
                 binding.tvFollowUpDate.text = "--"
                 binding.tvFollowUpAction.text = "No scheduled syncs"
+            }
+        }
+    }
+
+    private fun renderDynamicTimeline(visits: List<VisitModel>) {
+        binding.layoutDynamicTimeline.removeAllViews()
+        if (visits.isEmpty()) {
+            binding.layoutDynamicTimeline.visibility = View.GONE
+            binding.tvNoVisits.visibility = View.VISIBLE
+        } else {
+            binding.layoutDynamicTimeline.visibility = View.VISIBLE
+            binding.tvNoVisits.visibility = View.GONE
+
+            val topVisits = visits.take(3)
+            topVisits.forEach { visit ->
+                val dateFormatted = formatDate(visit.date)
+                val tvRow = TextView(requireContext()).apply {
+                    text = "● $dateFormatted   ${visit.purpose} (Dr. ${visit.doctorName})"
+                    setTextColor(Color.parseColor("#0A6AA1"))
+                    textSize = 14f
+                    setPadding(0, dpToPx(6), 0, dpToPx(6))
+                }
+                binding.layoutDynamicTimeline.addView(tvRow)
             }
         }
     }
@@ -226,9 +273,9 @@ class PatientHomeFragment : Fragment() {
         val density = resources.displayMetrics.density
         return (dp * density).toInt()
     }
+
     override fun onResume() {
         super.onResume()
-
         viewModel.loadPatient()
     }
 

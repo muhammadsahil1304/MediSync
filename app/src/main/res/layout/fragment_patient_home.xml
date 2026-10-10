@@ -10,8 +10,6 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -61,7 +59,7 @@
                 app:tint="#D04545" />
 
             <ImageView
-                android:id="@+id/imgProfile"
+                android:id="@+id/imgPatient"
                 android:layout_width="42dp"
                 android:layout_height="42dp"
                 android:background="@drawable/bg_circle"
@@ -113,7 +111,6 @@
                     android:layout_height="120dp">
 
                     <ImageView
-                        android:id="@+id/imgPatient"
                         android:layout_width="110dp"
                         android:layout_height="110dp"
                         android:layout_gravity="center"
@@ -238,13 +235,65 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- BOOK APPOINTMENT QUICK CARD -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardBookAppointments"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:cardCornerRadius="18dp"
+            app:cardBackgroundColor="#0A6AA1"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:gravity="center_vertical">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Book Doctor Appointment"
+                        android:textColor="#FFFFFF"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Find verified specialists &amp; reserve your slot"
+                        android:textColor="#D0E4FF"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/calender"
+                    app:tint="#FFFFFF" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
         <!-- LAST VISIT -->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardLastVisit"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:layout_marginTop="18dp"
+            android:layout_marginTop="16dp"
             app:cardBackgroundColor="#DCEEFF"
             app:cardCornerRadius="18dp">
 
@@ -329,57 +378,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- BOOK APPOINTMENT QUICK CARD -->
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardBookAppointments"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="18dp"
-            app:cardBackgroundColor="#0A6AA1"
-            app:cardElevation="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="20dp"
-                android:gravity="center_vertical">
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Book Doctor Appointment"
-                        android:textColor="#FFFFFF"
-                        android:textSize="17sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="4dp"
-                        android:text="Find verified specialists &amp; reserve your slot"
-                        android:textColor="#D0E4FF"
-                        android:textSize="12sp" />
-
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/calender"
-                    app:tint="#FFFFFF" />
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
         <!-- ================= AI SCAN ANALYSIS ================= -->
 
         <TextView
@@ -467,7 +465,6 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
 
         <!-- ================= CLINICAL AI CHAT ================= -->
 
@@ -559,6 +556,7 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
+
         <!-- ================= AI RISK MATRIX ================= -->
 
         <TextView
@@ -620,7 +618,7 @@
                     android:layout_height="8dp"
                     android:layout_marginTop="8dp"
                     android:max="100"
-                    android:progress="72"
+                    android:progress="0"
                     android:progressTint="#EF4444"/>
 
                 <TextView
@@ -632,12 +630,13 @@
                     android:textColor="#202124"/>
 
                 <ProgressBar
+                    android:id="@+id/progressDiabetes"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
                     android:layout_marginTop="8dp"
                     android:max="100"
-                    android:progress="48"
+                    android:progress="0"
                     android:progressTint="#F59E0B"/>
 
                 <TextView
@@ -649,19 +648,27 @@
                     android:textColor="#202124"/>
 
                 <ProgressBar
+                    android:id="@+id/progressKidney"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="8dp"
                     android:layout_marginTop="8dp"
                     android:max="100"
-                    android:progress="19"
+                    android:progress="0"
                     android:progressTint="#22C55E"/>
+
+                <TextView
+                    android:id="@+id/tvRiskDisclaimer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:text="AI risk assessment is for informational estimation only, not a clinical diagnosis."
+                    android:textColor="#70757A"
+                    android:textSize="11sp" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- ================= TIMELINE ================= -->
 
@@ -687,29 +694,22 @@
                     android:textSize="18sp"
                     android:textStyle="bold"/>
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/layoutDynamicTimeline"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:text="● 12 Oct 2025   Routine Check-up"
-                    android:textColor="#0A6AA1"
-                    android:textSize="14sp"/>
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical" />
 
                 <TextView
+                    android:id="@+id/tvNoVisits"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:text="● 05 Jan 2026   Blood Report"
-                    android:textColor="#16A34A"
-                    android:textSize="14sp"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:text="● 17 Mar 2026   MRI Analysis"
-                    android:textColor="#F59E0B"
-                    android:textSize="14sp"/>
+                    android:text="No past visit records found."
+                    android:textColor="#70757A"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
 
                 <Button
                     android:id="@+id/btnViewTimeline"
@@ -725,8 +725,6 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
-
 
         <!-- ================= HEALTH SCORE ================= -->
 
@@ -758,15 +756,16 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="87"
+                    android:text="--"
                     android:textColor="#16A34A"
                     android:textSize="64sp"
                     android:textStyle="bold"/>
 
                 <TextView
+                    android:id="@+id/tvHealthStatus"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Excellent"
+                    android:text="Assessment Pending"
                     android:textColor="#16A34A"
                     android:textSize="18sp"
                     android:textStyle="bold"/>
@@ -776,15 +775,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:gravity="center"
-                    android:text="AI-generated score based on vitals,\nmedical history and latest reports."
+                    android:text="Informational score generated from health background and records.\nNot a clinical diagnosis."
                     android:textAlignment="center"
                     android:textColor="#6B7280"
-                    android:textSize="13sp"/>
+                    android:textSize="12sp"/>
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-        <!-- ================= AI PRESCRIPTION SUGGESTIONS ================= -->
+
+        <!-- ================= ISSUED PRESCRIPTIONS & ADVICE ================= -->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardPrescriptionSuggestion"
@@ -803,7 +803,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="AI Prescription Suggestions"
+                    android:text="Issued Prescriptions &amp; Advice"
                     android:textStyle="bold"
                     android:textSize="18sp"
                     android:textColor="#202124"/>
@@ -813,7 +813,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
-                    android:text="Generating suggestions..."
+                    android:text="View prescriptions and clinical advice issued by your doctors."
                     android:textColor="#555555"
                     android:textSize="14sp"/>
 
@@ -823,7 +823,7 @@
                     android:layout_height="50dp"
                     android:layout_marginTop="18dp"
                     android:background="@drawable/bg_primary_button"
-                    android:text="Generate AI Prescription"
+                    android:text="View Issued Prescriptions"
                     android:textAllCaps="false"
                     android:textColor="@android:color/white"
                     android:textStyle="bold"/>
@@ -831,7 +831,6 @@
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
-
 
         <!-- ================= QUICK ACTIONS ================= -->
 
@@ -873,7 +872,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="History"
+                        android:text="Health Record"
                         android:textStyle="bold"/>
 
                 </LinearLayout>
@@ -903,7 +902,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="Reports"
+                        android:text="Prescriptions"
                         android:textStyle="bold"/>
 
                 </LinearLayout>

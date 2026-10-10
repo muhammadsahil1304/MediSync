@@ -193,6 +193,9 @@
         <action
             android:id="@+id/action_patientHomeFragment_to_editPatientProfile"
             app:destination="@id/navigation_editPatientProfile" />
+        <action
+            android:id="@+id/action_patientHomeFragment_to_medicalHistory"
+            app:destination="@id/navigation_medicalHistory" />
     </fragment>
     <fragment
         android:id="@+id/navigation_reports"
@@ -353,5 +356,15 @@
         android:name="com.example.newmedisync.ui.patient.EditPatientProfileFragment"
         android:label="Edit Patient Profile"
         tools:layout="@layout/fragment_edit_patient_profile" />
+
+    <fragment
+        android:id="@+id/navigation_medicalHistory"
+        android:name="com.example.newmedisync.ui.patient.MedicalHistoryFragment"
+        android:label="Medical History"
+        tools:layout="@layout/fragment_medical_history" >
+        <action
+            android:id="@+id/action_medicalHistoryFragment_to_editPatientProfile"
+            app:destination="@id/navigation_editPatientProfile" />
+    </fragment>
 
 </navigation>

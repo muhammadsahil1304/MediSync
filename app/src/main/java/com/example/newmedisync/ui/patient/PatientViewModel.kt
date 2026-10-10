@@ -10,9 +10,6 @@ import com.example.newmedisync.model.PatientModel
 import com.example.newmedisync.model.PrescriptionRecord
 import com.example.newmedisync.model.VisitModel
 import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 class PatientViewModel : ViewModel() {
 
@@ -67,19 +64,26 @@ class PatientViewModel : ViewModel() {
         viewModelScope.launch {
             val jsonResult = aiRepository.getComprehensiveHealthAnalysis(data)
             try {
-                val heart = jsonResult.substringAfter("\"heart\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
-                val diabetes = jsonResult.substringAfter("\"diabetes\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
-                val kidney = jsonResult.substringAfter("\"kidney\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
-                _healthRisk.postValue(Triple(heart, diabetes, kidney))
+                if (jsonResult.isNotBlank()) {
+                    val heart = jsonResult.substringAfter("\"heart\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                    val diabetes = jsonResult.substringAfter("\"diabetes\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                    val kidney = jsonResult.substringAfter("\"kidney\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                    _healthRisk.postValue(Triple(heart, diabetes, kidney))
 
-                val score = jsonResult.substringAfter("\"score\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 80
-                val status = jsonResult.substringAfter("\"status\":").substringBefore(",").replace("\"", "").trim()
-                _healthScore.postValue(Pair(score, status))
+                    val score = jsonResult.substringAfter("\"score\":").substringBefore(",").trim().filter { it.isDigit() }.toIntOrNull() ?: 0
+                    val status = jsonResult.substringAfter("\"status\":").substringBefore(",").replace("\"", "").trim()
+                    _healthScore.postValue(Pair(score, if (status.isNotBlank()) status else "Pending"))
 
-                val suggestions = jsonResult.substringAfter("\"suggestions\":").substringBefore("}").replace("\"", "").trim()
-                _aiPrescriptions.postValue(suggestions)
+                    val suggestions = jsonResult.substringAfter("\"suggestions\":").substringBefore("}").replace("\"", "").trim()
+                    _aiPrescriptions.postValue(suggestions)
+                } else {
+                    _healthRisk.postValue(Triple(0, 0, 0))
+                    _healthScore.postValue(Pair(0, "Pending"))
+                }
             } catch (e: Exception) {
                 isGeneratingInsights = false
+                _healthRisk.postValue(Triple(0, 0, 0))
+                _healthScore.postValue(Pair(0, "Pending"))
             }
         }
     }
@@ -108,12 +112,9 @@ class PatientViewModel : ViewModel() {
 
     private fun loadVisits(uid: String) {
         viewModelScope.launch {
-            // Sort locally to avoid Firestore index requirement
             val visits = repository.getPatientVisits(uid).sortedByDescending { it.timestamp }
             _allVisits.value = visits
             val now = System.currentTimeMillis()
-            
-            android.util.Log.d("PatientViewModel", "Loaded ${visits.size} visits for $uid. Current time: $now")
 
             val pastVisits = visits.filter { it.timestamp <= now }
             val futureVisits = visits.filter { it.timestamp > now }.sortedBy { it.timestamp }
@@ -125,7 +126,6 @@ class PatientViewModel : ViewModel() {
 
     private fun loadPrescriptions(uid: String) {
         viewModelScope.launch {
-            // Sort locally to avoid Firestore index requirement
             val prescriptions = repository.getPatientPrescriptions(uid).sortedByDescending { it.timestamp }
             _prescriptions.value = prescriptions
         }
